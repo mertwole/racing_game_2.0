@@ -1,0 +1,15 @@
+# rust binaries
+
+*/target
+
+#resources
+
+racing_game_core/resources/
+
+# c# and vs files
+
+bin/
+obj/
+.vs/
+lib/
+

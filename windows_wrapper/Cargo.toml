@@ -1,0 +1,13 @@
+[package]
+name = "windows_wrapper"
+version = "0.1.0"
+authors = ["mertwole <mertwole@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+glfw = "*"
+gl = "*"
+image = "*"
+rand = "*"
+include_dir = "*"
+racing_game_core = { path = "../racing_game_core" }
