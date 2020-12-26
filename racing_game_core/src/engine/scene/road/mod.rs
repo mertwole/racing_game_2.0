@@ -24,9 +24,9 @@ impl RoadData {
     pub fn new_test() -> RoadData {
         let keypoints = vec![
             Keypoint { road_distance : 0.0, height : 0.0 },
-            Keypoint { road_distance : 20.0, height : 0.0 },
+            Keypoint { road_distance : 20.0, height : 2.0 },
             Keypoint { road_distance : 40.0, height : 2.0 },
-            Keypoint { road_distance : 50.0, height : 2.0 },
+            Keypoint { road_distance : 50.0, height : 0.0 },
             Keypoint { road_distance : 70.0, height : 0.0 },
             Keypoint { road_distance : 100.0, height : 4.0 },
             Keypoint { road_distance : 1000.0, height : 4.0 }
@@ -232,7 +232,29 @@ impl Road {
         self.data.get_camera_angle(camera.distance + camera.near_plane)
     }
 
-    pub fn prepare_to_render(&mut self, camera : &Camera, renderer : &Renderer) {
+    pub fn get_offset(&self, distance_proj : f32) -> f32 {
+        let mut offset = self.render_data.lines[0].offset;
+        let mut offset_delta = 0.0;
+
+        self.data.apply_offset(self.render_data.lines[0].distance_proj, distance_proj, &mut offset, &mut offset_delta);
+        offset
+    }
+
+    pub fn get_line_count(&self) -> usize { self.render_data.lines.len() }
+
+    pub fn get_distance_proj(&self, y : usize) -> Option<f32> { 
+        if y < self.render_data.lines.len() {
+            Some(self.render_data.lines[y].distance_proj)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_height(&self, distance_proj : f32) -> f32 {
+        self.data.get_road_height(distance_proj)
+    }
+
+    pub fn compute_render_data(&mut self, camera : &Camera, renderer : &Renderer) {
         let lines_density = 1.0;
         let mut horz_lines_accum = camera.distance % (2.0 * lines_density);
         let mut prev_distance_proj = 0.0;
