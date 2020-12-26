@@ -88,21 +88,33 @@ impl Billboard{
         return closest_lod;
     }
 
-    // TODO : add render close to camera
     pub fn render(&self, camera : &Camera, road : &Road, renderer : &Renderer) {
         let dist_to_camera = self.road_distance - camera.distance;
         let width_px = renderer.width() as f32 * self.width * camera.near_plane / dist_to_camera;
         let lod = &self.lods[self.get_lod_id(width_px) as usize];
 
-        for y in (1..road.get_line_count() + 1).rev() {
-            let next_y_dist_proj = road.get_distance_proj(y - 1).unwrap();
+        // process 2 more segments : 
+        // (camera.near_plane..first ground intersection) <- billboards near the camera
+        // and 
+        // (last ground intersection..camera.far_plane) <- billboards hidden by the last heel
+        for y in (0..road.get_line_count() + 1).rev() {
+            let next_y_dist_proj = road.get_distance_proj(y - 1).unwrap_or(camera.near_plane + camera.distance);
             let distance_proj = road.get_distance_proj(y).unwrap_or(camera.distance + camera.far_plane);
 
             if !(distance_proj >= self.road_distance && next_y_dist_proj <= self.road_distance) { continue; }
 
             let global_camera_y = camera.y + road.get_height(camera.distance);
-            let min_visible_height = global_camera_y + 
-            (road.get_height(next_y_dist_proj) - global_camera_y) / (next_y_dist_proj - camera.distance) * dist_to_camera;
+
+            let min_visible_height = if y != 0 {
+                // normal occlusion mode (first ground intersection..camera.far_plane)
+                global_camera_y + 
+                (road.get_height(next_y_dist_proj) - global_camera_y) / (next_y_dist_proj - camera.distance) * dist_to_camera 
+            } else {
+                // close occlusion mode (camera.near_plane..first ground intersection)
+                let y0_distance_proj = road.get_distance_proj(0).unwrap();
+                let y0_height = road.get_height(y0_distance_proj);
+                global_camera_y - (global_camera_y - y0_height) / (y0_distance_proj - camera.distance) * dist_to_camera
+            };
 
             let min_visible_image_y = min_visible_height - road.get_height(self.road_distance);
             let px_height = (camera.viewport_height / renderer.height() as f32) * dist_to_camera / camera.near_plane;
