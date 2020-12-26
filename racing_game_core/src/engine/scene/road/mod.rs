@@ -162,20 +162,17 @@ impl RoadData {
         for curvature in &self.curvatures {
             if curvature.end > curr_dist && curvature.start < distance_proj {
                 let no_curvature_length = if curvature.start > curr_dist { curvature.start - curr_dist } else { 0.0 };
-                let mut curvature_length = curvature.end - curr_dist;
-                if curvature_length > curvature.end - curvature.start { 
-                    curvature_length = curvature.end - curvature.start; 
-                }
-                if curvature_length > distance_proj - curr_dist {
-                    curvature_length = distance_proj - curr_dist;
-                }
+
+                let mut curvature_length = curvature.end - curvature.start;
+                if distance_proj < curvature.end { curvature_length -= curvature.end - distance_proj; }
+                if curr_dist > curvature.start { curvature_length -= curr_dist - curvature.start; }
 
                 *offset += *offset_delta * no_curvature_length;
 
                 *offset += *offset_delta * curvature_length + curvature.strength * curvature_length * curvature_length * 0.5;
                 *offset_delta += curvature.strength * curvature_length;
 
-                curr_dist = curvature.end + 0.0001;
+                curr_dist = curvature.end;
                 if curr_dist > distance_proj { return; }
             }
         }
@@ -240,7 +237,9 @@ impl Road {
         offset
     }
 
-    pub fn get_line_count(&self) -> usize { self.render_data.lines.len() }
+    pub fn get_line_count(&self) -> usize { 
+        self.render_data.lines.len() 
+    }
 
     pub fn get_distance_proj(&self, y : usize) -> Option<f32> { 
         if y < self.render_data.lines.len() {

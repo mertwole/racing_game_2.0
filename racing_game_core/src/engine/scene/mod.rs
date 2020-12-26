@@ -38,7 +38,7 @@ impl Scene {
         );
 
         let billboard_test = vec![
-            billboard_factory.construct(60.0, 0.0, 1.0)
+            //billboard_factory.construct(60.0, 0.0, 1.0)
         ];
 
         Scene { camera, road, screen_resolution, billboard_test }

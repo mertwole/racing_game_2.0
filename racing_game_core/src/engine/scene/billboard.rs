@@ -88,6 +88,7 @@ impl Billboard{
         return closest_lod;
     }
 
+    // TODO : add render close to camera
     pub fn render(&self, camera : &Camera, road : &Road, renderer : &Renderer) {
         let dist_to_camera = self.road_distance - camera.distance;
         let width_px = renderer.width() as f32 * self.width * camera.near_plane / dist_to_camera;
@@ -105,7 +106,8 @@ impl Billboard{
 
             let min_visible_image_y = min_visible_height - road.get_height(self.road_distance);
             let px_height = (camera.viewport_height / renderer.height() as f32) * dist_to_camera / camera.near_plane;
-            let min_visible_image_y_px = (min_visible_image_y / px_height) as isize;
+            let mut min_visible_image_y_px = (min_visible_image_y / px_height) as isize;
+            if min_visible_image_y_px < 0 { min_visible_image_y_px = 0; }
 
             let draw_region = IAABB::new(IVec2::new(0, min_visible_image_y_px), IVec2::new(lod.image.width() as isize - 1, lod.image.height() as isize - 1));
             if draw_region.min.y >= draw_region.max.y { break; }
