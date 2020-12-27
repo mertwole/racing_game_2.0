@@ -15,13 +15,13 @@ pub struct Scene {
     screen_resolution : IVec2,
     camera : Camera,
     road : Road,
-
     billboard_test : Vec<Billboard>
 }
 
 impl Scene {
     pub fn new(screen_resolution : IVec2, road_tex : RgbImage) -> Scene {
-        let road = Road::new(road_tex);
+        let road = Road::new(road_tex.clone());
+
         let camera = Camera { 
             distance : 0.0,
             y : 1.0, 
@@ -29,7 +29,7 @@ impl Scene {
             viewport_width : 1.6, 
             viewport_height : 0.9, 
             near_plane : 1.0, 
-            far_plane : 1000.0 
+            far_plane : 100.0 
         };
 
         let billboard_factory = BillboardFactory::new(
@@ -38,7 +38,7 @@ impl Scene {
         );
 
         let billboard_test = vec![
-            //billboard_factory.construct(60.0, 0.0, 1.0)
+            billboard_factory.construct(10.0, 0.0, 1.0)
         ];
 
         Scene { camera, road, screen_resolution, billboard_test }
@@ -46,6 +46,7 @@ impl Scene {
 
     pub fn test_move_cam(&mut self, delta_time : f32) {
         self.camera.distance += delta_time;
+        if self.camera.distance > 120.0 { self.camera.distance -= 120.0; }
         //self.camera.angle = self.road.get_camera_angle(&self.camera);
     }
 

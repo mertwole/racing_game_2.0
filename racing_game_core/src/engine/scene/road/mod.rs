@@ -16,20 +16,21 @@ struct Curvature {
 }
 
 struct RoadData {
-    keypoints : Vec<Keypoint>,
-    curvatures : Vec<Curvature>
+    pub length : f32,
+    pub keypoints : Vec<Keypoint>,
+    pub curvatures : Vec<Curvature>
 }
 
 impl RoadData {
     pub fn new_test() -> RoadData {
         let keypoints = vec![
             Keypoint { road_distance : 0.0, height : 0.0 },
-            Keypoint { road_distance : 20.0, height : 2.0 },
-            Keypoint { road_distance : 40.0, height : 2.0 },
-            Keypoint { road_distance : 50.0, height : 0.0 },
+            Keypoint { road_distance : 20.0, height : 0.0 },
+            Keypoint { road_distance : 40.0, height : 1.0 },
+            Keypoint { road_distance : 50.0, height : 1.0 },
             Keypoint { road_distance : 70.0, height : 0.0 },
             Keypoint { road_distance : 100.0, height : 4.0 },
-            Keypoint { road_distance : 1000.0, height : 4.0 }
+            Keypoint { road_distance : 120.0, height : 0.0 }
         ];
 
         let curvatures = vec![ 
@@ -37,7 +38,7 @@ impl RoadData {
             Curvature { start : 60.0, end : 80.0, strength : -0.01 }
         ];
 
-        RoadData { keypoints, curvatures }
+        RoadData { keypoints, curvatures, length : 120.0 }
     }
 
     fn smoothstep(a : f32, b : f32, mut t : f32) -> f32 {
@@ -77,8 +78,6 @@ impl RoadData {
     }
 
     fn intersect_road(&self, ray_source : &Vec2, ray_direction : &Vec2) -> Option<f32> {
-        let ray_source = ray_source + &Vec2::new(0.0, self.get_road_height(ray_source.x));
-
         for i in 0..self.keypoints.len() - 1 {
             let curr_keypoint = &self.keypoints[i];
             let next_keypoint = &self.keypoints[i + 1];
@@ -121,7 +120,9 @@ impl RoadData {
         let mut ray_source = Vec2::new(camera.distance, camera.y);
         let screen_point = Vec2::new(camera.distance + camera.near_plane, camera.y - camera.viewport_height * 0.5 + camera.viewport_height * screen_pixel_y_norm);
         let mut ray_direction = &screen_point - &ray_source;
+        ray_source.y += self.get_road_height(camera.distance);
 
+        /*
         let (angle_sin, angle_cos) = camera.angle.sin_cos();
 
         // Rotate camera by center of near plane
@@ -138,11 +139,26 @@ impl RoadData {
         );
 
         ray_source = &ray_source + &(&Vec2::new(camera.near_plane, 0.0) - &ray_to_center);
+        */
 
+        // current lap
         match self.intersect_road(&ray_source, &ray_direction) {
-            None => { return None; }
+            None => {  }
             Some(mut intersection_x) => { 
                 intersection_x -= camera.distance; 
+                if intersection_x > camera.near_plane && intersection_x < camera.far_plane { 
+                    return Some(intersection_x);
+                }
+            }
+        }
+
+        // next lap
+        ray_source.x -= self.length;
+        match self.intersect_road(&ray_source, &ray_direction) {
+            None => {  }
+            Some(mut intersection_x) => { 
+                intersection_x -= camera.distance;
+                intersection_x += self.length; 
                 if intersection_x > camera.near_plane && intersection_x < camera.far_plane { 
                     return Some(intersection_x);
                 }
@@ -156,7 +172,7 @@ impl RoadData {
         return 1.0 / distance_proj * camera.near_plane;
     }
 
-    pub fn apply_offset(&self, prev_distance_proj : f32, distance_proj : f32, offset : &mut f32, offset_delta : &mut f32) {
+    fn apply_offset_unlooped(&self, prev_distance_proj : f32, distance_proj : f32, offset : &mut f32, offset_delta : &mut f32) {
         let mut curr_dist = prev_distance_proj;
 
         for curvature in &self.curvatures {
@@ -179,6 +195,20 @@ impl RoadData {
 
         *offset += *offset_delta * (distance_proj - curr_dist);
     }
+
+    pub fn apply_offset(&self, prev_distance_proj : f32, mut distance_proj : f32, offset : &mut f32, offset_delta : &mut f32) { 
+        if distance_proj < prev_distance_proj {
+            distance_proj += self.length;
+        }
+        
+        if distance_proj > self.length && prev_distance_proj < self.length {
+            // pass through start point
+            self.apply_offset_unlooped(prev_distance_proj, self.length, offset, offset_delta);
+            self.apply_offset_unlooped(0.0, distance_proj - self.length, offset, offset_delta);
+        } else {
+            self.apply_offset_unlooped(prev_distance_proj % self.length, distance_proj % self.length, offset, offset_delta);
+        }
+    }    
 
     pub fn get_camera_angle(&self, distance_proj : f32) -> f32 {
         for i in 0..self.keypoints.len() - 1 {
@@ -253,6 +283,10 @@ impl Road {
         self.data.get_road_height(distance_proj)
     }
 
+    pub fn get_length(&self) -> f32 { 
+        self.data.length
+    }
+
     pub fn compute_render_data(&mut self, camera : &Camera, renderer : &Renderer) {
         let lines_density = 1.0;
         let mut horz_lines_accum = camera.distance % (2.0 * lines_density);
@@ -288,7 +322,7 @@ impl Road {
             prev_distance_proj = distance_proj;
 
             self.render_data.lines.push(LineRenderData {
-                distance_proj : distance_proj + camera.distance,
+                distance_proj : (distance_proj + camera.distance) % self.data.length,
                 is_horz_line,
                 offset : offset * (camera.near_plane / distance_proj),
                 width : self.data.get_width(camera, distance_proj),

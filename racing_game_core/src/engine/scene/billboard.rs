@@ -89,7 +89,10 @@ impl Billboard{
     }
 
     pub fn render(&self, camera : &Camera, road : &Road, renderer : &Renderer) {
-        let dist_to_camera = self.road_distance - camera.distance;
+        let mut dist_to_camera = self.road_distance - camera.distance;
+        if dist_to_camera < 0.0 {
+            dist_to_camera += road.get_length();
+        }
         let width_px = renderer.width() as f32 * self.width * camera.near_plane / dist_to_camera;
         let lod = &self.lods[self.get_lod_id(width_px) as usize];
 
@@ -99,16 +102,27 @@ impl Billboard{
         // (last ground intersection..camera.far_plane) <- billboards hidden by the last heel
         for y in (0..road.get_line_count() + 1).rev() {
             let next_y_dist_proj = road.get_distance_proj(y - 1).unwrap_or(camera.near_plane + camera.distance);
-            let distance_proj = road.get_distance_proj(y).unwrap_or(camera.distance + camera.far_plane);
+            let mut distance_proj = road.get_distance_proj(y).unwrap_or(camera.distance + camera.far_plane);
+            if distance_proj < next_y_dist_proj { 
+                distance_proj += road.get_length(); 
+            }
 
-            if !(distance_proj >= self.road_distance && next_y_dist_proj <= self.road_distance) { continue; }
+            let mut visible = distance_proj >= self.road_distance && next_y_dist_proj <= self.road_distance;
+            let road_distance_next_lap = self.road_distance + road.get_length();
+            visible = visible || distance_proj >= road_distance_next_lap && next_y_dist_proj <= road_distance_next_lap;
+            if !visible { continue; }
 
             let global_camera_y = camera.y + road.get_height(camera.distance);
 
             let min_visible_height = if y != 0 {
                 // normal occlusion mode (first ground intersection..camera.far_plane)
+                let mut next_y_dist_to_camera = next_y_dist_proj - camera.distance;
+                if next_y_dist_to_camera < 0.0 {
+                    next_y_dist_to_camera += road.get_length();
+                }
+
                 global_camera_y + 
-                (road.get_height(next_y_dist_proj) - global_camera_y) / (next_y_dist_proj - camera.distance) * dist_to_camera 
+                (road.get_height(next_y_dist_proj) - global_camera_y) / next_y_dist_to_camera * dist_to_camera 
             } else {
                 // close occlusion mode (camera.near_plane..first ground intersection)
                 let y0_distance_proj = road.get_distance_proj(0).unwrap();
@@ -121,7 +135,10 @@ impl Billboard{
             let mut min_visible_image_y_px = (min_visible_image_y / px_height) as isize;
             if min_visible_image_y_px < 0 { min_visible_image_y_px = 0; }
 
-            let draw_region = IAABB::new(IVec2::new(0, min_visible_image_y_px), IVec2::new(lod.image.width() as isize - 1, lod.image.height() as isize - 1));
+            let draw_region = IAABB::new(
+                IVec2::new(0, min_visible_image_y_px), 
+                IVec2::new(lod.image.width() as isize - 1, lod.image.height() as isize - 1)
+            );
             if draw_region.min.y >= draw_region.max.y { break; }
             let offset = (self.offset + road.get_offset(self.road_distance)) * camera.near_plane / (dist_to_camera);
             let offset_px = (offset * renderer.width() as f32) as isize - lod.image.width() as isize / 2;

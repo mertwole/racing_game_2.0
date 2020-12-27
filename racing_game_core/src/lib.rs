@@ -40,7 +40,7 @@ impl Game {
     }
 
     pub fn update(&mut self, delta_time : f32) {
-        self.scene.test_move_cam(2.0 * delta_time);
+        self.scene.test_move_cam(10.0 * delta_time);
     }
 
     pub fn redraw(&mut self, pixels : *mut u32) {

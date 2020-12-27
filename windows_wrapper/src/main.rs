@@ -28,7 +28,7 @@ fn main() {
         let delta_time = window.get_time() as f32;
         window.set_time(0.0);
 
-        println!("{}", delta_time);
+        //println!("{}", delta_time);
 
         for i in 0..SCREEN_WIDTH * SCREEN_HEIGHT { pixels[i as usize] = 0; }
 
