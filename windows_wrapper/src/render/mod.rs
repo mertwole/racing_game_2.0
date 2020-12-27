@@ -52,15 +52,6 @@ impl Render{
         Render { }
     }
 
-    pub fn render(&mut self, window : &mut Window, image : image::RgbImage) {
-        unsafe {
-            gl::TexSubImage2D(gl::TEXTURE_2D, 0, 0, 0, image.width() as GLsizei, image.height() as GLsizei, gl::RGB, gl::UNSIGNED_BYTE, image.into_raw().as_ptr() as *const GLvoid);
-            gl::DrawArrays(gl::TRIANGLE_STRIP, 0, 4);
-        }
-        
-        window.swap_buffers();
-    }
-
     pub fn render_from_raw(&mut self, window : &mut Window, width : u32, height : u32, pixels : *const u32) {
         unsafe {
             gl::TexSubImage2D(gl::TEXTURE_2D, 0, 0, 0, width as GLsizei, height as GLsizei, gl::RGBA, gl::UNSIGNED_BYTE, pixels as *const GLvoid);

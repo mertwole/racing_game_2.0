@@ -1,5 +1,4 @@
 extern crate image;
-use image::RgbImage;
 
 extern crate core;
 use core::Game;

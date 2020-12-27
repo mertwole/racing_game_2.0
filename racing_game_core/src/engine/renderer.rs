@@ -8,7 +8,7 @@ pub struct Renderer {
     pixels_ptr : *mut u32
 }
 
-trait PixelReader {
+pub trait PixelReader {
     fn get_pixel_value(&self, x : u32, y : u32) -> Option<u32>;
     fn width(&self) -> u32;
     fn height(&self) -> u32;
@@ -61,7 +61,7 @@ impl Renderer {
 
         let left_draw = if location.x < 0 { -location.x + region.min.x } else { region.min.x };
         let bottom_draw = if location.y < 0 { -location.y + region.min.y } else { region.min.y };
-        
+
         let right_draw = if location.x + region.max.x - region.min.x > self.width as isize { 
             -location.x + region.min.x + self.width() as isize 
         } else { 
