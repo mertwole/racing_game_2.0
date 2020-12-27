@@ -11,7 +11,7 @@ impl Storage {
     pub fn load_image_rgb(name : &str) -> RgbImage {
         let file = RESOURCES_DIR.get_file(name);
         match file {
-            Some(file) => { image::load_from_memory(file.contents()).unwrap().to_rgb() } 
+            Some(file) => { image::load_from_memory(file.contents()).unwrap().to_rgb8() } 
             None => { panic!("file {} not found!", name); }
         }
     }
@@ -19,7 +19,7 @@ impl Storage {
     pub fn load_image_rgba(name : &str) -> RgbaImage {
         let file = RESOURCES_DIR.get_file(name);
         match file {
-            Some(file) => { image::load_from_memory(file.contents()).unwrap().to_rgba() } 
+            Some(file) => { image::load_from_memory(file.contents()).unwrap().to_rgba8() } 
             None => { panic!("file {} not found!", name); }
         }
     }

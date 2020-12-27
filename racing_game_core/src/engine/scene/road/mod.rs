@@ -235,7 +235,6 @@ impl RoadData {
 struct LineRenderData {
     distance_proj : f32,
     is_horz_line : bool,
-    height : f32,
     offset : f32,
     width : f32
 }
@@ -342,8 +341,7 @@ impl Road {
                 distance_proj : (distance_proj + camera.distance) % self.data.length,
                 is_horz_line,
                 offset : offset * (camera.near_plane / distance_proj),
-                width : self.data.get_width(camera, distance_proj),
-                height : self.data.get_road_height(distance_proj + camera.distance)
+                width : self.data.get_width(camera, distance_proj)
             });
         }
     }

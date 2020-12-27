@@ -10,15 +10,6 @@ impl IAABB {
     pub fn new(min : IVec2, max : IVec2) -> IAABB {
         IAABB { min, max }
     } 
-
-    pub fn clone(&self) -> IAABB {
-        IAABB { min : self.min.clone(), max : self.max.clone() }
-    }
-
-    pub fn expand(&mut self, value : IVec2) {
-        self.min = &self.min - &value;
-        self.max = &self.max + &value;
-    }
 }
 
 // endregion

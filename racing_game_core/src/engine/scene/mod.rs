@@ -1,7 +1,7 @@
 use crate::image::*;
 
 use crate::engine::renderer::Renderer;
-use crate::engine::common::{IVec2, IAABB};
+use crate::engine::common::{IVec2};
 use crate::storage::Storage;
 
 mod road;
@@ -39,7 +39,7 @@ impl Scene {
 
         let mut billboard_test = vec![
             //billboard_factory.construct(110.0, 0.0, 1.0),
-            //billboard_factory.construct(50.0, 1.0, 1.0),
+            billboard_factory.construct(50.0, 1.0, 1.0),
             //billboard_factory.construct(40.0, 1.0, 1.0),
             //billboard_factory.construct(30.0, 1.0, 1.0),
             //billboard_factory.construct(20.0, 1.0, 1.0),
