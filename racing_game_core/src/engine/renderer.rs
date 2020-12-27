@@ -61,8 +61,17 @@ impl Renderer {
 
         let left_draw = if location.x < 0 { -location.x + region.min.x } else { region.min.x };
         let bottom_draw = if location.y < 0 { -location.y + region.min.y } else { region.min.y };
-        let right_draw = if location.x + region.max.x - region.min.x > self.width as isize { -location.x + region.min.x + self.width() as isize } else { region.max.x };
-        let top_draw = if location.y + region.max.y - region.min.y > self.height as isize { -location.y + region.min.y + self.height() as isize } else { region.max.y };
+        
+        let right_draw = if location.x + region.max.x - region.min.x > self.width as isize { 
+            -location.x + region.min.x + self.width() as isize 
+        } else { 
+            region.max.x 
+        };
+        let top_draw = if location.y + region.max.y - region.min.y > self.height as isize { 
+            -location.y + region.min.y + self.height() as isize 
+        } else { 
+            region.max.y 
+        };
 
         for y in bottom_draw..top_draw {
             for x in left_draw..right_draw {
