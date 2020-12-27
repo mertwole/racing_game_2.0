@@ -237,6 +237,8 @@ struct LineRenderData {
 }
 
 struct RenderData {
+    camera_offset : f32,
+    camera_distance : f32,
     lines : Vec<LineRenderData>
 }
 
@@ -251,19 +253,19 @@ impl Road {
         Road { 
             road_tex, 
             data : RoadData::new_test(), 
-            render_data : RenderData { lines : Vec::new() } 
+            render_data : RenderData { lines : Vec::new(), camera_distance : 0.0, camera_offset : 0.0 } 
         }
     }
 
-    pub fn get_camera_angle(&self, camera : &Camera) -> f32 {
-        self.data.get_camera_angle(camera.distance + camera.near_plane)
+    pub fn set_camera_angle(&self, camera : &mut Camera) {
+        camera.angle = self.data.get_camera_angle(camera.distance + camera.near_plane);
     }
 
     pub fn get_offset(&self, distance_proj : f32) -> f32 {
-        let mut offset = self.render_data.lines[0].offset;
+        let mut offset = self.render_data.camera_offset;
         let mut offset_delta = 0.0;
 
-        self.data.apply_offset(self.render_data.lines[0].distance_proj, distance_proj, &mut offset, &mut offset_delta);
+        self.data.apply_offset(self.render_data.camera_distance, distance_proj, &mut offset, &mut offset_delta);
         offset
     }
 
@@ -296,6 +298,9 @@ impl Road {
         let mut offset_delta = 0.0;
 
         self.render_data.lines.truncate(0);
+
+        self.render_data.camera_offset = 0.0;
+        self.render_data.camera_distance = camera.distance;
 
         for y in 0..renderer.height() as isize {
             let distance_proj = 

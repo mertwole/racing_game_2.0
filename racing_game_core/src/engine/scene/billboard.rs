@@ -140,7 +140,8 @@ impl Billboard{
                 IVec2::new(lod.image.width() as isize - 1, lod.image.height() as isize - 1)
             );
             if draw_region.min.y >= draw_region.max.y { break; }
-            let offset = (self.offset + road.get_offset(self.road_distance)) * camera.near_plane / (dist_to_camera);
+            
+            let offset = (self.offset + road.get_offset(self.road_distance)) * camera.near_plane / (dist_to_camera);       
             let offset_px = (offset * renderer.width() as f32) as isize - lod.image.width() as isize / 2;
             let left_bottom = IVec2::new(renderer.width() as isize / 2 + offset_px, y as isize);
             renderer.draw_subimage(&lod.image, draw_region, left_bottom);

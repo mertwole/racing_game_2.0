@@ -38,7 +38,12 @@ impl Scene {
         );
 
         let billboard_test = vec![
-            billboard_factory.construct(10.0, 0.0, 1.0)
+            billboard_factory.construct(60.0, 1.0, 1.0),
+            billboard_factory.construct(50.0, 1.0, 1.0),
+            billboard_factory.construct(40.0, 1.0, 1.0),
+            billboard_factory.construct(30.0, 1.0, 1.0),
+            billboard_factory.construct(20.0, 1.0, 1.0),
+            billboard_factory.construct(10.0, 1.0, 1.0),
         ];
 
         Scene { camera, road, screen_resolution, billboard_test }
@@ -47,7 +52,7 @@ impl Scene {
     pub fn test_move_cam(&mut self, delta_time : f32) {
         self.camera.distance += delta_time;
         if self.camera.distance > 120.0 { self.camera.distance -= 120.0; }
-        //self.camera.angle = self.road.get_camera_angle(&self.camera);
+        self.road.set_camera_angle(&mut self.camera);
     }
 
     pub fn render(&mut self, pixels_ptr : *mut u32) {
