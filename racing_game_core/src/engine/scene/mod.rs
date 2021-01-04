@@ -7,20 +7,26 @@ use crate::storage::Storage;
 mod road;
 mod billboard;
 mod camera;
+mod background;
 use road::*;
 use camera::*;
 use billboard::*;
+use background::*;
 
 pub struct Scene {
     screen_resolution : IVec2,
     camera : Camera,
     road : Road,
-    billboard_test : Vec<Billboard>
+    background : Background,
+    billboard_test : Vec<Billboard>,
+
+    test_back_offset : u32
 }
 
 impl Scene {
-    pub fn new(screen_resolution : IVec2, road_tex : RgbImage) -> Scene {
-        let road = Road::new(road_tex.clone());
+    pub fn new(screen_resolution : IVec2) -> Scene {
+        let road_tex = Storage::load_image_rgb("road_tex.png");
+        let road = Road::new(road_tex);
 
         let camera = Camera { 
             distance : 0.0,
@@ -58,7 +64,9 @@ impl Scene {
 
         billboard_test.push(billboard_factory.construct(0.0, 0.0, 0.4));
 
-        Scene { camera, road, screen_resolution, billboard_test }
+        let background = Background::new(Storage::load_image_rgb("background.png"), 10);
+
+        Scene { camera, road, background, screen_resolution, billboard_test, test_back_offset : 0 }
     }
 
     pub fn test_move_cam(&mut self, delta_time : f32) {
@@ -67,6 +75,9 @@ impl Scene {
         self.road.set_camera_angle(&mut self.camera);
 
         self.billboard_test.last_mut().unwrap().road_distance = (self.camera.distance + self.camera.near_plane + 1.5) % 120.0;
+
+        self.test_back_offset += 1;
+        self.background.set_offset(self.test_back_offset);
     }
 
     pub fn render(&mut self, pixels_ptr : *mut u32) {
@@ -74,6 +85,8 @@ impl Scene {
 
         self.road.compute_render_data(&self.camera, &renderer);
         self.road.render(&renderer);
+
+        self.background.render(&self.road, &self.camera, &renderer);
 
         for billboard in &self.billboard_test {
             billboard.render(&self.camera, &self.road, &renderer);

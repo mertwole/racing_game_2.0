@@ -35,7 +35,7 @@ impl Game {
 
 impl Game {
     pub fn init(screen_width : u32, screen_height : u32) -> Game {
-        let scene = Scene::new(IVec2::new(screen_width as isize, screen_height as isize), Storage::load_image_rgb("road_tex.png"));
+        let scene = Scene::new(IVec2::new(screen_width as isize, screen_height as isize));
         Game { scene }
     }
 
