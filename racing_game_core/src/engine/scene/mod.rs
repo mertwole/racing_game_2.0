@@ -8,10 +8,13 @@ mod road;
 mod billboard;
 mod camera;
 mod background;
+mod collider;
+
 use road::*;
 use camera::*;
 use billboard::*;
 use background::*;
+use collider::*;
 
 pub struct Scene {
     camera : Camera,
@@ -38,28 +41,13 @@ impl Scene {
         };
 
         let billboard_factory = BillboardFactory::new(
-            &Storage::load_image_rgba("test_line.png"), 
-            Storage::load_file("test_line.meta")
-        );
-
-        let billboard_factory = BillboardFactory::new(
             &Storage::load_image_rgba("test_spritesheet.png"), 
             Storage::load_file("test_spritesheet.meta")
         );
 
         let mut billboard_test = vec![
-            //billboard_factory.construct(110.0, 0.0, 1.0),
-            billboard_factory.construct(50.0, 1.0, 1.0),
-            //billboard_factory.construct(40.0, 1.0, 1.0),
-            //billboard_factory.construct(30.0, 1.0, 1.0),
-            //billboard_factory.construct(20.0, 1.0, 1.0),
-            //billboard_factory.construct(10.0, 1.0, 1.0),
+            billboard_factory.construct(50.0, 1.0, 1.0)
         ];
-
-        let billboard_factory = BillboardFactory::new(
-            &Storage::load_image_rgba("test_spritesheet.png"), 
-            Storage::load_file("test_spritesheet.meta")
-        );
 
         billboard_test.push(billboard_factory.construct(0.0, 0.0, 0.4));
 
