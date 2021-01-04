@@ -327,13 +327,11 @@ impl Road {
             }
 
             // Horizontal offset
-            if prev_distance_proj != 0.0 {
-                self.data.apply_offset(
-                    prev_distance_proj + camera.distance, 
-                    distance_proj + camera.distance, 
-                    &mut offset, &mut offset_delta
-                );
-            }
+            self.data.apply_offset(
+                prev_distance_proj + camera.distance, 
+                distance_proj + camera.distance, 
+                &mut offset, &mut offset_delta
+            );
             
             prev_distance_proj = distance_proj;
 
