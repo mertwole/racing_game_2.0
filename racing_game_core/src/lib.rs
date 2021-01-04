@@ -5,10 +5,10 @@ mod storage;
 
 mod engine;
 use engine::scene::Scene;
-use storage::Storage;
-use engine::common::IVec2;
 
 pub struct Game {
+    screen_width : u32, 
+    screen_height : u32,
     scene : Scene
 }
 
@@ -35,8 +35,8 @@ impl Game {
 
 impl Game {
     pub fn init(screen_width : u32, screen_height : u32) -> Game {
-        let scene = Scene::new(IVec2::new(screen_width as isize, screen_height as isize));
-        Game { scene }
+        let scene = Scene::new();
+        Game { scene, screen_width, screen_height }
     }
 
     pub fn update(&mut self, delta_time : f32) {
@@ -44,6 +44,6 @@ impl Game {
     }
 
     pub fn redraw(&mut self, pixels : *mut u32) {
-        self.scene.render(pixels);
+        self.scene.render(self.screen_width, self.screen_height, pixels);
     }
 }

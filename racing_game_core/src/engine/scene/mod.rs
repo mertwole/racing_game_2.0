@@ -14,7 +14,6 @@ use billboard::*;
 use background::*;
 
 pub struct Scene {
-    screen_resolution : IVec2,
     camera : Camera,
     road : Road,
     background : Background,
@@ -24,7 +23,7 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub fn new(screen_resolution : IVec2) -> Scene {
+    pub fn new() -> Scene {
         let road_tex = Storage::load_image_rgb("road_tex.png");
         let road = Road::new(road_tex);
 
@@ -66,7 +65,7 @@ impl Scene {
 
         let background = Background::new(Storage::load_image_rgb("background.png"), 10);
 
-        Scene { camera, road, background, screen_resolution, billboard_test, test_back_offset : 0 }
+        Scene { camera, road, background, billboard_test, test_back_offset : 0 }
     }
 
     pub fn test_move_cam(&mut self, delta_time : f32) {
@@ -80,8 +79,8 @@ impl Scene {
         self.background.set_offset(self.test_back_offset);
     }
 
-    pub fn render(&mut self, pixels_ptr : *mut u32) {
-        let renderer = Renderer::new(self.screen_resolution.x as u32, self.screen_resolution.y as u32, pixels_ptr);
+    pub fn render(&mut self, width : u32, height : u32, pixels_ptr : *mut u32) {
+        let renderer = Renderer::new(width, height, pixels_ptr);
 
         self.road.compute_render_data(&self.camera, &renderer);
         self.road.render(&renderer);
