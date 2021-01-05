@@ -162,4 +162,11 @@ impl Vec3{
     }
 }
 
+impl ops::Add<Vec3> for Vec3 {
+    type Output = Vec3;
+    fn add(self, rhs: Vec3) -> Vec3 {
+        Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    }
+}
+
 // endregion

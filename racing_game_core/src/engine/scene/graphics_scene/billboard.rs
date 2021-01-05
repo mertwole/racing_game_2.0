@@ -5,7 +5,7 @@ use std::mem;
 use image::*;
 
 use crate::engine::renderer::Renderer;
-use crate::engine::common::{IVec2, IAABB};
+use crate::engine::common::{IVec2, IAABB, Vec3};
 
 use super::road::Road;
 use crate::engine::scene::camera::Camera;
@@ -25,8 +25,8 @@ struct Lod{
 
 #[derive(Clone)]
 pub struct Billboard{
-    pub road_distance : f32,
-    pub offset : f32,
+    // Position : x is offset, y is height, z is road distance. 
+    pub position : Vec3,
     pub width : f32,
 
     lods : Rc<Vec<Lod>>
@@ -63,12 +63,18 @@ impl BillboardFactory {
         BillboardFactory { lods : Rc::from(lods) }
     }
 
-    pub fn construct(&self, road_distance : f32, offset : f32, width : f32) -> Billboard {
-        Billboard { lods : self.lods.clone(), road_distance, offset, width }
+    pub fn construct(&self, position : Vec3, width : f32) -> Billboard {
+        Billboard { lods : self.lods.clone(), position, width }
     }
 }  
 
 impl Billboard{
+    pub fn set_position(&mut self, position : Vec3) {
+        self.position = position;
+    }
+
+    pub fn position(&self) -> Vec3 { self.position }
+
     fn get_lod_id(&self, width_px : f32) -> u32 {
         let mut closest_lod = 0u32;
         for i in 0..self.lods.len() {
@@ -90,13 +96,16 @@ impl Billboard{
 
     fn render_cutted(
         &self, road : &Road, renderer : &Renderer, camera : &Camera, 
-        lod : &Lod, draw_y : isize, min_visible_height : f32, dist_to_camera : f32
+        lod : &Lod, mut draw_y : isize, min_visible_height : f32, dist_to_camera : f32
     ) {
-        let min_visible_image_y = min_visible_height - road.get_height(self.road_distance);
+        let min_visible_image_y = min_visible_height - road.get_height(self.position.z) - self.position.y;
 
         let px_height = (camera.viewport_height / renderer.height() as f32) * dist_to_camera / camera.near_plane;
         let mut min_visible_image_y_px = (min_visible_image_y / px_height) as isize;
-        if min_visible_image_y_px < 0 { min_visible_image_y_px = 0; }
+        if min_visible_image_y_px < 0 { 
+            draw_y -= min_visible_image_y_px; 
+            min_visible_image_y_px = 0; 
+        }
 
         let draw_region = IAABB::new(
             IVec2::new(0, min_visible_image_y_px), 
@@ -104,14 +113,14 @@ impl Billboard{
         );
         if draw_region.min.y >= draw_region.max.y { return; }
 
-        let offset = (self.offset + road.get_offset(self.road_distance)) * camera.near_plane / (dist_to_camera);       
+        let offset = (self.position.x + road.get_offset(self.position.z)) * camera.near_plane / (dist_to_camera);       
         let offset_px = (offset * renderer.width() as f32) as isize - lod.image.width() as isize / 2;
-        let left_bottom = IVec2::new(renderer.width() as isize / 2 + offset_px, draw_y as isize);
+        let left_bottom = IVec2::new(renderer.width() as isize / 2 + offset_px, draw_y);
         renderer.draw_subimage(&lod.image, draw_region, left_bottom);
     }   
 
     pub fn render(&self, camera : &Camera, road : &Road, renderer : &Renderer) {
-        let mut dist_to_camera = self.road_distance - camera.distance;
+        let mut dist_to_camera = self.position.z - camera.distance;
         if dist_to_camera < 0.0 {
             dist_to_camera += road.get_length();
         }
@@ -133,14 +142,14 @@ impl Billboard{
                 next_distance_proj 
             };
 
-            let visible = next_distance_proj_global > self.road_distance && self.road_distance > distance_proj;
+            let visible = next_distance_proj_global > self.position.z && self.position.z > distance_proj;
             if !visible { continue; }
 
             let global_camera_y = camera.y + road.get_height(camera.distance);
             // interpolate height between camera and next distance
             let min_visible_height = 
-            (global_camera_y * (next_distance_proj_global - self.road_distance) 
-            + road.get_height(next_distance_proj) * (self.road_distance - camera.distance))
+            (global_camera_y * (next_distance_proj_global - self.position.z) 
+            + road.get_height(next_distance_proj) * (self.position.z - camera.distance))
             / (next_distance_proj_global - camera.distance);
 
             self.render_cutted(
@@ -155,7 +164,7 @@ impl Billboard{
         let camera_far_plane_global = camera.distance + camera.far_plane;
         let mut last_y_distance_to_cam = last_y_distance - camera.distance;
         if last_y_distance_to_cam < 0.0 { last_y_distance_to_cam += road.get_length(); }
-        if camera_far_plane_global > self.road_distance && self.road_distance > last_y_distance {
+        if camera_far_plane_global > self.position.z && self.position.z > last_y_distance {
             let global_camera_y = camera.y + road.get_height(camera.distance);
             // interpolate height between camera and last y's distance
             let min_visible_height = 

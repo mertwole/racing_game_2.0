@@ -15,6 +15,7 @@ pub struct GraphicsScene {
     billboards : Vec<Billboard>
 }
 
+#[derive(Clone, Copy)]
 pub struct BillboardId {
     vec_id : usize
 }
@@ -31,6 +32,10 @@ impl GraphicsScene {
     pub fn add_billboard(&mut self, billboard : Billboard) -> BillboardId {
         self.billboards.push(billboard);
         BillboardId { vec_id : self.billboards.len() - 1 }
+    }
+
+    pub fn get_billboard_mut(&mut self, id : BillboardId) -> &mut Billboard {
+        &mut self.billboards[id.vec_id]
     }
 
     pub fn set_camera_angle_by_road(&self, camera : &mut Camera) {

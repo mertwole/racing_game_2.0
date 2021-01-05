@@ -11,6 +11,7 @@ pub struct CollisionEvent {
     pub second_id : isize
 }
 
+#[derive(Clone, Copy)]
 pub struct ColliderId {
     vec_id : usize
 }
@@ -25,6 +26,10 @@ impl PhysicsScene {
     pub fn add_collider(&mut self, collider : Collider) -> ColliderId {
         self.colliders.push(collider);
         ColliderId { vec_id : self.colliders.len() - 1 }
+    }
+
+    pub fn get_collider_mut(&mut self, id : ColliderId) -> &mut Collider {
+        &mut self.colliders[id.vec_id]
     }
 
     pub fn resolve_collisions(&self) -> Vec<CollisionEvent> {

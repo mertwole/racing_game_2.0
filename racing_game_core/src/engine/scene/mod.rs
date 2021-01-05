@@ -1,3 +1,4 @@
+use crate::engine::common::Vec3;
 use crate::engine::renderer::Renderer;
 use crate::storage::Storage;
 
@@ -24,6 +25,7 @@ pub struct Scene {
     game_objects : Vec<GameObjectMeta>
 }
 
+#[derive(Clone, Copy)]
 pub struct GameObjectId {
     vec_id : usize
 }
@@ -60,6 +62,11 @@ impl Scene {
         self.game_objects.push(meta);
         GameObjectId { vec_id : self.game_objects.len() - 1 }
     }
+
+    pub fn set_gameobject_position(&mut self, id : GameObjectId, position : Vec3) {
+        self.game_objects[id.vec_id]
+        .set_position(position, &mut self.physics_scene, &mut self.graphics_scene);
+    } 
 
     pub fn update(&mut self, delta_time : f32) {
         self.camera.distance += delta_time * 10.0;
