@@ -45,7 +45,7 @@ impl GameObject {
         }
 
         for billboard in billboards {
-            billboard_local_positions.push(billboard.position());
+            billboard_local_positions.push(billboard.position);
             let id = graphics_scene.add_billboard(billboard);
             billboard_ids.push(id);
         }
@@ -75,7 +75,7 @@ impl GameObjectMeta {
         for i in 0..self.billboard_ids.len() {
             let billboard_id = self.billboard_ids[i];
             let billboard = graphics_scene.get_billboard_mut(billboard_id);
-            billboard.set_position(self.billboard_local_positions[i] + self.position);
+            billboard.position = self.billboard_local_positions[i] + self.position;
         }
     }
 }

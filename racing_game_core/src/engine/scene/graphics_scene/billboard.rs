@@ -69,12 +69,6 @@ impl BillboardFactory {
 }  
 
 impl Billboard{
-    pub fn set_position(&mut self, position : Vec3) {
-        self.position = position;
-    }
-
-    pub fn position(&self) -> Vec3 { self.position }
-
     fn get_lod_id(&self, width_px : f32) -> u32 {
         let mut closest_lod = 0u32;
         for i in 0..self.lods.len() {

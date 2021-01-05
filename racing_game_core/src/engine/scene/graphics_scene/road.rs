@@ -4,42 +4,26 @@ use crate::engine::renderer::Renderer;
 use crate::engine::common::*;
 use crate::engine::scene::camera::*;
 
-struct Keypoint {
+pub struct Keypoint {
     pub road_distance : f32,
     pub height : f32
 }
 
-struct Curvature {
+pub struct Curvature {
     pub start : f32,
     pub end : f32,
     pub strength : f32
 }
 
-struct RoadData {
+pub struct RoadData {
     pub length : f32,
     pub keypoints : Vec<Keypoint>,
     pub curvatures : Vec<Curvature>
 }
 
 impl RoadData {
-    pub fn new_test() -> RoadData {
-        let keypoints = vec![
-            Keypoint { road_distance : 0.0, height : 0.0 },
-            Keypoint { road_distance : 20.0, height : 1.0 },
-            Keypoint { road_distance : 40.0, height : 0.0 },
-            Keypoint { road_distance : 60.0, height : 2.0 },
-            Keypoint { road_distance : 80.0, height : 0.0 },
-            Keypoint { road_distance : 100.0, height : 4.0 },
-            Keypoint { road_distance : 110.0, height : 4.0 },
-            Keypoint { road_distance : 120.0, height : 0.0 }
-        ];
-
-        let curvatures = vec![ 
-            Curvature { start : 20.0, end : 30.0, strength :  0.01 },
-            Curvature { start : 60.0, end : 80.0, strength : -0.01 }
-        ];
-
-        RoadData { keypoints, curvatures, length : 120.0 }
+    pub fn new(keypoints : Vec<Keypoint>, curvatures : Vec<Curvature>, length : f32) -> RoadData {
+        RoadData { keypoints, curvatures, length }
     }
 
     fn smoothstep(a : f32, b : f32, mut t : f32) -> f32 {
@@ -118,7 +102,7 @@ impl RoadData {
         0.0
     }
 
-    pub fn get_distance_proj(&self, camera : &Camera, screen_pixel_y_norm : f32) -> Option<f32> {
+    fn get_distance_proj(&self, camera : &Camera, screen_pixel_y_norm : f32) -> Option<f32> {
         let mut ray_source = Vec2::new(camera.distance, camera.y);
         let screen_point = Vec2::new(
             camera.distance + camera.near_plane, 
@@ -171,7 +155,7 @@ impl RoadData {
         None
     }
 
-    pub fn get_width(&self, camera : &Camera, distance_proj : f32) -> f32 {
+    fn get_width(&self, camera : &Camera, distance_proj : f32) -> f32 {
         return 1.0 / distance_proj * camera.near_plane;
     }
 
@@ -199,7 +183,7 @@ impl RoadData {
         *offset += *offset_delta * (distance_proj - curr_dist);
     }
 
-    pub fn apply_offset(&self, prev_distance_proj : f32, mut distance_proj : f32, offset : &mut f32, offset_delta : &mut f32) { 
+    fn apply_offset(&self, prev_distance_proj : f32, mut distance_proj : f32, offset : &mut f32, offset_delta : &mut f32) { 
         if distance_proj < prev_distance_proj {
             distance_proj += self.length;
         }
@@ -213,7 +197,7 @@ impl RoadData {
         }
     }    
 
-    pub fn get_camera_angle(&self, distance_proj : f32) -> f32 {
+    fn get_camera_angle(&self, distance_proj : f32) -> f32 {
         for i in 0..self.keypoints.len() - 1 {
             let curr_keypoint = &self.keypoints[i];
             let next_keypoint = &self.keypoints[i + 1];
@@ -252,10 +236,10 @@ pub struct Road {
 }
 
 impl Road {
-    pub fn new(road_tex : RgbImage) -> Road {
+    pub fn new(road_tex : RgbImage, road_data : RoadData) -> Road {
         Road { 
             road_tex, 
-            data : RoadData::new_test(), 
+            data : road_data, 
             render_data : RenderData { lines : Vec::new(), camera_distance : 0.0, camera_offset : 0.0 } 
         }
     }
