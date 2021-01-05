@@ -1,28 +1,31 @@
-use crate::image::*;
-
 use crate::engine::renderer::Renderer;
-use crate::engine::common::{IVec2};
 use crate::storage::Storage;
 
-mod road;
-mod billboard;
-mod camera;
-mod background;
-mod collider;
+mod physics_scene;
+mod graphics_scene;
+mod game_object;
+pub mod camera;
 
-use road::*;
-use camera::*;
-use billboard::*;
-use background::*;
-use collider::*;
+use physics_scene::*;
+use graphics_scene::*;
+use game_object::*;
+use camera::Camera;
+
+use graphics_scene::background::*;
+use graphics_scene::billboard::*;
+use graphics_scene::road::*;
 
 pub struct Scene {
     camera : Camera,
-    road : Road,
-    background : Background,
-    billboard_test : Vec<Billboard>,
 
-    test_back_offset : u32
+    physics_scene : PhysicsScene,
+    graphics_scene : GraphicsScene,
+
+    game_objects : Vec<GameObjectMeta>
+}
+
+pub struct GameObjectId {
+    vec_id : usize
 }
 
 impl Scene {
@@ -40,43 +43,33 @@ impl Scene {
             far_plane : 100.0 
         };
 
-        let billboard_factory = BillboardFactory::new(
-            &Storage::load_image_rgba("test_spritesheet.png"), 
-            Storage::load_file("test_spritesheet.meta")
-        );
-
-        let mut billboard_test = vec![
-            billboard_factory.construct(50.0, 1.0, 1.0)
-        ];
-
-        billboard_test.push(billboard_factory.construct(0.0, 0.0, 0.4));
-
         let background = Background::new(Storage::load_image_rgb("background.png"), 10);
 
-        Scene { camera, road, background, billboard_test, test_back_offset : 0 }
+        Scene { 
+            camera,
+
+            physics_scene : PhysicsScene::new(),
+            graphics_scene : GraphicsScene::new(road, background),
+
+            game_objects : Vec::new()
+        }
     }
 
-    pub fn test_move_cam(&mut self, delta_time : f32) {
-        self.camera.distance += delta_time;
+    pub fn add_gameobject(&mut self, game_object : GameObject) -> GameObjectId {
+        let meta = game_object.to_meta(&mut self.physics_scene, &mut self.graphics_scene);
+        self.game_objects.push(meta);
+        GameObjectId { vec_id : self.game_objects.len() - 1 }
+    }
+
+    pub fn update(&mut self, delta_time : f32) {
+        self.camera.distance += delta_time * 10.0;
         if self.camera.distance > 120.0 { self.camera.distance -= 120.0; }
-        self.road.set_camera_angle(&mut self.camera);
 
-        self.billboard_test.last_mut().unwrap().road_distance = (self.camera.distance + self.camera.near_plane + 1.5) % 120.0;
-
-        self.test_back_offset += 1;
-        self.background.set_offset(self.test_back_offset);
+        self.graphics_scene.set_camera_angle_by_road(&mut self.camera);
     }
 
     pub fn render(&mut self, width : u32, height : u32, pixels_ptr : *mut u32) {
         let renderer = Renderer::new(width, height, pixels_ptr);
-
-        self.road.compute_render_data(&self.camera, &renderer);
-        self.road.render(&renderer);
-
-        self.background.render(&self.road, &self.camera, &renderer);
-
-        for billboard in &self.billboard_test {
-            billboard.render(&self.camera, &self.road, &renderer);
-        }
+        self.graphics_scene.render(&renderer, &self.camera);
     }
 }

@@ -8,7 +8,7 @@ use crate::engine::renderer::Renderer;
 use crate::engine::common::{IVec2, IAABB};
 
 use super::road::Road;
-use super::camera::Camera;
+use crate::engine::scene::camera::Camera;
 
 struct SpriteDescr {
     pos_x : u32,

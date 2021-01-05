@@ -83,6 +83,7 @@ impl ops::Mul<&Vec2> for f32 {
 //endregion
 
 // region IVec2 
+
 #[derive(Clone, Copy)]
 pub struct IVec2{
     pub x : isize,
@@ -137,6 +138,27 @@ impl ops::Div<isize> for &IVec2 {
     type Output = IVec2;
     fn div(self, rhs: isize) -> IVec2 {
         IVec2::new(self.x / rhs, self.y / rhs)
+    }
+}
+
+// endregion
+
+// region Vec3
+
+#[derive(Clone, Copy)]
+pub struct Vec3 {
+    pub x : f32,
+    pub y : f32,
+    pub z : f32
+}
+
+impl Vec3{
+    pub fn zero() -> Vec3 {
+        Vec3 { x : 0.0, y : 0.0, z : 0.0 }
+    }
+
+    pub fn new(x : f32, y : f32, z : f32) -> Vec3 {
+        Vec3 { x, y, z }
     }
 }
 

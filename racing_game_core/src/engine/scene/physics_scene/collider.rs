@@ -2,16 +2,19 @@ pub struct Collider {
     length : f32,
     start_distance_proj : f32,
     width : f32,
-    offset : f32
+    offset : f32,
+
+    pub id : isize
 }
 
 impl Collider {
-    pub fn new(length : f32, start_distance_proj : f32, width : f32, offset : f32) -> Collider {
+    pub fn new(length : f32, start_distance_proj : f32, width : f32, offset : f32, id : isize) -> Collider {
         Collider { 
             length,
             start_distance_proj,
             width,
-            offset 
+            offset,
+            id 
         }
     }
 
