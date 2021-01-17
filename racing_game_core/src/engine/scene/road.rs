@@ -156,6 +156,7 @@ impl RoadData {
     }
 
     fn get_width(&self, camera : &Camera, distance_proj : f32) -> f32 {
+        // TODO : varying width
         return 1.0 / distance_proj * camera.near_plane;
     }
 
@@ -244,8 +245,8 @@ impl Road {
         }
     }
 
-    pub fn set_camera_angle(&self, camera : &mut Camera) {
-        camera.angle = self.data.get_camera_angle(camera.distance + camera.near_plane);
+    pub fn get_camera_angle(&self, camera : &Camera) -> f32 {
+        self.data.get_camera_angle(camera.distance + camera.near_plane)
     }
 
     pub fn get_offset(&self, distance_proj : f32) -> f32 {
@@ -260,11 +261,11 @@ impl Road {
         offset
     }
 
-    pub fn get_line_count(&self) -> usize { 
+    pub(in crate::engine::scene) fn get_line_count(&self) -> usize { 
         self.render_data.lines.len() 
     }
 
-    pub fn get_distance_proj(&self, y : usize) -> Option<f32> { 
+    pub(in crate::engine::scene) fn get_distance_proj(&self, y : usize) -> Option<f32> { 
         if y < self.render_data.lines.len() {
             Some(self.render_data.lines[y].distance_proj)
         } else {
@@ -280,7 +281,7 @@ impl Road {
         self.data.length
     }
 
-    pub fn compute_render_data(&mut self, camera : &Camera, renderer : &Renderer) {
+    pub(in crate::engine::scene) fn compute_render_data(&mut self, camera : &Camera, renderer : &Renderer) {
         let lines_density = 1.0;
         let mut horz_lines_accum = camera.distance % (2.0 * lines_density);
         let mut prev_distance_proj = 0.0;
@@ -328,7 +329,7 @@ impl Road {
         }
     }
 
-    pub fn render(&self, renderer : &Renderer) {
+    pub(in crate::engine::scene) fn render(&self, renderer : &Renderer) {
         for y in 0..self.render_data.lines.len() {
             let line_render_data = &self.render_data.lines[y];
 

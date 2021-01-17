@@ -24,7 +24,7 @@ impl Background {
         self.x_offset = (offset % img_width + img_width) % img_width;
     }
 
-    pub fn render(&self, road : &Road, camera : &Camera, renderer : &Renderer) {
+    pub(super) fn render(&self, road : &Road, camera : &Camera, renderer : &Renderer) {
         assert_eq!(renderer.width() <= self.image.width(), true);
 
         let near_plane_center_offset = camera.near_plane * camera.angle;

@@ -5,6 +5,8 @@ mod storage;
 
 mod engine;
 use engine::scene::*;
+use engine::scene::road::*;
+use engine::scene::background::*;
 use engine::scene::game_object::*;
 use engine::scene::camera::*;
 use engine::common::Vec3;
@@ -80,7 +82,7 @@ impl Game {
 
         let go = GameObject::new(vec![], vec![
             billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
-            billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
+            billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0),
         ]);
         let id = scene.add_gameobject(go);
         scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
@@ -90,6 +92,7 @@ impl Game {
 
     pub fn update(&mut self, delta_time : f32) {
         self.scene.camera.distance += delta_time * 10.0;
+        self.scene.camera.angle = self.scene.road.get_camera_angle(&self.scene.camera);
         if self.scene.camera.distance > 120.0 { self.scene.camera.distance -= 120.0; }
     }
 

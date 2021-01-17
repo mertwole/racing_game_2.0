@@ -30,7 +30,7 @@ impl GameObject {
     }   
 
     pub fn to_meta(self, physics_scene : &mut PhysicsScene, graphics_scene : &mut GraphicsScene) -> GameObjectMeta {
-        let GameObject { colliders, billboards, position } = self;
+        let GameObject { mut colliders, billboards, position } = self;
 
         let mut collider_ids = Vec::new();
         let mut billboard_ids = Vec::new();
@@ -38,8 +38,13 @@ impl GameObject {
         let mut collider_local_positions = Vec::new();
         let mut billboard_local_positions = Vec::new();
 
+        // cache min and max values
+        for collider in &mut colliders {
+            collider.compute_min_max();
+        }
+
         for collider in colliders {
-            collider_local_positions.push(collider.position());
+            collider_local_positions.push(collider.position);
             let id = physics_scene.add_collider(collider);
             collider_ids.push(id);
         }
@@ -69,7 +74,8 @@ impl GameObjectMeta {
         for i in 0..self.collider_ids.len() {
             let collider_id = self.collider_ids[i];
             let collider = physics_scene.get_collider_mut(collider_id);
-            collider.set_position(self.collider_local_positions[i] + self.position);
+            collider.position = self.collider_local_positions[i] + self.position;
+            collider.compute_min_max();
         }
 
         for i in 0..self.billboard_ids.len() {

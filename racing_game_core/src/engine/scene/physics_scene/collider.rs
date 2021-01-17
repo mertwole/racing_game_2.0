@@ -2,8 +2,8 @@ use crate::engine::common::Vec3;
 
 pub struct Collider {
     // Position(of center) : x is offset, y is height, z is road distance.
-    position : Vec3,
-    size : Vec3,
+    pub position : Vec3,
+    pub size : Vec3,
     min : Vec3,
     max : Vec3,
 
@@ -11,7 +11,7 @@ pub struct Collider {
 }
 
 impl Collider {
-    fn compute_min_max(&mut self) {
+    pub(in crate::engine::scene) fn compute_min_max(&mut self) {
         self.min = Vec3::new(
             self.position.x - self.size.x * 0.5, 
             self.position.y - self.size.y * 0.5, 
@@ -38,14 +38,7 @@ impl Collider {
         collider
     }
 
-    pub fn position(&self) -> Vec3 { self.position }
-
-    pub fn set_position(&mut self, position : Vec3) {
-        self.position = position;
-        self.compute_min_max();
-    }
-
-    pub fn collision(&self, other : &Collider) -> bool {
+    pub(super) fn collision(&self, other : &Collider) -> bool {
         fn interval_intersection(first : (f32, f32), second : (f32, f32)) -> bool {
             !(first.1 < second.0 || first.0 > second.1)
         }

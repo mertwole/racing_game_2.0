@@ -7,7 +7,7 @@ use image::*;
 use crate::engine::renderer::Renderer;
 use crate::engine::common::{IVec2, IAABB, Vec3};
 
-use super::road::Road;
+use crate::engine::scene::road::Road;
 use crate::engine::scene::camera::Camera;
 
 struct SpriteDescr {
@@ -19,7 +19,7 @@ struct SpriteDescr {
 }
 
 struct Lod{
-    pub image : RgbaImage,
+    image : RgbaImage,
     width : u32
 }
 
@@ -97,7 +97,6 @@ impl Billboard{
         let px_height = (camera.viewport_height / renderer.height() as f32) * dist_to_camera / camera.near_plane;
         let mut min_visible_image_y_px = (min_visible_image_y / px_height) as isize;
         if min_visible_image_y_px < 0 { 
-            draw_y -= min_visible_image_y_px; 
             min_visible_image_y_px = 0; 
         }
 
@@ -113,7 +112,7 @@ impl Billboard{
         renderer.draw_subimage(&lod.image, draw_region, left_bottom);
     }   
 
-    pub fn render(&self, camera : &Camera, road : &Road, renderer : &Renderer) {
+    pub(super) fn render(&self, camera : &Camera, road : &Road, renderer : &Renderer) {
         let mut dist_to_camera = self.position.z - camera.distance;
         if dist_to_camera < 0.0 {
             dist_to_camera += road.get_length();

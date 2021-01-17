@@ -5,23 +5,27 @@ mod physics_scene;
 mod graphics_scene;
 pub mod game_object;
 pub mod camera;
+pub mod road;
+pub mod background;
 
 use physics_scene::*;
 use graphics_scene::*;
 use game_object::*;
 use camera::Camera;
+use road::*;
+use background::*;
 
 pub use physics_scene::collider::*;
-
-pub use graphics_scene::background::*;
 pub use graphics_scene::billboard::*;
-pub use graphics_scene::road::*;
 
 pub struct Scene {
     pub camera : Camera,
 
     physics_scene : PhysicsScene,
     graphics_scene : GraphicsScene,
+
+    pub road : Road,
+    pub background : Background,
 
     game_objects : Vec<GameObjectMeta>
 }
@@ -36,7 +40,9 @@ impl Scene {
         Scene { 
             camera,
             physics_scene : PhysicsScene::new(),
-            graphics_scene : GraphicsScene::new(road, background),
+            graphics_scene : GraphicsScene::new(),
+            road,
+            background,
             game_objects : Vec::new()
         }
     }
@@ -54,7 +60,10 @@ impl Scene {
 
     pub fn render(&mut self, width : u32, height : u32, pixels_ptr : *mut u32) {
         let renderer = Renderer::new(width, height, pixels_ptr);
-        self.graphics_scene.set_camera_angle_by_road(&mut self.camera);
-        self.graphics_scene.render(&renderer, &self.camera);
+        // Compute road render data first because background and billboards use it.
+        self.road.compute_render_data(&self.camera, &renderer);
+        self.road.render(&renderer);
+        self.background.render(&self.road, &self.camera, &renderer);
+        self.graphics_scene.render(&renderer, &self.road, &self.camera);
     }
 }
