@@ -1,7 +1,7 @@
 extern crate image;
 
 extern crate core;
-use core::Game;
+use core::game::Game;
 
 mod render;
 mod window;
