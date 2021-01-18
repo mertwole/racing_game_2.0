@@ -17,11 +17,11 @@ namespace RacingGameAndroid
     public class MainActivity : AppCompatActivity
     {
         [DllImport("core.so")]
-        private unsafe static extern void* init_ffi(uint screen_width, uint screen_height);
+        private unsafe static extern void* game_init_ffi(uint screen_width, uint screen_height);
         [DllImport("core.so")]
-        private unsafe static extern void update_ffi(void* game, float delta_time);
+        private unsafe static extern void game_update_ffi(void* game, float delta_time);
         [DllImport("core.so")]
-        private unsafe static extern void redraw_ffi(void* game, uint* pixels);
+        private unsafe static extern void game_redraw_ffi(void* game, uint* pixels);
 
         ImageView screen_image;
         unsafe void* game;
@@ -53,7 +53,7 @@ namespace RacingGameAndroid
             };
             current_renderbuffer = 0;
 
-            unsafe { game = init_ffi((uint)screen_width, (uint)screen_height); }
+            unsafe { game = game_init_ffi((uint)screen_width, (uint)screen_height); }
 
             ThreadPool.QueueUserWorkItem(o => GameLoop());
         }
@@ -67,14 +67,14 @@ namespace RacingGameAndroid
             {
                 DateTime time = DateTime.Now;
                 var delta_time = (time - prev_time).TotalSeconds;
-                Console.WriteLine(delta_time);
+                //Console.WriteLine(delta_time);
                 prev_time = time;
 
-                unsafe { update_ffi(game, (float)delta_time); }
+                unsafe { game_update_ffi(game, (float)delta_time); }
 
                 renderbuffers[current_renderbuffer].EraseColor(0);
                 IntPtr renderbuffer_ptr = renderbuffers[current_renderbuffer].LockPixels();
-                unsafe { redraw_ffi(game, (uint*)renderbuffer_ptr); }
+                unsafe { game_redraw_ffi(game, (uint*)renderbuffer_ptr); }
                 renderbuffers[current_renderbuffer].UnlockPixels();
 
                 var prev_renderbuffer = current_renderbuffer;

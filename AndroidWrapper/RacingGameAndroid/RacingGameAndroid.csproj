@@ -74,6 +74,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="lib\armeabi-v7a\libcore.so" />
+    <None Include="lib\x86\libcore.so" />
+    <None Include="lib\x86_64\libcore.so" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
@@ -105,10 +108,6 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="lib\armeabi-v7a\" />
-    <Folder Include="lib\armeabi\" />
-    <Folder Include="lib\x64\" />
-    <Folder Include="lib\x86\" />
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>

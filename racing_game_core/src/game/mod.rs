@@ -4,36 +4,25 @@ use crate::engine::scene::background::*;
 use crate::engine::scene::game_object::*;
 use crate::engine::scene::camera::*;
 use crate::engine::common::Vec3;
+
 use crate::storage::Storage;
+
+mod input;
+use input::*;
 
 pub struct Game {
     screen_width : u32, 
     screen_height : u32,
-    scene : Scene
-}
-
-// FFI
-impl Game {
-    #[no_mangle]
-    extern "C" fn init_ffi(screen_width : u32, screen_height : u32) -> *mut libc::c_void {
-        let game = Game::init(screen_width, screen_height);
-        unsafe { std::mem::transmute(Box::new(game)) }
-    }
-
-    #[no_mangle]
-    extern "C" fn update_ffi(self_ : *mut libc::c_void, delta_time : f32) {
-        let self_ = unsafe { (self_ as *mut Game).as_mut().unwrap() };
-        self_.update(delta_time);
-    }
-
-    #[no_mangle]
-    extern "C" fn redraw_ffi(self_ : *mut libc::c_void, pixels : *mut u32) {
-        let self_ = unsafe { (self_ as *mut Game).as_mut().unwrap() };
-        self_.redraw(pixels);
-    }
+    scene : Scene,
+    input : Input
 }
 
 impl Game {
+    // key is GLFW key code
+    pub fn keyboard_input(&mut self, key : i32, pressed : bool) {
+        self.input.keyboard_input(key, pressed);
+    }
+
     pub fn init(screen_width : u32, screen_height : u32) -> Game {
         let road_tex = Storage::load_image_rgb("road_tex.png");
         let keypoints = vec![
@@ -79,10 +68,22 @@ impl Game {
         let id = scene.add_gameobject(go);
         scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
 
-        Game { scene, screen_width, screen_height }
+        let mut input = Input::new();
+        input.bind_key_action(input::KEY_LEFT, InputAction::SteerLeft);
+        input.bind_key_action(input::KEY_RIGHT, InputAction::SteerRight);
+
+        Game { scene, screen_width, screen_height, input }
     }
 
     pub fn update(&mut self, delta_time : f32) {
+        let input_queue = self.input.get_queue();
+        for action in input_queue {
+            match action {
+                InputAction::SteerLeft => { println!("STEER LEFT"); }
+                InputAction::SteerRight => { println!("STEER RIGHT"); }
+            }
+        }
+
         self.scene.camera.distance += delta_time * 10.0;
         self.scene.camera.angle = self.scene.road.get_camera_angle(&self.scene.camera);
         if self.scene.camera.distance > 120.0 { self.scene.camera.distance -= 120.0; }

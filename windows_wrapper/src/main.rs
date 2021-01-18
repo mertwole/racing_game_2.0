@@ -21,8 +21,12 @@ fn main() {
     for _ in 0..SCREEN_WIDTH * SCREEN_HEIGHT { pixels.push(0); }
 
     loop {
-        window.get_events();
+        let keyboard_input = window.get_events();
         if window.should_close() { break; }
+
+        for (key, is_pressed) in keyboard_input {
+            game.keyboard_input(key as i32, is_pressed);
+        }
 
         let delta_time = window.get_time() as f32;
         window.set_time(0.0);

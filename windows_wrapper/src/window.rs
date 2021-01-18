@@ -3,8 +3,6 @@ use std::sync::mpsc::Receiver;
 use glfw::{Context};
 pub use glfw::{Key};
 
-//use crate::engine::input::EventType;
-
 pub struct WindowParameters {
     pub width : u32,
     pub height : u32,
@@ -34,24 +32,9 @@ impl Window{
 
         Window { window, glfw, events }
     }
-    
-    pub fn get_events(&mut self)
-    {
-        for (_, event) in glfw::flush_messages(&self.events) {
-            match event {
-                glfw::WindowEvent::FramebufferSize(width, height) => {
-                    unsafe { gl::Viewport(0, 0, width, height) }
-                }
-                _ => {}
-            }
-        }
 
-        self.glfw.poll_events();
-    }
-
-/*
-    pub fn get_events(&mut self) -> Vec<(Key, EventType)>{
-        let mut events : Vec<(Key, EventType)> = Vec::new();
+    pub fn get_events(&mut self) -> Vec<(Key, bool)>{
+        let mut events : Vec<(Key, bool)> = Vec::new();
 
         for (_, event) in glfw::flush_messages(&self.events) {
             match event {
@@ -59,8 +42,8 @@ impl Window{
                     unsafe { gl::Viewport(0, 0, width, height) }
                 }
                 
-                glfw::WindowEvent::Key(key, _, Action::Press, _) => events.push((key, EventType::Pressed)),
-                glfw::WindowEvent::Key(key, _, Action::Release, _) => events.push((key, EventType::Released)),
+                glfw::WindowEvent::Key(key, _, glfw::Action::Press, _) => events.push((key, true)),
+                glfw::WindowEvent::Key(key, _, glfw::Action::Release, _) => events.push((key, false)),
 
                 _ => {}
             }
@@ -70,7 +53,7 @@ impl Window{
 
         events
     }
-*/
+
     pub fn swap_buffers(&mut self) {
         self.window.swap_buffers();
     }
