@@ -14,7 +14,8 @@ pub struct Game {
     screen_width : u32, 
     screen_height : u32,
     scene : Scene,
-    input : Input
+    input : Input,
+    player_go_id : GameObjectId
 }
 
 impl Game {
@@ -45,7 +46,7 @@ impl Game {
         let background = Background::new(Storage::load_image_rgb("background.png"), 10);
 
         let camera = Camera { 
-            position : Vec3::new(0.5, 1.0, 0.0),
+            position : Vec3::new(0.0, 1.0, 0.0),
             angle : 0.0,
             viewport_width : 1.6, 
             viewport_height : 0.9, 
@@ -62,16 +63,21 @@ impl Game {
 
         let go = GameObject::new(vec![], vec![
             billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
-            billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0),
+            billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
         ]);
         let id = scene.add_gameobject(go);
         scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
+            
+        let player_go = GameObject::new(vec![], vec![
+            billboard_factory.construct(Vec3::new(0.0, 0.0, 2.5), 0.5),
+        ]);
+        let player_go_id = scene.add_gameobject(player_go);
 
         let mut input = Input::new();
         input.bind_key_action(input::KEY_LEFT, InputAction::SteerLeft);
         input.bind_key_action(input::KEY_RIGHT, InputAction::SteerRight);
 
-        Game { scene, screen_width, screen_height, input }
+        Game { scene, screen_width, screen_height, input, player_go_id }
     }
 
     pub fn update(&mut self, delta_time : f32) {
@@ -85,6 +91,7 @@ impl Game {
 
         self.scene.camera.position.z += delta_time * 10.0;
         self.scene.camera.angle = self.scene.road.get_camera_angle(&self.scene.camera);
+        self.scene.set_gameobject_position(self.player_go_id, self.scene.camera.position);
         if self.scene.camera.position.z > 120.0 { self.scene.camera.position.z -= 120.0; }
     }
 
