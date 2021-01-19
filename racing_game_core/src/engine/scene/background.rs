@@ -21,7 +21,7 @@ impl Background {
 
     pub fn set_offset(&mut self, offset : u32) {
         let img_width = self.image.width();
-        self.x_offset = (offset % img_width + img_width) % img_width;
+        self.x_offset = offset.rem_euclid(img_width);
     }
 
     pub(super) fn render(&self, road : &Road, camera : &Camera, renderer : &Renderer) {
@@ -41,9 +41,8 @@ impl Background {
         if draw_region.min.y < 0 { draw_region.min.y = 0; }
 
         let read_x = (
-            self.x_offset - renderer.width() / 2 + self.image.width() / 2 
-            + self.image.width() // Because remainder, not modulo.
-        ) % self.image.width();
+            self.x_offset - renderer.width() / 2 + self.image.width() / 2
+        ).rem_euclid(self.image.width());
 
         draw_region.min.x = read_x as isize;
         draw_region.max.x = (read_x + renderer.width()) as isize;
@@ -57,7 +56,7 @@ impl Background {
             draw_region_0.max.x = self.image.width() as isize - 1;
             
             draw_region_1.min.x = 0;
-            draw_region_1.max.x = draw_region.max.x % self.image.width() as isize;
+            draw_region_1.max.x = draw_region.max.x.rem_euclid(self.image.width() as isize);
 
             renderer.draw_subimage(&self.image, draw_region_1, 
                 IVec2::new(draw_region_0.max.x - draw_region_0.min.x + 1, road.get_line_count() as isize)
