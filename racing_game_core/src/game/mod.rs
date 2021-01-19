@@ -45,7 +45,7 @@ impl Game {
         let background = Background::new(Storage::load_image_rgb("background.png"), 10);
 
         let camera = Camera { 
-            position : Vec3::new(0.0, 1.0, 0.0),
+            position : Vec3::new(0.5, 1.0, 0.0),
             angle : 0.0,
             viewport_width : 1.6, 
             viewport_height : 0.9, 

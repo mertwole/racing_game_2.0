@@ -250,7 +250,7 @@ impl Road {
     }
 
     pub fn get_offset(&self, distance_proj : f32) -> f32 {
-        let mut offset = self.render_data.camera_offset;
+        let mut offset = -self.render_data.camera_offset;
         let mut offset_delta = 0.0;
 
         self.data.apply_offset(
@@ -286,12 +286,12 @@ impl Road {
         let mut horz_lines_accum = camera.position.z % (2.0 * lines_density);
         let mut prev_distance_proj = 0.0;
         let mut is_horz_line = false;
-        let mut offset = 0.0;
+        let mut offset = -camera.position.x;
         let mut offset_delta = 0.0;
 
         self.render_data.lines.truncate(0);
 
-        self.render_data.camera_offset = 0.0;
+        self.render_data.camera_offset = camera.position.x;
         self.render_data.camera_distance = camera.position.z;
 
         for y in 0..renderer.height() as isize {
