@@ -84,8 +84,8 @@ impl Game {
         let input_queue = self.input.get_queue();
         for action in input_queue {
             match action {
-                InputAction::SteerLeft => { println!("STEER LEFT"); }
-                InputAction::SteerRight => { println!("STEER RIGHT"); }
+                InputAction::SteerLeft => { self.scene.camera.position.x -= delta_time * 0.5; }
+                InputAction::SteerRight => { self.scene.camera.position.x += delta_time * 0.5; }
             }
         }
 

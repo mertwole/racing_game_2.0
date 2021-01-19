@@ -55,7 +55,7 @@ impl Scene {
 
     pub fn set_gameobject_position(&mut self, id : GameObjectId, position : Vec3) {
         self.game_objects[id.vec_id]
-        .set_position(position, &mut self.physics_scene, &mut self.graphics_scene);
+        .set_position(position, self.road.get_length(), &mut self.physics_scene, &mut self.graphics_scene);
     } 
 
     pub fn render(&mut self, width : u32, height : u32, pixels_ptr : *mut u32) {

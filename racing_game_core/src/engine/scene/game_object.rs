@@ -68,9 +68,10 @@ impl GameObject {
 }
 
 impl GameObjectMeta {
-    pub fn set_position(&mut self, position : Vec3, physics_scene : &mut PhysicsScene, graphics_scene : &mut GraphicsScene) {
+    pub fn set_position(&mut self, position : Vec3, road_length : f32, physics_scene : &mut PhysicsScene, graphics_scene : &mut GraphicsScene) {
         self.position = position;
 
+        // TODO : process case where collider intersects the end of road.
         for i in 0..self.collider_ids.len() {
             let collider_id = self.collider_ids[i];
             let collider = physics_scene.get_collider_mut(collider_id);
@@ -82,6 +83,7 @@ impl GameObjectMeta {
             let billboard_id = self.billboard_ids[i];
             let billboard = graphics_scene.get_billboard_mut(billboard_id);
             billboard.position = self.billboard_local_positions[i] + self.position;
+            billboard.position.z = billboard.position.z.rem_euclid(road_length);
         }
     }
 }

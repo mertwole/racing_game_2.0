@@ -123,7 +123,7 @@ impl Billboard{
         // process (camera's near plane .. last segment)
         for y in -1..road.get_line_count() as isize - 1 {
             let distance_proj = if y == -1 { 
-                camera.position.z + camera.near_plane 
+                (camera.position.z + camera.near_plane) % road.get_length()
             } else { 
                 road.get_distance_proj(y as usize).unwrap() 
             };
@@ -135,7 +135,9 @@ impl Billboard{
                 next_distance_proj 
             };
 
-            let visible = next_distance_proj_global > self.position.z && self.position.z > distance_proj;
+            let visible = 
+            next_distance_proj_global - self.position.z >= -std::f32::EPSILON && 
+            self.position.z - distance_proj >= -std::f32::EPSILON;
             if !visible { continue; }
 
             let global_camera_y = camera.position.y + road.get_height(camera.position.z);
