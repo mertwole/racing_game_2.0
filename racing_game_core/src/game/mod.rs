@@ -45,8 +45,7 @@ impl Game {
         let background = Background::new(Storage::load_image_rgb("background.png"), 10);
 
         let camera = Camera { 
-            distance : 0.0,
-            y : 1.0, 
+            position : Vec3::new(0.0, 1.0, 0.0),
             angle : 0.0,
             viewport_width : 1.6, 
             viewport_height : 0.9, 
@@ -84,9 +83,9 @@ impl Game {
             }
         }
 
-        self.scene.camera.distance += delta_time * 10.0;
+        self.scene.camera.position.z += delta_time * 10.0;
         self.scene.camera.angle = self.scene.road.get_camera_angle(&self.scene.camera);
-        if self.scene.camera.distance > 120.0 { self.scene.camera.distance -= 120.0; }
+        if self.scene.camera.position.z > 120.0 { self.scene.camera.position.z -= 120.0; }
     }
 
     pub fn redraw(&mut self, pixels : *mut u32) {

@@ -113,7 +113,7 @@ impl Billboard{
     }   
 
     pub(super) fn render(&self, camera : &Camera, road : &Road, renderer : &Renderer) {
-        let mut dist_to_camera = self.position.z - camera.distance;
+        let mut dist_to_camera = self.position.z - camera.position.z;
         if dist_to_camera < 0.0 {
             dist_to_camera += road.get_length();
         }
@@ -123,7 +123,7 @@ impl Billboard{
         // process (camera's near plane .. last segment)
         for y in -1..road.get_line_count() as isize - 1 {
             let distance_proj = if y == -1 { 
-                camera.distance + camera.near_plane 
+                camera.position.z + camera.near_plane 
             } else { 
                 road.get_distance_proj(y as usize).unwrap() 
             };
@@ -138,12 +138,12 @@ impl Billboard{
             let visible = next_distance_proj_global > self.position.z && self.position.z > distance_proj;
             if !visible { continue; }
 
-            let global_camera_y = camera.y + road.get_height(camera.distance);
+            let global_camera_y = camera.position.y + road.get_height(camera.position.z);
             // interpolate height between camera and next distance
             let min_visible_height = 
             (global_camera_y * (next_distance_proj_global - self.position.z) 
-            + road.get_height(next_distance_proj) * (self.position.z - camera.distance))
-            / (next_distance_proj_global - camera.distance);
+            + road.get_height(next_distance_proj) * (self.position.z - camera.position.z))
+            / (next_distance_proj_global - camera.position.z);
 
             self.render_cutted(
                 road, renderer, camera, 
@@ -154,11 +154,11 @@ impl Billboard{
 
         // process (last segment .. camera's far plane)
         let last_y_distance = road.get_distance_proj(road.get_line_count() - 1).unwrap();
-        let camera_far_plane_global = camera.distance + camera.far_plane;
-        let mut last_y_distance_to_cam = last_y_distance - camera.distance;
+        let camera_far_plane_global = camera.position.z + camera.far_plane;
+        let mut last_y_distance_to_cam = last_y_distance - camera.position.z;
         if last_y_distance_to_cam < 0.0 { last_y_distance_to_cam += road.get_length(); }
         if camera_far_plane_global > self.position.z && self.position.z > last_y_distance {
-            let global_camera_y = camera.y + road.get_height(camera.distance);
+            let global_camera_y = camera.position.y + road.get_height(camera.position.z);
             // interpolate height between camera and last y's distance
             let min_visible_height = 
             global_camera_y + 

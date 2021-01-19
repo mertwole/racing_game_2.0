@@ -103,13 +103,13 @@ impl RoadData {
     }
 
     fn get_distance_proj(&self, camera : &Camera, screen_pixel_y_norm : f32) -> Option<f32> {
-        let mut ray_source = Vec2::new(camera.distance, camera.y);
+        let mut ray_source = Vec2::new(camera.position.z, camera.position.y);
         let screen_point = Vec2::new(
-            camera.distance + camera.near_plane, 
-            camera.y - camera.viewport_height * 0.5 + camera.viewport_height * screen_pixel_y_norm
+            camera.position.z + camera.near_plane, 
+            camera.position.y - camera.viewport_height * 0.5 + camera.viewport_height * screen_pixel_y_norm
         );
         let mut ray_direction = &screen_point - &ray_source;
-        ray_source.y += self.get_road_height(camera.distance);
+        ray_source.y += self.get_road_height(camera.position.z);
 
         let (angle_sin, angle_cos) = camera.angle.sin_cos();
 
@@ -132,7 +132,7 @@ impl RoadData {
         match self.intersect_road(&ray_source, &ray_direction) {
             None => {  }
             Some(mut intersection_x) => { 
-                intersection_x -= camera.distance; 
+                intersection_x -= camera.position.z; 
                 if intersection_x > camera.near_plane && intersection_x < camera.far_plane { 
                     return Some(intersection_x);
                 }
@@ -144,7 +144,7 @@ impl RoadData {
         match self.intersect_road(&ray_source, &ray_direction) {
             None => {  }
             Some(mut intersection_x) => { 
-                intersection_x -= camera.distance;
+                intersection_x -= camera.position.z;
                 intersection_x += self.length; 
                 if intersection_x > camera.near_plane && intersection_x < camera.far_plane { 
                     return Some(intersection_x);
@@ -246,7 +246,7 @@ impl Road {
     }
 
     pub fn get_camera_angle(&self, camera : &Camera) -> f32 {
-        self.data.get_camera_angle(camera.distance + camera.near_plane)
+        self.data.get_camera_angle(camera.position.z + camera.near_plane)
     }
 
     pub fn get_offset(&self, distance_proj : f32) -> f32 {
@@ -283,7 +283,7 @@ impl Road {
 
     pub(in crate::engine::scene) fn compute_render_data(&mut self, camera : &Camera, renderer : &Renderer) {
         let lines_density = 1.0;
-        let mut horz_lines_accum = camera.distance % (2.0 * lines_density);
+        let mut horz_lines_accum = camera.position.z % (2.0 * lines_density);
         let mut prev_distance_proj = 0.0;
         let mut is_horz_line = false;
         let mut offset = 0.0;
@@ -292,7 +292,7 @@ impl Road {
         self.render_data.lines.truncate(0);
 
         self.render_data.camera_offset = 0.0;
-        self.render_data.camera_distance = camera.distance;
+        self.render_data.camera_distance = camera.position.z;
 
         for y in 0..renderer.height() as isize {
             let distance_proj = 
@@ -313,15 +313,15 @@ impl Road {
 
             // Horizontal offset
             self.data.apply_offset(
-                prev_distance_proj + camera.distance, 
-                distance_proj + camera.distance, 
+                prev_distance_proj + camera.position.z, 
+                distance_proj + camera.position.z, 
                 &mut offset, &mut offset_delta
             );
             
             prev_distance_proj = distance_proj;
 
             self.render_data.lines.push(LineRenderData {
-                distance_proj : (distance_proj + camera.distance) % self.data.length,
+                distance_proj : (distance_proj + camera.position.z) % self.data.length,
                 is_horz_line,
                 offset : offset * (camera.near_plane / distance_proj),
                 width : self.data.get_width(camera, distance_proj)
