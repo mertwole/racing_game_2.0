@@ -69,21 +69,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BindingProxy.cs" />
+    <Compile Include="Common\BindingProxy.cs" />
     <Compile Include="CurvatureEditor\CurvatureEditorModel.cs" />
     <Compile Include="CurvatureEditor\CurvatureEditorView.xaml.cs">
       <DependentUpon>CurvatureEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="CurvatureEditor\CurvatureEditorVM.cs" />
-    <Compile Include="DoubleInputValidationRule.cs" />
-    <Compile Include="EventToCommand.cs" />
+    <Compile Include="Common\DoubleInputValidationRule.cs" />
+    <Compile Include="Common\EventToCommand.cs" />
     <Compile Include="HeelEditor\HeelEditorModel.cs" />
     <Compile Include="HeelEditor\HeelEditorView.xaml.cs">
       <DependentUpon>HeelEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="HeelEditor\HeelEditorVM.cs" />
     <Compile Include="HeelEditor\ListToPathSegmentCollectionConverter.cs" />
-    <Compile Include="RelayCommand.cs" />
+    <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="TimelineView.xaml.cs">
       <DependentUpon>TimelineView.xaml</DependentUpon>
     </Compile>

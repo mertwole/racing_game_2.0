@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 
-namespace Editor
+namespace Editor.Common
 {
     public class DoubleInputValidationRule : ValidationRule
     {

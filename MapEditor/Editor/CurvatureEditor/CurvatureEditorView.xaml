@@ -5,9 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.CurvatureEditor"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:cmd="clr-namespace:Editor"
-             xmlns:vr="clr-namespace:Editor"
-             xmlns:bp="clr-namespace:Editor"
+             xmlns:common="clr-namespace:Editor.Common"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -15,23 +13,23 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <bp:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+        <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
 
     <Grid Background="#474747">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="MouseLeftButtonDown">
-                <cmd:EventToCommand Command="{Binding StartCreate}"
+                <common:EventToCommand Command="{Binding StartCreate}"
                                     PassEventArgsToCommand="True"/>
             </i:EventTrigger>
             
             <i:EventTrigger EventName="MouseMove">
-                <cmd:EventToCommand Command="{Binding CreateOrEdit}"
+                <common:EventToCommand Command="{Binding CreateOrEdit}"
                                     PassEventArgsToCommand="True"/>
             </i:EventTrigger>
 
             <i:EventTrigger EventName="MouseLeftButtonUp">
-                <cmd:EventToCommand Command="{Binding FinishCreateAndEdit}"/>
+                <common:EventToCommand Command="{Binding FinishCreateAndEdit}"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
 
@@ -86,13 +84,13 @@
                                     IsHitTestVisible="{Binding ElementName=MainCanvas, Path=DataContext.IsCurvatureNotEditing}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonDown">
-                                    <cmd:EventToCommand 
+                                    <common:EventToCommand 
                                         Command="{Binding ElementName=MainCanvas, Path=DataContext.StartEdit}"
                                         PassEventArgsToCommand="True"/>
                                 </i:EventTrigger>
 
                                 <i:EventTrigger EventName="MouseLeftButtonUp">
-                                    <cmd:EventToCommand 
+                                    <common:EventToCommand 
                                         Command="{Binding ElementName=MainCanvas, Path=DataContext.FinishCreateAndEdit}"
                                         PassEventArgsToCommand="True"/>
                                 </i:EventTrigger>
@@ -106,13 +104,13 @@
                                     IsHitTestVisible="{Binding ElementName=MainCanvas, Path=DataContext.IsCurvatureNotEditing}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseLeftButtonDown">
-                                    <cmd:EventToCommand 
+                                    <common:EventToCommand 
                                         Command="{Binding ElementName=MainCanvas, Path=DataContext.StartEdit}"
                                         PassEventArgsToCommand="True"/>
                                 </i:EventTrigger>
 
                                 <i:EventTrigger EventName="MouseLeftButtonUp">
-                                    <cmd:EventToCommand 
+                                    <common:EventToCommand 
                                         Command="{Binding ElementName=MainCanvas, Path=DataContext.FinishCreateAndEdit}"
                                         PassEventArgsToCommand="True"/>
                                 </i:EventTrigger>
@@ -137,7 +135,7 @@
                                         <ContextMenu>
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="Opened">
-                                                    <cmd:EventToCommand 
+                                                    <common:EventToCommand 
                                                         Command="{Binding Source={StaticResource Proxy}, 
                                                         Path=Data.DeleteCurvatureAt}"/>
                                                 </i:EventTrigger>
@@ -149,7 +147,7 @@
                                         <Binding Path="Value" Mode="TwoWay" 
                                                  ConverterCulture="en-US">
                                             <Binding.ValidationRules>
-                                                <vr:DoubleInputValidationRule/>
+                                                <common:DoubleInputValidationRule/>
                                             </Binding.ValidationRules>
                                         </Binding>
                                     </TextBox.Text>

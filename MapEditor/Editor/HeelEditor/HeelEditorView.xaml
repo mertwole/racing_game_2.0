@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.HeelEditor"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:cmd="clr-namespace:Editor"
+             xmlns:common="clr-namespace:Editor.Common"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -19,17 +19,17 @@
     <Grid Background="#474747">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="MouseLeftButtonDown">
-                <cmd:EventToCommand Command="{Binding CreateNewKeypoint}"
+                <common:EventToCommand Command="{Binding CreateNewKeypoint}"
                                     PassEventArgsToCommand="True"/>
             </i:EventTrigger>
 
             <i:EventTrigger EventName="MouseMove">
-                <cmd:EventToCommand Command="{Binding MoveKeypoint}"
+                <common:EventToCommand Command="{Binding MoveKeypoint}"
                                     PassEventArgsToCommand="True"/>
             </i:EventTrigger>
 
             <i:EventTrigger EventName="MouseLeftButtonUp">
-                <cmd:EventToCommand Command="{Binding FinishMoveKeypoint}"/>
+                <common:EventToCommand Command="{Binding FinishMoveKeypoint}"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
 
@@ -103,22 +103,22 @@
                              Fill="Orange" Margin="-5, 0, 0, -5">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseLeftButtonDown">
-                                <cmd:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.StartMoveKeypoint}"
+                                <common:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.StartMoveKeypoint}"
                                     PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
 
                             <i:EventTrigger EventName="MouseMove">
-                                <cmd:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.MoveKeypoint}"
+                                <common:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.MoveKeypoint}"
                                     PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
 
                             <i:EventTrigger EventName="MouseLeftButtonUp">
-                                <cmd:EventToCommand 
+                                <common:EventToCommand 
                                     Command="{Binding ElementName=MainCanvas, Path=DataContext.FinishMoveKeypoint}"/>
                             </i:EventTrigger>
 
                             <i:EventTrigger EventName="MouseRightButtonDown">
-                                <cmd:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.RemoveKeypoint}"
+                                <common:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.RemoveKeypoint}"
                                     PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>

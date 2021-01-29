@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Editor
+namespace Editor.Common
 {
     public class BindingProxy : Freezable
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Editor
+namespace Editor.Common
 {
     public class RelayCommand : ICommand
     {
