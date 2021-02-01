@@ -77,6 +77,11 @@
     <Compile Include="CurvatureEditor\CurvatureEditorVM.cs" />
     <Compile Include="Common\DoubleInputValidationRule.cs" />
     <Compile Include="Common\EventToCommand.cs" />
+    <Compile Include="FileManager\FileManagerModel.cs" />
+    <Compile Include="FileManager\FileManagerView.xaml.cs">
+      <DependentUpon>FileManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FileManager\FileManagerVM.cs" />
     <Compile Include="HeelEditor\HeelEditorModel.cs" />
     <Compile Include="HeelEditor\HeelEditorView.xaml.cs">
       <DependentUpon>HeelEditorView.xaml</DependentUpon>
@@ -88,6 +93,10 @@
       <DependentUpon>TimelineView.xaml</DependentUpon>
     </Compile>
     <Page Include="CurvatureEditor\CurvatureEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FileManager\FileManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

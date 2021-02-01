@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="Editor.FileManager.FileManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Editor.FileManager"
+             xmlns:common="clr-namespace:Editor.Common"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <local:FileManagerVM/>
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+    </UserControl.Resources>
+    
+    <Grid Background="#303030">
+        <TreeView ItemsSource="{Binding Hierarchy}" AllowDrop="True" x:Name="MainTreeView"
+                  local:FileManagerVM.MainTreeView="{Binding ElementName=MainTreeView}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectedItemChanged">
+                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.FinishRenameItem}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
+            <TreeView.Resources>
+                <!--folder-->
+                <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding Contents}">
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="Folder"/>
+                        
+                        <StackPanel Width="5"/>
+                        
+                        <TextBlock Text = "{Binding Name}" Focusable="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.StartRenameItem}"
+                                            PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+
+                                <i:EventTrigger EventName="TextInput">
+                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.ItemNameInput}"
+                                            PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                                
+                                <i:EventTrigger EventName="LostFocus">
+                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.FinishRenameItem}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <!--file-->
+                <DataTemplate DataType="{x:Type local:File}">
+                    <StackPanel Orientation="Horizontal">
+                        <md:PackIcon Kind="FileImage"/>
+                        
+                        <StackPanel Width="5"/>
+
+                        <TextBlock Text="{Binding Name}" Focusable="True">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.StartRenameItem}"
+                                            PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+
+                                <i:EventTrigger EventName="TextInput">
+                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.ItemNameInput}"
+                                            PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                                
+                                <i:EventTrigger EventName="LostFocus">
+                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.FinishRenameItem}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+    </Grid>
+</UserControl>

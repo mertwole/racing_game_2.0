@@ -7,8 +7,9 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:curv_e="clr-namespace:Editor.CurvatureEditor"
         xmlns:heel_e="clr-namespace:Editor.HeelEditor"
+        xmlns:fm="clr-namespace:Editor.FileManager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="540" Width="960"
         WindowStartupLocation="CenterScreen"
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -19,7 +20,14 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
-        <local:TimelineView>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        
+        <fm:FileManagerView DockPanel.Dock="Left" Grid.Column="0"/>
+
+        <local:TimelineView DockPanel.Dock="Right" Grid.Column="1">
             <curv_e:CurvatureEditorView Height="20" HorizontalAlignment="Stretch"/>
 
             <Grid Height="35" HorizontalAlignment="Stretch"/>
