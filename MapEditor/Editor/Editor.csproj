@@ -70,6 +70,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\BindingProxy.cs" />
+    <Compile Include="Common\ChildFinder.cs" />
+    <Compile Include="FileManager\CallCheckSelected.cs" />
     <Compile Include="CurvatureEditor\CurvatureEditorModel.cs" />
     <Compile Include="CurvatureEditor\CurvatureEditorView.xaml.cs">
       <DependentUpon>CurvatureEditorView.xaml</DependentUpon>

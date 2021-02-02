@@ -18,6 +18,28 @@ namespace Editor.FileManager
             (hierarchy[0] as Folder).Contents.Add(new Folder("234f", hierarchy[0]));
             (hierarchy[0] as Folder).Contents.Add(new File("saf", hierarchy[0]));
         }
+
+        public void DeleteContent(IContent content)
+        {
+            DeleteContent(content, hierarchy);
+        }
+
+        bool DeleteContent(IContent content, ObservableCollection<IContent> contents)
+        {
+            for (int i = 0; i < contents.Count; i++)
+                if (contents[i] == content)
+                {
+                    contents.RemoveAt(i);
+                    return true;
+                }
+
+            for (int i = 0; i < contents.Count; i++)
+                if (contents[i] is Folder)
+                    if (DeleteContent(content, (contents[i] as Folder).Contents))
+                        return true;
+
+            return false;
+        }
     }
 
     public interface IContent
