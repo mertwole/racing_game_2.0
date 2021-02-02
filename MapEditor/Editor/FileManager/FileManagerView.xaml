@@ -19,8 +19,10 @@
     </UserControl.Resources>
 
     <Grid Background="#303030">
-        <TreeView ItemsSource="{Binding Hierarchy}" AllowDrop="True" x:Name="MainTreeView"
-                  local:FileManagerVM.MainTreeView="{Binding ElementName=MainTreeView}" Margin="-1">
+        <!--content tree-->
+        <TreeView ItemsSource="{Binding Hierarchy}" x:Name="MainTreeView"
+                  local:FileManagerVM.MainTreeView="{Binding ElementName=MainTreeView}" Margin="-17, -1, -1, -1"
+                  AllowDrop="True">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged">
                     <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
@@ -30,6 +32,11 @@
                 <i:EventTrigger EventName="SelectedItemChanged">
                     <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                             Path=Data.SelectItem}" PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="MouseUp">
+                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.SelectItemEnded}" PassEventArgsToCommand="True"/>
                 </i:EventTrigger>
 
                 <i:EventTrigger EventName="KeyDown">
@@ -51,6 +58,12 @@
                     <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                             Path=Data.ItemNameInput}"
                                             PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="Drop">
+                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.DropItems}" 
+                                           PassEventArgsToCommand="True"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
@@ -138,21 +151,23 @@
                                     <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" 
                                                 Style="{StaticResource MaterialDesignExpandCollapseToggleStyle}"
                                                 Foreground="{TemplateBinding Foreground}"
-                                                Margin="8 0 8 0"
+                                                Margin="16, 0, 0, 0"
                                                 Panel.ZIndex="1"
                                                 VerticalAlignment="Center"/>
 
                                     <Grid Grid.Column="1" Grid.ColumnSpan="2" 
                                           x:Name="ContentGrid" Background="{TemplateBinding Background}">
-                                        <md:Ripple  Feedback="Transparent"
+                                        <!--<md:Ripple  Feedback="Transparent"
                                                     Focusable="False"
                                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                     Padding="{TemplateBinding Padding}" 
                                                     ClipToBounds="False">
-                                            <ContentPresenter x:Name="PART_Header" ContentSource="Header"/>
-                                        </md:Ripple>
+                                            
+                                        </md:Ripple>-->
+                                        
+                                        <ContentPresenter x:Name="PART_Header" ContentSource="Header"/>
                                     </Grid>
 
                                     <ContentControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
@@ -215,47 +230,101 @@
             <TreeView.Resources>
                 <!--folder-->
                 <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding Contents}">
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Background="Orange" Margin="-1000, -8, -1000, -8" 
+                    <StackPanel Orientation="Horizontal" AllowDrop="True" Focusable="True" Background="Transparent">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseUp">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.StopDragItems}" 
+                                               PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                            
+                            <i:EventTrigger EventName="MouseDown">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.StartDragItems}" 
+                                               PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+
+                            <i:EventTrigger EventName="MouseMove">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.DragItems}" 
+                                           PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                            
+                            <i:EventTrigger EventName="Drop">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.DropItems}" 
+                                           PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <StackPanel Background="Orange" Margin="-1000, 0, -1000, 0"
                                     Name="Selection"
                                     IsHitTestVisible="False" IsEnabled="False"
                                     Visibility="{Binding .,Converter={StaticResource CallCheckSelected}, 
                                                 UpdateSourceTrigger=Explicit}"/>
-                        
+
                         <md:PackIcon Kind="Folder"/>
 
                         <StackPanel Width="5"/>
 
-                        <TextBlock Text = "{Binding Name}" Focusable="True">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDown">
-                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.StartRenameItem}"
-                                            PassEventArgsToCommand="True"/>
-                                </i:EventTrigger>
+                        <TextBlock Text = "{Binding Name}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.StartRenameItem}"
+                                                PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
 
-                                <i:EventTrigger EventName="TextInput">
-                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.ItemNameInput}"
-                                            PassEventArgsToCommand="True"/>
-                                </i:EventTrigger>
+                                    <i:EventTrigger EventName="TextInput">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.ItemNameInput}"
+                                                PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
                                 
-                                <i:EventTrigger EventName="LostFocus">
-                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.FinishRenameItem}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="LostFocus">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.FinishRenameItem}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
                         </TextBlock>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <!--file-->
                 <DataTemplate DataType="{x:Type local:File}">
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Background="Orange" Margin="-1000, -8, -1000, -8" 
-                                    Name="Selection"
-                                    IsHitTestVisible="False" IsEnabled="False"
-                                    Visibility="{Binding .,Converter={StaticResource CallCheckSelected}, 
-                                                UpdateSourceTrigger=Explicit}"/>
+                    <StackPanel Orientation="Horizontal" AllowDrop="True" Background="Transparent">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseUp">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.StopDragItems}" 
+                                               PassEventArgsToCommand="True"/>
+
+                            </i:EventTrigger>
+                            
+                            <i:EventTrigger EventName="MouseDown">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.StartDragItems}" 
+                                               PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+
+                            <i:EventTrigger EventName="MouseMove">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.DragItems}" 
+                                           PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+
+                            <i:EventTrigger EventName="Drop">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.DropItems}" 
+                                           PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+
+                        <StackPanel Background="Orange" Margin="-1000, 0, -1000, 0" 
+                                Name="Selection"
+                                IsHitTestVisible="False" IsEnabled="False"
+                                Visibility="{Binding .,Converter={StaticResource CallCheckSelected}, 
+                                            UpdateSourceTrigger=Explicit}"/>
+
                         <md:PackIcon Kind="FileImage"/>
                         
                         <StackPanel Width="5"/>

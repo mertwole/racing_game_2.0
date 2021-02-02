@@ -5,7 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq; 
+using System.Linq;
+using System.Windows.Media;
 
 namespace Editor.FileManager
 {
@@ -14,8 +15,7 @@ namespace Editor.FileManager
         public static Visibility CheckSelected(this IContent content)
         {
             bool selected = FileManagerVM.SelectedItems.Contains(content);
-            //selected = true;
-            return selected ? Visibility.Visible : Visibility.Hidden;
+            return selected ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 
@@ -135,12 +135,16 @@ namespace Editor.FileManager
             mainTreeView.UpdateLayout();
 
             var tree_view_item = mainTreeView.ItemContainerGenerator.ContainerFromItemRecursive(content);
+            if (tree_view_item == null)
+                return;
             // Disable default selection behaviour.
             tree_view_item.IsSelected = false;
             var selection = ChildFinder.FindChild<FrameworkElement>(tree_view_item, "Selection");
             var binding_expression = (selection).GetBindingExpression(StackPanel.VisibilityProperty);
             binding_expression.UpdateTarget();
         }
+
+        IContent lastSelected;
 
         public ICommand SelectItem
         {
@@ -155,23 +159,39 @@ namespace Editor.FileManager
 
                 if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
-                    if(selectedItems.Count == 1 && selectedItems.Contains(selected))
-                        UnselectAll();
+                    //UnselectAll();
+                    if(selectedItems.Contains(selected))
+                    {
+                        // Maybe dragging multiple contents. Check it in SelectItemEnded.
+                    }
                     else
                     {
                         UnselectAll();
-                        selectedItems.Add(selected);
                     }
+
+                    selectedItems.Add(selected);
+                    lastSelected = selected;
                 }
                 else
                 {
-                    if (selectedItems.Contains(selected))
-                        selectedItems.Remove(selected);
-                    else
+                    if (!selectedItems.Contains(selected))
                         selectedItems.Add(selected);
                 }
 
                 UpdateSelection(selected);
+            });
+        }
+
+        public ICommand SelectItemEnded
+        {
+            get => new RelayCommand((e) =>
+            {
+                if (!itemsDrag && !Keyboard.IsKeyDown(Key.LeftCtrl))
+                {
+                    UnselectAll();
+                    selectedItems.Add(lastSelected);
+                    UpdateSelection(lastSelected);
+                }
             });
         }
 
@@ -219,10 +239,67 @@ namespace Editor.FileManager
 
         #region DragDrop
 
+        public ICommand DropItems
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as DragEventArgs;
+                args.Handled = true;
 
+                var mouse_pos = args.GetPosition(mainTreeView);
+                var new_location = GetContentAtPosition(mouse_pos);
+
+                var selected_items = new List<IContent>(selectedItems.AsEnumerable());
+                for (int i = 0; i < selectedItems.Count; i++)
+                    model.MoveContent(selected_items[i], new_location);
+                UnselectAll();
+            });
+        }
+
+        bool itemsDrag = false;
+
+        // Position is relative to mainTreeView.
+        IContent GetContentAtPosition(Point position)
+        {
+            var curr_item = mainTreeView.InputHitTest(position) as DependencyObject;
+            while(true)
+            {
+                if (curr_item is TreeViewItem tvi)
+                    return tvi.Header as IContent;
+                else if (curr_item == null)
+                    return null;
+
+                curr_item = VisualTreeHelper.GetParent(curr_item);
+            }
+        }
+
+        public ICommand StartDragItems
+        {
+            get => new RelayCommand((e) =>
+            {
+                itemsDrag = true;
+            });
+        }
+
+        public ICommand StopDragItems
+        {
+            get => new RelayCommand((e) =>
+            {
+                itemsDrag = false;
+            });
+        }
+
+        public ICommand DragItems
+        {
+            get => new RelayCommand((e) =>
+            {
+                if (!itemsDrag) return;
+                itemsDrag = false;
+                DragDrop.DoDragDrop(mainTreeView, selectedItems, DragDropEffects.Copy);
+            });
+        }
 
         #endregion
-
 
         static FileManagerVM instance;
         public FileManagerVM()
