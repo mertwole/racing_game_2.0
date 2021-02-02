@@ -5,72 +5,80 @@ namespace Editor.FileManager
 {
     public class FileManagerModel
     {
-        public ObservableCollection<IContent> Hierarchy { get => hierarchy; }
-        ObservableCollection<IContent> hierarchy = new ObservableCollection<IContent>();
+        public ObservableCollection<IContent> Hierarchy { get => root.Contents; }
+
+        Folder root = new Folder("root", null);
 
         public FileManagerModel()
         {
-            hierarchy.Add(new Folder("wddw", null));
-            hierarchy.Add(new File("ttt", null));
+            root.AddContent(new Folder("1", root));
+            root.AddContent(new File("2", root));
 
-            (hierarchy[0] as Folder).Contents.Add(new File("332", hierarchy[0]));
-            (hierarchy[0] as Folder).Contents.Add(new File("wfwq", hierarchy[0]));
+            (root.Contents[0] as Folder).AddContent(new File("3", root.Contents[0]));
+            (root.Contents[0] as Folder).AddContent(new File("4", root.Contents[0]));
 
-            var folder = new Folder("234f", hierarchy[0]);
-            folder.Contents.Add(new File("dwdwdw", folder));
-            folder.Parent = hierarchy[0];
-            (hierarchy[0] as Folder).Contents.Add(folder);
+            var folder = new Folder("5", root.Contents[0]);
+            folder.AddContent(new File("6", folder));
+            folder.Parent = root.Contents[0];
+            (root.Contents[0] as Folder).AddContent(folder);
 
-            (hierarchy[0] as Folder).Contents.Add(new File("saf", hierarchy[0]));
+            (root.Contents[0] as Folder).AddContent(new File("7", root.Contents[0]));
         }
 
         public void DeleteContent(IContent content)
         {
-            DeleteContent(content, hierarchy);
-        }
-
-        bool DeleteContent(IContent content, ObservableCollection<IContent> contents)
-        {
-            for (int i = 0; i < contents.Count; i++)
-                if (contents[i] == content)
-                {
-                    contents.RemoveAt(i);
-                    return true;
-                }
-
-            for (int i = 0; i < contents.Count; i++)
-                if (contents[i] is Folder)
-                    if (DeleteContent(content, (contents[i] as Folder).Contents))
+            bool DeleteContent(IContent cont, ObservableCollection<IContent> contents)
+            {
+                for (int i = 0; i < contents.Count; i++)
+                    if (contents[i] == cont)
+                    {
+                        contents.RemoveAt(i);
                         return true;
+                    }
 
-            return false;
+                for (int i = 0; i < contents.Count; i++)
+                    if (contents[i] is Folder)
+                        if (DeleteContent(cont, (contents[i] as Folder).Contents))
+                            return true;
+
+                return false;
+            }
+
+            DeleteContent(content, root.Contents);
         }
 
         // If new_location is folder insert inside it.
         // If new_location is file insert in it's parent.
+        // If new_location is null insert in root.
         public void MoveContent(IContent content, IContent new_location)
         {
             var insert_to = new_location;
             if (insert_to is File)
                 insert_to = insert_to.Parent;
+            else if (insert_to == null)
+                insert_to = root;
 
-            // We can't put folder in itself.
-            if (content == insert_to)
-                return;
+            // We can't put folder inside it's content.
+            var insert_to_parent = insert_to;
+            while(true)
+            {
+                if (insert_to_parent == null)
+                    break;
+                if (content == insert_to_parent)
+                    return;
+                insert_to_parent = insert_to_parent.Parent;
+            }
 
             DeleteContent(content);
             content.Parent = insert_to;
-            if (content.Parent == null)
-                hierarchy.Add(content);
-            else
-                (content.Parent as Folder).Contents.Add(content);
+            (insert_to as Folder).AddContent(content);
         }
     }
 
     public interface IContent
     {
         string Name { get; set; }
-        IContent Parent { get; set; } // null means that it's the root directory.
+        IContent Parent { get; set; }
     }
 
     public class Folder : IContent, INotifyPropertyChanged
@@ -87,6 +95,19 @@ namespace Editor.FileManager
         {
             this.name = name;
             Parent = parent;
+        }
+
+        // Keep sorted.
+        public void AddContent(IContent content)
+        {
+            for (int i = 0; i < contents.Count; i++)
+                if (contents[i].Name.CompareTo(content.Name) == 1)
+                {
+                    contents.Insert(i, content);
+                    return;
+                }
+
+            contents.Add(content);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -67,7 +67,8 @@ namespace Editor.FileManager
             {
                 var args = e as MouseButtonEventArgs;
 
-                if (args.ClickCount == 2)
+                // If selectedItems.Count > 1 then it's mis-doubleclick.
+                if (args.ClickCount == 2 && selectedItems.Count <= 1)
                 {
                     args.Handled = true;
                     editingItem = ((args.Source as TextBlock).DataContext as IContent);
@@ -129,6 +130,7 @@ namespace Editor.FileManager
 
         HashSet<IContent> selectedItems = new HashSet<IContent>();
         public static HashSet<IContent> SelectedItems { get => instance.selectedItems; }
+        IContent lastSelected;
 
         void UpdateSelection(IContent content)
         {
@@ -144,7 +146,13 @@ namespace Editor.FileManager
             binding_expression.UpdateTarget();
         }
 
-        IContent lastSelected;
+        void UnselectAll()
+        {
+            var old_selected = selectedItems.ToList();
+            selectedItems.Clear();
+            foreach (var sel in old_selected)
+                UpdateSelection(sel);
+        }
 
         public ICommand SelectItem
         {
@@ -159,25 +167,15 @@ namespace Editor.FileManager
 
                 if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
-                    //UnselectAll();
-                    if(selectedItems.Contains(selected))
-                    {
-                        // Maybe dragging multiple contents. Check it in SelectItemEnded.
-                    }
-                    else
-                    {
+                    if(!selectedItems.Contains(selected))
                         UnselectAll();
-                    }
+                    // Elsewhere : maybe dragging multiple contents. Check it in SelectItemEnded.
 
-                    selectedItems.Add(selected);
                     lastSelected = selected;
                 }
-                else
-                {
-                    if (!selectedItems.Contains(selected))
-                        selectedItems.Add(selected);
-                }
 
+                if (!selectedItems.Contains(selected))
+                    selectedItems.Add(selected);
                 UpdateSelection(selected);
             });
         }
@@ -193,14 +191,6 @@ namespace Editor.FileManager
                     UpdateSelection(lastSelected);
                 }
             });
-        }
-
-        void UnselectAll()
-        {
-            var old_selected = selectedItems.ToList();
-            selectedItems.Clear();
-            foreach (var sel in old_selected)
-                UpdateSelection(sel);
         }
 
         public ICommand UnselectAllItems
@@ -239,6 +229,22 @@ namespace Editor.FileManager
 
         #region DragDrop
 
+        bool itemsDrag = false;
+        // Position is relative to mainTreeView.
+        IContent GetContentAtPosition(Point position)
+        {
+            var curr_item = mainTreeView.InputHitTest(position) as DependencyObject;
+            while (true)
+            {
+                if (curr_item is TreeViewItem tvi)
+                    return tvi.Header as IContent;
+                else if (curr_item == null)
+                    return null;
+
+                curr_item = VisualTreeHelper.GetParent(curr_item);
+            }
+        }
+
         public ICommand DropItems
         {
             get => new RelayCommand((e) =>
@@ -256,37 +262,14 @@ namespace Editor.FileManager
             });
         }
 
-        bool itemsDrag = false;
-
-        // Position is relative to mainTreeView.
-        IContent GetContentAtPosition(Point position)
-        {
-            var curr_item = mainTreeView.InputHitTest(position) as DependencyObject;
-            while(true)
-            {
-                if (curr_item is TreeViewItem tvi)
-                    return tvi.Header as IContent;
-                else if (curr_item == null)
-                    return null;
-
-                curr_item = VisualTreeHelper.GetParent(curr_item);
-            }
-        }
-
         public ICommand StartDragItems
         {
-            get => new RelayCommand((e) =>
-            {
-                itemsDrag = true;
-            });
+            get => new RelayCommand((e) => itemsDrag = true);
         }
 
         public ICommand StopDragItems
         {
-            get => new RelayCommand((e) =>
-            {
-                itemsDrag = false;
-            });
+            get => new RelayCommand((e) => itemsDrag = false);
         }
 
         public ICommand DragItems
