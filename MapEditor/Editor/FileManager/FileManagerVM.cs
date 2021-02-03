@@ -12,10 +12,11 @@ namespace Editor.FileManager
 {
     public static class IContentExtensions
     {
-        public static Visibility CheckSelected(this IContent content)
+        // Returns opacity.
+        public static double CheckSelected(this IContent content)
         {
             bool selected = FileManagerVM.SelectedItems.Contains(content);
-            return selected ? Visibility.Visible : Visibility.Collapsed;
+            return selected ? 1.0 : 0.0;
         }
     }
 
@@ -142,7 +143,7 @@ namespace Editor.FileManager
             // Disable default selection behaviour.
             tree_view_item.IsSelected = false;
             var selection = ChildFinder.FindChild<FrameworkElement>(tree_view_item, "Selection");
-            var binding_expression = (selection).GetBindingExpression(StackPanel.VisibilityProperty);
+            var binding_expression = (selection).GetBindingExpression(StackPanel.OpacityProperty);
             binding_expression.UpdateTarget();
         }
 
@@ -245,6 +246,42 @@ namespace Editor.FileManager
             }
         }
 
+        TreeViewItem GetTreeViewItemAtPosition(Point position)
+        {
+            var curr_item = mainTreeView.InputHitTest(position) as DependencyObject;
+            while (true)
+            {
+                if (curr_item is TreeViewItem tvi)
+                    return tvi;
+                else if (curr_item == null)
+                    return null;
+
+                curr_item = VisualTreeHelper.GetParent(curr_item);
+            }
+        }
+
+        FrameworkElement FindChildByName(FrameworkElement element, string name)
+        {
+            if (element == null)
+                return null;
+
+            int child_count = VisualTreeHelper.GetChildrenCount(element);
+            for (int i = 0; i < child_count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
+                if (child != null && child.Name == name)
+                    return child;
+                else
+                {
+                    var childs_child = FindChildByName(child, name);
+                    if (childs_child != null)
+                        return childs_child;
+                }
+            }
+
+            return null;
+        }
+
         public ICommand DropItems
         {
             get => new RelayCommand((e) =>
@@ -259,12 +296,18 @@ namespace Editor.FileManager
                 for (int i = 0; i < selectedItems.Count; i++)
                     model.MoveContent(selected_items[i], new_location);
                 UnselectAll();
+
+                if(lastDragHighlight != null)
+                    lastDragHighlight.Opacity = 0;
             });
         }
 
         public ICommand StartDragItems
         {
-            get => new RelayCommand((e) => itemsDrag = true);
+            get => new RelayCommand((e) => {
+                if (Mouse.LeftButton == MouseButtonState.Pressed) 
+                    itemsDrag = true;
+            });
         }
 
         public ICommand StopDragItems
@@ -279,6 +322,47 @@ namespace Editor.FileManager
                 if (!itemsDrag) return;
                 itemsDrag = false;
                 DragDrop.DoDragDrop(mainTreeView, selectedItems, DragDropEffects.Copy);
+            });
+        }
+
+        FrameworkElement lastDragHighlight = null;
+
+        public ICommand DragItemsOver
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as DragEventArgs;
+                FrameworkElement highlight_tvi = args.OriginalSource as FrameworkElement;
+                while (true)
+                {
+                    if (highlight_tvi is TreeViewItem)
+                        break;
+                    else
+                        highlight_tvi = VisualTreeHelper
+                        .GetParent(highlight_tvi) as FrameworkElement;
+                }
+                var highlight = FindChildByName(highlight_tvi, "DragHighlight");
+                lastDragHighlight = highlight;
+                if (highlight != null) highlight.Opacity = 1;
+            });
+        }
+
+        public ICommand DragItemsLeave
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as DragEventArgs;
+                FrameworkElement highlight_tvi = args.OriginalSource as FrameworkElement;
+                while(true)
+                {
+                    if (highlight_tvi is TreeViewItem)
+                        break;
+                    else
+                        highlight_tvi = VisualTreeHelper
+                        .GetParent(highlight_tvi) as FrameworkElement;
+                }
+                var highlight = FindChildByName(highlight_tvi, "DragHighlight");
+                if (highlight != null) highlight.Opacity = 0;
             });
         }
 
