@@ -17,131 +17,33 @@
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
         <local:CallCheckSelected x:Key="CallCheckSelected"/>
 
-        <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
-            <Setter Property="Focusable" Value="False"/>
+        <Style TargetType="{x:Type TextBox}" x:Key="DefaultTextBoxStyle">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="MinWidth" Value="120" />
+            <Setter Property="MinHeight" Value="20" />
+            <Setter Property="AllowDrop" Value="true" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Grid
-                  Width="15"
-                  Height="13"
-                  Background="Transparent">
-                            <Path x:Name="ExpandPath"
-                    Panel.ZIndex="10000"
-                    HorizontalAlignment="Left" 
-                    VerticalAlignment="Center" 
-                    Margin="1,1,1,1"
-                    Fill="White"
-                    Data="M 4 0 L 8 4 L 4 8 Z"/>
-                        </Grid>
-                        <!--<ControlTemplate.Triggers>
-                  <Trigger Property="IsChecked"
-                       Value="True">
-                    <Setter Property="Data"
-                        TargetName="ExpandPath"
-                        Value="M 0 4 L 8 4 L 4 8 Z"/>
-                  </Trigger>
-                </ControlTemplate.Triggers>-->
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="TreeViewItemFocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Border>
-                            <Rectangle Margin="0,0,0,0"
-                         StrokeThickness="5"
-                         Stroke="Black"
-                         StrokeDashArray="1 2"
-                         Opacity="0"/>
+                    <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                        <Border Name="Border" CornerRadius="2"
+                                Padding="2" BorderThickness="1">
+                            <Border.Background>
+                                <SolidColorBrush Color="{DynamicResource ControlLightColor}" />
+                            </Border.Background>
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
+                            </Border.BorderBrush>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="MouseOver" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ScrollViewer Margin="0" x:Name="PART_ContentHost" />
                         </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Padding" Value="1,0,0,0"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition MinWidth="19" Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <ToggleButton   x:Name="Expander" Panel.ZIndex="100"
-                                            Style="{StaticResource ExpandCollapseToggleStyle}"
-                                            IsChecked="{Binding Path=IsExpanded,
-                                            RelativeSource={RelativeSource TemplatedParent}}"
-                                            ClickMode="Press"/>
-
-                            <Border Name="Bd"
-                                    Grid.Column="1"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    Padding="{TemplateBinding Padding}">
-
-                                <ContentPresenter   x:Name="PART_Header" ContentSource="Header"
-                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
-                            </Border>
-                            <ItemsPresenter x:Name="ItemsHost" Grid.Row="1"
-                                            Grid.Column="1" Grid.ColumnSpan="2"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsExpanded" Value="false">
-                                <Setter TargetName="ItemsHost" Property="Visibility"
-                                        Value="Collapsed"/>
-                            </Trigger>
-                            <Trigger Property="HasItems" Value="false">
-                                <Setter TargetName="Expander" Property="Visibility"
-                                        Value="Hidden"/>
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="HasHeader" Value="false"/>
-                                    <Condition Property="Width" Value="Auto"/>
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="PART_Header" Property="MinWidth" Value="75"/>
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="HasHeader" Value="false"/>
-                                    <Condition Property="Height" Value="Auto"/>
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="PART_Header" Property="MinHeight" Value="19"/>
-                            </MultiTrigger>
-                            <Trigger Property="IsSelected" Value="true">
-                                <Setter TargetName="Bd" Property="Background"
-                                        Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                                <Setter Property="Foreground"
-                                        Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="true"/>
-                                    <Condition Property="IsSelectionActive" Value="false"/>
-                                </MultiTrigger.Conditions>
-                                <Setter TargetName="Bd" Property="Background"
-                                        Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-                                <Setter Property="Foreground"
-                                        Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-                            </MultiTrigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Foreground"
-                                        Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -183,12 +85,6 @@
                 <i:EventTrigger EventName="LostFocus">
                     <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                             Path=Data.FinishRenameItem}"/>
-                </i:EventTrigger>
-
-                <i:EventTrigger EventName="TextInput">
-                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.ItemNameInput}"
-                                            PassEventArgsToCommand="True"/>
                 </i:EventTrigger>
 
                 <i:EventTrigger EventName="Drop">
@@ -288,16 +184,6 @@
 
                                     <Grid Grid.Column="1" Grid.ColumnSpan="2" 
                                           x:Name="ContentGrid" Background="{TemplateBinding Background}">
-                                        <!--<md:Ripple  Feedback="Transparent"
-                                                    Focusable="False"
-                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
-                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                    Padding="{TemplateBinding Padding}" 
-                                                    ClipToBounds="False">
-                                            
-                                        </md:Ripple>-->
-                                        
                                         <ContentPresenter x:Name="PART_Header" ContentSource="Header"/>
                                     </Grid>
 
@@ -402,6 +288,7 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
+                        <!--context menu-->
                         <StackPanel.ContextMenu>
                             <ContextMenu Panel.ZIndex="1000">
                                 <i:Interaction.Triggers>
@@ -428,7 +315,8 @@
                                     </i:Interaction.Triggers>
 
                                     <MenuItem.Header>
-                                        <TextBlock Text="new folder" Margin="4" Foreground="White"/>
+                                        <TextBlock Text="new folder" Margin="4" Foreground="White" 
+                                                   FontSize="12"/>
                                     </MenuItem.Header>
                                 </MenuItem>
                             </ContextMenu>
@@ -446,30 +334,42 @@
                                     Opacity="{Binding .,Converter={StaticResource CallCheckSelected}, 
                                                 UpdateSourceTrigger=Explicit}"/>
 
-                        <md:PackIcon Kind="Folder" />
+                        <md:PackIcon Kind="Folder" VerticalAlignment="Center"/>
 
                         <StackPanel Width="5"/>
 
-                        <TextBlock Text = "{Binding Name}" Foreground="White">
+                        <!--name-->
+                        <Grid>
+                            <TextBlock Text="{Binding ElementName=NameTextBox, Path=Text}" Focusable="True" Foreground="White"
+                                       VerticalAlignment="Center">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseDown">
                                         <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                                 Path=Data.StartRenameItem}"
                                                 PassEventArgsToCommand="True"/>
                                     </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
 
-                                    <i:EventTrigger EventName="TextInput">
-                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                                Path=Data.ItemNameInput}"
-                                                PassEventArgsToCommand="True"/>
-                                    </i:EventTrigger>
-                                
+                            <TextBox Text="{Binding Name}" Focusable="True" 
+                                     Name="NameTextBox" Style="{StaticResource DefaultTextBoxStyle}"
+                                     Foreground="White" Visibility="Hidden"
+                                     Margin="-5, 0, 0, 0">
+
+                                <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="LostFocus">
                                         <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                                 Path=Data.FinishRenameItem}"/>
                                     </i:EventTrigger>
+
+                                    <i:EventTrigger EventName="KeyDown">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.FinishRenameItemByEnter}"
+                                                PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                        </TextBlock>
+                            </TextBox>
+                        </Grid>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <!--file-->
@@ -527,30 +427,42 @@
                                     Opacity="{Binding .,Converter={StaticResource CallCheckSelected}, 
                                                 UpdateSourceTrigger=Explicit}"/>
 
-                        <md:PackIcon Kind="FileImage" />
+                        <md:PackIcon Kind="FileImage" VerticalAlignment="Center"/>
 
                         <StackPanel Width="5"/>
 
-                        <TextBlock Text="{Binding Name}" Focusable="True" Foreground="White">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseDown">
-                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.StartRenameItem}"
-                                            PassEventArgsToCommand="True"/>
-                                </i:EventTrigger>
+                        <!--name-->
+                        <Grid>
+                            <TextBlock Text="{Binding ElementName=NameTextBox, Path=Text}" Focusable="True" Foreground="White"
+                                       VerticalAlignment="Center">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.StartRenameItem}"
+                                                PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
 
-                                <i:EventTrigger EventName="TextInput">
-                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.ItemNameInput}"
-                                            PassEventArgsToCommand="True"/>
-                                </i:EventTrigger>
-                                
-                                <i:EventTrigger EventName="LostFocus">
-                                    <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.FinishRenameItem}"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </TextBlock>
+                            <TextBox Text="{Binding Name}" Focusable="True" 
+                                     Name="NameTextBox" Style="{StaticResource DefaultTextBoxStyle}"
+                                     Foreground="White" Visibility="Hidden"
+                                     Margin="-5, 0, 0, 0">
+
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="LostFocus">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.FinishRenameItem}"/>
+                                    </i:EventTrigger>
+
+                                    <i:EventTrigger EventName="KeyDown">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.FinishRenameItemByEnter}"
+                                                PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBox>
+                        </Grid>
                     </StackPanel>
                 </DataTemplate>
             </TreeView.Resources>

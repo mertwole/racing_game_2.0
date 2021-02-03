@@ -79,6 +79,14 @@ namespace Editor.FileManager
             var folder = new Folder("NewFolder", null);
             MoveContent(folder, location);
         }
+
+        public void RenameItem(IContent item, string new_name)
+        {
+            item.Name = new_name;
+            var parent = item.Parent as Folder;
+            parent.Contents.Remove(item);
+            parent.AddContent(item);
+        }
     }
 
     public interface IContent

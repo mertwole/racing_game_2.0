@@ -61,6 +61,7 @@ namespace Editor.FileManager
 
         IContent editingItem = null;
         string editingItemPrevName = "";
+        TextBox nameTextBox;
 
         public ICommand StartRenameItem
         {
@@ -72,42 +73,34 @@ namespace Editor.FileManager
                 if (args.ClickCount == 2 && selectedItems.Count <= 1)
                 {
                     args.Handled = true;
+
+                    var text_block = args.Source as TextBlock;
+                    var parent = VisualTreeHelper.GetParent(text_block) as FrameworkElement;
+                    var text_box = ChildFinder.FindChild<TextBox>(parent, "NameTextBox");
+
+                    text_box.Visibility = Visibility.Visible;
+                    text_box.Focus();
+                    text_box.CaretIndex = 10000;
+                    text_box.Select(0, 10000);
+
+                    nameTextBox = text_box;
                     editingItem = ((args.Source as TextBlock).DataContext as IContent);
                     editingItemPrevName = editingItem.Name;
-                    editingItem.Name = "";
+
+                    return;
                 }
             });
         }
 
-        public ICommand ItemNameInput
+        public ICommand FinishRenameItemByEnter
         {
             get => new RelayCommand((e) =>
             {
-                var args = e as TextCompositionEventArgs;
-
-                if (editingItem == null)
+                var args = e as KeyEventArgs;
+                if (args.Key != Key.Enter)
                     return;
 
-                if (Keyboard.IsKeyDown(Key.Return))
-                {
-                    FinishRenameItem.Execute(null);
-                }
-                else if (Keyboard.IsKeyDown(Key.Back))
-                {
-                    var len = editingItem.Name.Length;
-                    if (len != 0)
-                        editingItem.Name = editingItem.Name.Remove(len - 1);
-                }
-                else
-                {
-                    var text = args.Text;
-                    if (text.Length != 1)
-                        return;
-
-                    bool cap = Keyboard.IsKeyDown(Key.LeftShift) ^ Keyboard.IsKeyDown(Key.CapsLock);
-                    text = cap ? text.ToUpper() : text.ToLower();
-                    editingItem.Name += text;
-                }
+                FinishRenameItem.Execute(null);
             });
         }
 
@@ -118,8 +111,13 @@ namespace Editor.FileManager
                 if (editingItem == null)
                     return;
 
-                if (editingItem.Name == "")
-                    editingItem.Name = editingItemPrevName;
+                var new_name = nameTextBox.Text;
+                if (new_name == "")
+                    new_name = editingItemPrevName;
+
+                model.RenameItem(editingItem, new_name);
+
+                nameTextBox.Visibility = Visibility.Hidden;
 
                 editingItem = null;
             });
@@ -145,7 +143,9 @@ namespace Editor.FileManager
             // Disable default selection behaviour.
             tree_view_item.IsSelected = false;
             var selection = ChildFinder.FindChild<FrameworkElement>(tree_view_item, "Selection");
-            var binding_expression = (selection).GetBindingExpression(StackPanel.OpacityProperty);
+            if (selection == null)
+                return;
+            var binding_expression = selection.GetBindingExpression(StackPanel.OpacityProperty);
             binding_expression.UpdateTarget();
         }
 
@@ -247,28 +247,6 @@ namespace Editor.FileManager
 
         bool itemsDrag = false;
 
-        FrameworkElement FindChildByName(FrameworkElement element, string name)
-        {
-            if (element == null)
-                return null;
-
-            int child_count = VisualTreeHelper.GetChildrenCount(element);
-            for (int i = 0; i < child_count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
-                if (child != null && child.Name == name)
-                    return child;
-                else
-                {
-                    var childs_child = FindChildByName(child, name);
-                    if (childs_child != null)
-                        return childs_child;
-                }
-            }
-
-            return null;
-        }
-
         public ICommand DropItems
         {
             get => new RelayCommand((e) =>
@@ -328,7 +306,7 @@ namespace Editor.FileManager
                         highlight_tvi = VisualTreeHelper
                         .GetParent(highlight_tvi) as FrameworkElement;
                 }
-                var highlight = FindChildByName(highlight_tvi, "DragHighlight");
+                var highlight = ChildFinder.FindChild<FrameworkElement>(highlight_tvi, "DragHighlight");
                 lastDragHighlight = highlight;
                 if (highlight != null) highlight.Opacity = 1;
             });
@@ -348,7 +326,7 @@ namespace Editor.FileManager
                         highlight_tvi = VisualTreeHelper
                         .GetParent(highlight_tvi) as FrameworkElement;
                 }
-                var highlight = FindChildByName(highlight_tvi, "DragHighlight");
+                var highlight = ChildFinder.FindChild<FrameworkElement>(highlight_tvi, "DragHighlight");
                 if (highlight != null) highlight.Opacity = 0;
             });
         }
