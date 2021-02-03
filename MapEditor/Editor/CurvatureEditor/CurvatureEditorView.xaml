@@ -124,8 +124,7 @@
                                 Background="Transparent">
 
                             <Grid Background="{StaticResource BackgroundBrush}">
-                                <TextBox    Background="{StaticResource BackgroundBrush}"
-                                            VerticalAlignment="Center"
+                                <TextBox    VerticalAlignment="Center"
                                             HorizontalAlignment="Stretch"
                                             HorizontalContentAlignment="Center"
                                             Foreground="{StaticResource FontBrush}"

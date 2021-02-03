@@ -92,10 +92,10 @@ namespace Editor.FileManager
                 {
                     FinishRenameItem.Execute(null);
                 }
-                else if(Keyboard.IsKeyDown(Key.Back))
+                else if (Keyboard.IsKeyDown(Key.Back))
                 {
                     var len = editingItem.Name.Length;
-                    if(len != 0)
+                    if (len != 0)
                         editingItem.Name = editingItem.Name.Remove(len - 1);
                 }
                 else
@@ -168,7 +168,7 @@ namespace Editor.FileManager
 
                 if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                 {
-                    if(!selectedItems.Contains(selected))
+                    if (!selectedItems.Contains(selected))
                         UnselectAll();
                     // Elsewhere : maybe dragging multiple contents. Check it in SelectItemEnded.
 
@@ -284,7 +284,7 @@ namespace Editor.FileManager
                     model.MoveContent(selected_items[i], new_location);
                 UnselectAll();
 
-                if(lastDragHighlight != null)
+                if (lastDragHighlight != null)
                     lastDragHighlight.Opacity = 0;
             });
         }
@@ -292,7 +292,7 @@ namespace Editor.FileManager
         public ICommand StartDragItems
         {
             get => new RelayCommand((e) => {
-                if (Mouse.LeftButton == MouseButtonState.Pressed) 
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
                     itemsDrag = true;
             });
         }
@@ -340,7 +340,7 @@ namespace Editor.FileManager
             {
                 var args = e as DragEventArgs;
                 FrameworkElement highlight_tvi = args.OriginalSource as FrameworkElement;
-                while(true)
+                while (true)
                 {
                     if (highlight_tvi is TreeViewItem)
                         break;
@@ -368,7 +368,7 @@ namespace Editor.FileManager
                 context_menu.Visibility = Visibility.Hidden;
 
                 var context_menu_tvi = context_menu.PlacementTarget as FrameworkElement;
-                while(true)
+                while (true)
                 {
                     if (context_menu_tvi is TreeViewItem)
                         break;

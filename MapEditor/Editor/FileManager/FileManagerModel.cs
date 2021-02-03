@@ -60,7 +60,7 @@ namespace Editor.FileManager
 
             // We can't put folder inside it's content.
             var insert_to_parent = insert_to;
-            while(true)
+            while (true)
             {
                 if (insert_to_parent == null)
                     break;

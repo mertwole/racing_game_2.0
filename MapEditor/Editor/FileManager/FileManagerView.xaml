@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.FileManager"
              xmlns:common="clr-namespace:Editor.Common"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="300">
@@ -15,25 +16,25 @@
     <UserControl.Resources>
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
         <local:CallCheckSelected x:Key="CallCheckSelected"/>
-        
+
         <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
-          <Setter Property="Focusable" Value="False"/>
-          <Setter Property="Template">
-            <Setter.Value>
-              <ControlTemplate TargetType="ToggleButton">
-                <Grid
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid
                   Width="15"
                   Height="13"
                   Background="Transparent">
-                  <Path x:Name="ExpandPath"
+                            <Path x:Name="ExpandPath"
                     Panel.ZIndex="10000"
                     HorizontalAlignment="Left" 
                     VerticalAlignment="Center" 
                     Margin="1,1,1,1"
                     Fill="White"
                     Data="M 4 0 L 8 4 L 4 8 Z"/>
-                </Grid>
-                <!--<ControlTemplate.Triggers>
+                        </Grid>
+                        <!--<ControlTemplate.Triggers>
                   <Trigger Property="IsChecked"
                        Value="True">
                     <Setter Property="Data"
@@ -41,24 +42,24 @@
                         Value="M 0 4 L 8 4 L 4 8 Z"/>
                   </Trigger>
                 </ControlTemplate.Triggers>-->
-              </ControlTemplate>
-            </Setter.Value>
-          </Setter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="TreeViewItemFocusVisual">
-          <Setter Property="Control.Template">
-            <Setter.Value>
-              <ControlTemplate>
-                <Border>
-                  <Rectangle Margin="0,0,0,0"
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Border>
+                            <Rectangle Margin="0,0,0,0"
                          StrokeThickness="5"
                          Stroke="Black"
                          StrokeDashArray="1 2"
                          Opacity="0"/>
-                </Border>
-              </ControlTemplate>
-            </Setter.Value>
-          </Setter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
             <Setter Property="Background" Value="Transparent"/>
@@ -83,14 +84,14 @@
                                             IsChecked="{Binding Path=IsExpanded,
                                             RelativeSource={RelativeSource TemplatedParent}}"
                                             ClickMode="Press"/>
-                            
+
                             <Border Name="Bd"
                                     Grid.Column="1"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    Padding="{TemplateBinding Padding}">  
-                                
+                                    Padding="{TemplateBinding Padding}">
+
                                 <ContentPresenter   x:Name="PART_Header" ContentSource="Header"
                                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
                             </Border>
@@ -197,6 +198,166 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
+            <!--overwrited MaterialDesignTreeView style from MaterialDesignInXAML-->
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                    <Setter Property="Padding" Value="8" />
+                    <Setter Property="FocusVisualStyle" Value="{StaticResource MaterialDesignTreeViewItemFocusVisual}"/>
+                    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type TreeView}}}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup Name="CommonStates">
+                                            <VisualState Name="Normal"/>
+                                            <VisualState Name="MouseOver"/>
+                                            <VisualState Name="Disabled"/>
+                                        </VisualStateGroup>
+                                        <VisualStateGroup x:Name="ExpansionStates">
+                                            <VisualStateGroup.Transitions>
+                                                <VisualTransition GeneratedDuration="0" To="Expanded">
+                                                    <VisualTransition.GeneratedEasingFunction>
+                                                        <CubicEase EasingMode="EaseOut"/>
+                                                    </VisualTransition.GeneratedEasingFunction>
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemsHost" Storyboard.TargetProperty="Visibility">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ItemsHost" To="1" Duration="0:0:0.3"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Scale" Storyboard.TargetName="ScaleHost" To="1" Duration="0:0:0.3"/>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                                <VisualTransition GeneratedDuration="0" To="Collapsed">
+                                                    <VisualTransition.GeneratedEasingFunction>
+                                                        <CubicEase EasingMode="EaseOut"/>
+                                                    </VisualTransition.GeneratedEasingFunction>
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemsHost" Storyboard.TargetProperty="Visibility">
+                                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Collapsed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ItemsHost" To="0" Duration="0:0:0.3"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="Scale" Storyboard.TargetName="ScaleHost" To="0" Duration="0:0:0.3"/>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                            </VisualStateGroup.Transitions>
+                                            <VisualState x:Name="Expanded">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ItemsHost" To="1" Duration="0"/>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Scale" Storyboard.TargetName="ScaleHost" To="1" Duration="0:0:0.3"/>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemsHost" Storyboard.TargetProperty="Visibility">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState x:Name="Collapsed">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ItemsHost" To="0" Duration="0"/>
+                                                    <DoubleAnimation Storyboard.TargetProperty="Scale" Storyboard.TargetName="ScaleHost" To="0" Duration="0:0:0.3"/>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ItemsHost" Storyboard.TargetProperty="Visibility">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <md:ScaleHost x:Name="ScaleHost" />
+
+                                    <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" 
+                                                Style="{StaticResource MaterialDesignExpandCollapseToggleStyle}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                Margin="16, 0, 0, 0"
+                                                Panel.ZIndex="1"
+                                                VerticalAlignment="Center"/>
+
+                                    <Grid Grid.Column="1" Grid.ColumnSpan="2" 
+                                          x:Name="ContentGrid" Background="{TemplateBinding Background}">
+                                        <!--<md:Ripple  Feedback="Transparent"
+                                                    Focusable="False"
+                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                    Padding="{TemplateBinding Padding}" 
+                                                    ClipToBounds="False">
+                                            
+                                        </md:Ripple>-->
+                                        
+                                        <ContentPresenter x:Name="PART_Header" ContentSource="Header"/>
+                                    </Grid>
+
+                                    <ContentControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                        x:Name="AdditionalContentControl"
+                                        Content="{TemplateBinding Header}"
+                                        ContentTemplate="{Binding RelativeSource={RelativeSource Self}, Path=(md:TreeViewAssist.AdditionalTemplate)}"
+                                        ContentTemplateSelector="{Binding RelativeSource={RelativeSource Self}, Path=(md:TreeViewAssist.AdditionalTemplateSelector)}"                                        
+                                        Visibility="Collapsed">
+                                    </ContentControl>
+
+                                    <StackPanel Grid.Column="1" Grid.Row="2"
+                                    x:Name="ItemsPanel"
+                                    Margin="-16 0 0 0"
+                                    Grid.ColumnSpan="2">
+                                        <StackPanel.Height>
+                                            <MultiBinding Converter="{StaticResource MathMlpMultipleConverter}">
+                                                <Binding ElementName="ItemsHost" Path="ActualHeight"/>
+                                                <Binding ElementName="ScaleHost" Path="Scale"/>
+                                            </MultiBinding>
+                                        </StackPanel.Height>
+                                        <ItemsPresenter x:Name="ItemsHost"
+                                            VerticalAlignment="Top"
+                                            Opacity="0"
+                                            Visibility="Collapsed"/>
+                                    </StackPanel>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=(md:TreeViewAssist.AdditionalTemplate), Converter={StaticResource NullableToVisibilityConverter}, Mode=OneWay}" 
+                                     Value="Visible">
+                                        <Setter TargetName="AdditionalContentControl" Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=(md:TreeViewAssist.AdditionalTemplateSelector), Converter={StaticResource NullableToVisibilityConverter}, Mode=OneWay}" 
+                                     Value="Visible">
+                                        <Setter TargetName="AdditionalContentControl" Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                    <Trigger Property="HasItems" Value="false">
+                                        <Setter Property="Visibility" TargetName="Expander" Value="Hidden"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="false">
+                                        <Setter Property="Opacity" Value=".56"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="VirtualizingPanel.IsVirtualizing" Value="true">
+                            <Setter Property="ItemsPanel">
+                                <Setter.Value>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel/>
+                                    </ItemsPanelTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TreeView.ItemContainerStyle>
+
             <TreeView.Resources>
                 <!--folder-->
                 <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding Contents}">
@@ -242,7 +403,7 @@
                         </i:Interaction.Triggers>
 
                         <StackPanel.ContextMenu>
-                            <ContextMenu Panel.ZIndex="100">
+                            <ContextMenu Panel.ZIndex="1000">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Opened">
                                         <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
@@ -265,7 +426,7 @@
                                                             PassEventArgsToCommand="True"/>
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
-                                    
+
                                     <MenuItem.Header>
                                         <TextBlock Text="new folder" Margin="4" Foreground="White"/>
                                     </MenuItem.Header>
@@ -285,11 +446,10 @@
                                     Opacity="{Binding .,Converter={StaticResource CallCheckSelected}, 
                                                 UpdateSourceTrigger=Explicit}"/>
 
-                        <Image Source="/Editor;component/Resources/folder.png" 
-                               Stretch="Uniform" Height="16" Width="16"/>
+                        <md:PackIcon Kind="Folder" />
 
                         <StackPanel Width="5"/>
-      
+
                         <TextBlock Text = "{Binding Name}" Foreground="White">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseDown">
@@ -367,9 +527,8 @@
                                     Opacity="{Binding .,Converter={StaticResource CallCheckSelected}, 
                                                 UpdateSourceTrigger=Explicit}"/>
 
-                        <Image Source="/Editor;component/Resources/file.png" 
-                               Stretch="Uniform" Height="16" Width="16"/>
-                        
+                        <md:PackIcon Kind="FileImage" />
+
                         <StackPanel Width="5"/>
 
                         <TextBlock Text="{Binding Name}" Focusable="True" Foreground="White">
