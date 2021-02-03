@@ -150,11 +150,5 @@
   <ItemGroup>
     <Resource Include="Resources\folder.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\treeview_toggle0.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\treeview_toggle1.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

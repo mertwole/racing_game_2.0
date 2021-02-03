@@ -127,11 +127,13 @@ namespace Editor.FileManager
 
         #endregion
 
-        #region Multiselection
-
-        HashSet<IContent> selectedItems = new HashSet<IContent>();
-        public static HashSet<IContent> SelectedItems { get => instance.selectedItems; }
-        IContent lastSelected;
+        void UnselectAll()
+        {
+            var old_selected = selectedItems.ToList();
+            selectedItems.Clear();
+            foreach (var sel in old_selected)
+                UpdateSelection(sel);
+        }
 
         void UpdateSelection(IContent content)
         {
@@ -147,13 +149,11 @@ namespace Editor.FileManager
             binding_expression.UpdateTarget();
         }
 
-        void UnselectAll()
-        {
-            var old_selected = selectedItems.ToList();
-            selectedItems.Clear();
-            foreach (var sel in old_selected)
-                UpdateSelection(sel);
-        }
+        #region Multiselection
+
+        HashSet<IContent> selectedItems = new HashSet<IContent>();
+        public static HashSet<IContent> SelectedItems { get => instance.selectedItems; }
+        IContent lastSelected;
 
         public ICommand SelectItem
         {
@@ -228,9 +228,6 @@ namespace Editor.FileManager
 
         #endregion
 
-        #region DragDrop
-
-        bool itemsDrag = false;
         // Position is relative to mainTreeView.
         IContent GetContentAtPosition(Point position)
         {
@@ -246,19 +243,9 @@ namespace Editor.FileManager
             }
         }
 
-        TreeViewItem GetTreeViewItemAtPosition(Point position)
-        {
-            var curr_item = mainTreeView.InputHitTest(position) as DependencyObject;
-            while (true)
-            {
-                if (curr_item is TreeViewItem tvi)
-                    return tvi;
-                else if (curr_item == null)
-                    return null;
+        #region DragDrop
 
-                curr_item = VisualTreeHelper.GetParent(curr_item);
-            }
-        }
+        bool itemsDrag = false;
 
         FrameworkElement FindChildByName(FrameworkElement element, string name)
         {
@@ -363,6 +350,59 @@ namespace Editor.FileManager
                 }
                 var highlight = FindChildByName(highlight_tvi, "DragHighlight");
                 if (highlight != null) highlight.Opacity = 0;
+            });
+        }
+
+        #endregion
+
+        #region Context menu
+
+        public ICommand NewFolderContextMenu
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+
+                var menu_item = args.Source as MenuItem;
+                var context_menu = menu_item.Parent as ContextMenu;
+                context_menu.Visibility = Visibility.Hidden;
+
+                var context_menu_tvi = context_menu.PlacementTarget as FrameworkElement;
+                while(true)
+                {
+                    if (context_menu_tvi is TreeViewItem)
+                        break;
+                    else
+                        context_menu_tvi = VisualTreeHelper
+                        .GetParent(context_menu_tvi) as FrameworkElement;
+                }
+
+                var location = (context_menu_tvi as TreeViewItem).Header;
+                model.NewFolder(location as IContent);
+            });
+        }
+
+        public ICommand ContextMenuOpened
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+
+                var context_menu = args.Source as ContextMenu;
+                var context_menu_tvi = context_menu.PlacementTarget as FrameworkElement;
+                while (true)
+                {
+                    if (context_menu_tvi is TreeViewItem)
+                        break;
+                    else
+                        context_menu_tvi = VisualTreeHelper
+                        .GetParent(context_menu_tvi) as FrameworkElement;
+                }
+
+                UnselectAll();
+                var content = (context_menu_tvi as TreeViewItem).Header as IContent;
+                selectedItems.Add(content);
+                UpdateSelection(content);
             });
         }
 

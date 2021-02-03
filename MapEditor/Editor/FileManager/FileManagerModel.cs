@@ -73,6 +73,12 @@ namespace Editor.FileManager
             content.Parent = insert_to;
             (insert_to as Folder).AddContent(content);
         }
+
+        public void NewFolder(IContent location)
+        {
+            var folder = new Folder("NewFolder", null);
+            MoveContent(folder, location);
+        }
     }
 
     public interface IContent
