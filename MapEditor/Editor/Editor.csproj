@@ -94,6 +94,11 @@
     <Compile Include="TimelineView.xaml.cs">
       <DependentUpon>TimelineView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TrackEditor\TrackEditorModel.cs" />
+    <Compile Include="TrackEditor\TrackEditorView.xaml.cs">
+      <DependentUpon>TrackEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TrackEditor\TrackEditorVM.cs" />
     <Page Include="CurvatureEditor\CurvatureEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -119,6 +124,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="TimelineView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TrackEditor\TrackEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Editor"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:curv_e="clr-namespace:Editor.CurvatureEditor"
-        xmlns:heel_e="clr-namespace:Editor.HeelEditor"
+        xmlns:curv_editor="clr-namespace:Editor.CurvatureEditor"
+        xmlns:heel_editor="clr-namespace:Editor.HeelEditor"
+        xmlns:track_editor="clr-namespace:Editor.TrackEditor"
         xmlns:fm="clr-namespace:Editor.FileManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="540" Width="960"
@@ -21,18 +22,22 @@
         FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         
-        <fm:FileManagerView DockPanel.Dock="Left" Grid.Column="0"/>
-
-        <local:TimelineView DockPanel.Dock="Right" Grid.Column="1">
-            <curv_e:CurvatureEditorView Height="20" HorizontalAlignment="Stretch"/>
+        <local:TimelineView DockPanel.Dock="Right" Grid.Column="0">
+            <curv_editor:CurvatureEditorView Height="20" HorizontalAlignment="Stretch"/>
 
             <Grid Height="35" HorizontalAlignment="Stretch"/>
 
-            <heel_e:HeelEditorView Height="60" HorizontalAlignment="Stretch"/>
+            <heel_editor:HeelEditorView Height="60" HorizontalAlignment="Stretch"/>
+
+            <Grid Height="35" HorizontalAlignment="Stretch"/>
+
+            <track_editor:TrackEditorView Height="200" HorizontalAlignment="Stretch"/>
         </local:TimelineView>
+
+        <fm:FileManagerView DockPanel.Dock="Left" Grid.Column="1"/>
     </Grid>
 </Window>

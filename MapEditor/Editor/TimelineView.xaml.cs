@@ -56,6 +56,7 @@ namespace Editor
                 line.Y2 = editFieldHeight * scaleY;
                 line.Stroke = new SolidColorBrush(Color.FromArgb(45, 0x7B, 0x7B, 0x7B));
                 line.StrokeThickness = 1.0;
+                line.IsHitTestVisible = false;
 
                 var text = new TextBlock();
                 text.Text = $"{i}.0";
