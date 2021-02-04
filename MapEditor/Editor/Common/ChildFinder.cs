@@ -16,7 +16,7 @@ namespace Editor.Common
                 if (!string.IsNullOrEmpty(childName))
                 {
                     var framework_element = child as FrameworkElement;
-                    if (framework_element.Name == childName)
+                    if (framework_element?.Name == childName)
                         return (T)child;
                 }
                 else if(child is T ch)

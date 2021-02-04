@@ -257,13 +257,17 @@ namespace Editor.FileManager
                 var mouse_pos = args.GetPosition(mainTreeView);
                 var new_location = GetContentAtPosition(mouse_pos);
 
+                if (lastDragHighlight != null)
+                    lastDragHighlight.Opacity = 0;
+
+                // Drag item into itself.
+                if (selectedItems.Count == 1 && selectedItems.Contains(new_location))
+                    return;
+
                 var selected_items = new List<IContent>(selectedItems.AsEnumerable());
                 for (int i = 0; i < selectedItems.Count; i++)
                     model.MoveContent(selected_items[i], new_location);
                 UnselectAll();
-
-                if (lastDragHighlight != null)
-                    lastDragHighlight.Opacity = 0;
             });
         }
 
@@ -292,7 +296,7 @@ namespace Editor.FileManager
 
         FrameworkElement lastDragHighlight = null;
 
-        public ICommand DragItemsOver
+        public ICommand DragItemsEnter
         {
             get => new RelayCommand((e) =>
             {
@@ -302,6 +306,8 @@ namespace Editor.FileManager
                 {
                     if (highlight_tvi is TreeViewItem)
                         break;
+                    else if (highlight_tvi == null)
+                        return;
                     else
                         highlight_tvi = VisualTreeHelper
                         .GetParent(highlight_tvi) as FrameworkElement;
@@ -322,6 +328,8 @@ namespace Editor.FileManager
                 {
                     if (highlight_tvi is TreeViewItem)
                         break;
+                    else if (highlight_tvi == null)
+                        return;
                     else
                         highlight_tvi = VisualTreeHelper
                         .GetParent(highlight_tvi) as FrameworkElement;

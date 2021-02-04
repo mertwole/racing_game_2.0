@@ -173,7 +173,7 @@
                                         </VisualStateGroup>
                                     </VisualStateManager.VisualStateGroups>
 
-                                    <md:ScaleHost x:Name="ScaleHost" />
+                                    <md:ScaleHost x:Name="ScaleHost"/>
 
                                     <ToggleButton x:Name="Expander" ClickMode="Press" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" 
                                                 Style="{StaticResource MaterialDesignExpandCollapseToggleStyle}"
@@ -275,15 +275,15 @@
                                            PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
 
-                            <i:EventTrigger EventName="DragOver">
-                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.DragItemsOver}"
-                                            PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-
                             <i:EventTrigger EventName="DragLeave">
                                 <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                             Path=Data.DragItemsLeave}"
+                                            PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+
+                            <i:EventTrigger EventName="DragEnter">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.DragItemsEnter}"
                                             PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
@@ -322,17 +322,19 @@
                             </ContextMenu>
                         </StackPanel.ContextMenu>
 
-                        <!--drag highlight-->
-                        <StackPanel Background="#474747" Margin="-1000, 0, -1000, 0"
+                        <Grid IsHitTestVisible="False">
+                            <!--drag highlight-->
+                            <StackPanel Background="#474747"
                                     Panel.ZIndex="-100" Name="DragHighlight"
-                                    Opacity="0"/>
+                                    Margin="0, 0, -1000, 0" Opacity="0"/>
 
-                        <!--selection-->
-                        <StackPanel Background="Orange" Margin="-1000, 0, -1000, 0"
-                                    Name="Selection"
-                                    Panel.ZIndex="-100"
+                            <!--selection-->
+                            <StackPanel Background="Orange"
+                                    Name="Selection" Panel.ZIndex="-100"
+                                    Margin="0, 0, -1000, 0"
                                     Opacity="{Binding .,Converter={StaticResource CallCheckSelected}, 
                                                 UpdateSourceTrigger=Explicit}"/>
+                        </Grid>
 
                         <md:PackIcon Kind="Folder" VerticalAlignment="Center"/>
 
@@ -375,13 +377,12 @@
                 <!--file-->
                 <DataTemplate DataType="{x:Type local:File}">
                     <StackPanel Orientation="Horizontal" AllowDrop="True" Background="Transparent"
-                                Margin="0, 0, -1000, 0">
+                                Margin="0, 0, -1000, 0" ClipToBounds="False">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseUp">
                                 <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                                 Path=Data.StopDragItems}" 
                                                PassEventArgsToCommand="True"/>
-
                             </i:EventTrigger>
 
                             <i:EventTrigger EventName="MouseDown">
@@ -402,30 +403,32 @@
                                            PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
 
-                            <i:EventTrigger EventName="DragOver">
-                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                            Path=Data.DragItemsOver}"
-                                            PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-
                             <i:EventTrigger EventName="DragLeave">
                                 <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
                                             Path=Data.DragItemsLeave}"
                                             PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
+
+                            <i:EventTrigger EventName="DragEnter">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                            Path=Data.DragItemsEnter}"
+                                            PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
                         </i:Interaction.Triggers>
 
-                        <!--drag highlight-->
-                        <StackPanel Background="#474747" Margin="-1000, 0, -1000, 0"
+                        <Grid IsHitTestVisible="False">
+                            <!--drag highlight-->
+                            <StackPanel Background="#474747"
                                     Panel.ZIndex="-100" Name="DragHighlight"
-                                    Opacity="0"/>
+                                    Margin="0, 0, -1000, 0" Opacity="0"/>
 
-                        <!--selection-->
-                        <StackPanel Background="Orange" Margin="-1000, 0, -1000, 0"
-                                    Name="Selection"
-                                    Panel.ZIndex="-100"
+                            <!--selection-->
+                            <StackPanel Background="Orange"
+                                    Name="Selection" Panel.ZIndex="-100"
+                                    Margin="0, 0, -1000, 0"
                                     Opacity="{Binding .,Converter={StaticResource CallCheckSelected}, 
                                                 UpdateSourceTrigger=Explicit}"/>
+                        </Grid>
 
                         <md:PackIcon Kind="FileImage" VerticalAlignment="Center"/>
 
