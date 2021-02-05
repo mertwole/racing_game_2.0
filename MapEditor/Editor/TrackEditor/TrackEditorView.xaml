@@ -104,6 +104,12 @@
                                     , Path=Data.FinishMoveGameObject}"
                                     PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
+
+                            <i:EventTrigger EventName="MouseRightButtonDown">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}
+                                    , Path=Data.RemoveGameObject}"
+                                    PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Rectangle>
                 </DataTemplate>

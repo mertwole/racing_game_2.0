@@ -8,6 +8,7 @@
         xmlns:curv_editor="clr-namespace:Editor.CurvatureEditor"
         xmlns:heel_editor="clr-namespace:Editor.HeelEditor"
         xmlns:track_editor="clr-namespace:Editor.TrackEditor"
+        xmlns:billboard_editor="clr-namespace:Editor.BillboardEditor"
         xmlns:fm="clr-namespace:Editor.FileManager"
         mc:Ignorable="d"
         Title="MainWindow" Height="540" Width="960"
@@ -23,10 +24,10 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="*"/>
+            <!--<ColumnDefinition Width="*"/>-->
         </Grid.ColumnDefinitions>
         
-        <local:TimelineView DockPanel.Dock="Right" Grid.Column="0">
+        <!--<local:TimelineView DockPanel.Dock="Right" Grid.Column="0">
             <curv_editor:CurvatureEditorView Height="20" HorizontalAlignment="Stretch"/>
 
             <Grid Height="35" HorizontalAlignment="Stretch"/>
@@ -36,8 +37,10 @@
             <Grid Height="35" HorizontalAlignment="Stretch"/>
 
             <track_editor:TrackEditorView Height="200" HorizontalAlignment="Stretch"/>
-        </local:TimelineView>
+        </local:TimelineView>-->
 
-        <fm:FileManagerView DockPanel.Dock="Left" Grid.Column="1"/>
+        <billboard_editor:BillboardEditorView/>
+
+        <!--<fm:FileManagerView DockPanel.Dock="Left" Grid.Column="1"/>-->
     </Grid>
 </Window>

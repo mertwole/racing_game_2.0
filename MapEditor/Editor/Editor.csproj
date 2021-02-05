@@ -69,6 +69,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BillboardEditor\BillboardEditorView.xaml.cs">
+      <DependentUpon>BillboardEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BillboardEditor\InfiniteGridView.xaml.cs">
+      <DependentUpon>InfiniteGridView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Common\BindingProxy.cs" />
     <Compile Include="Common\ChildFinder.cs" />
     <Compile Include="FileManager\CallCheckSelected.cs" />
@@ -99,6 +105,14 @@
       <DependentUpon>TrackEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\TrackEditorVM.cs" />
+    <Page Include="BillboardEditor\BillboardEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BillboardEditor\InfiniteGridView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CurvatureEditor\CurvatureEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

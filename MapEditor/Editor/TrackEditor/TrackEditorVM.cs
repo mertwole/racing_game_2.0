@@ -60,18 +60,18 @@ namespace Editor.TrackEditor
         public double PixelsToOffset(double pixels) =>
             (pixels / mainCanvas.ActualHeight - 0.5) * model.TrackWidth;
 
-        #region Move
+
 
         GameObject ClosestGameObject(double distance, double offset)
         {
             GameObject closest = null;
             double min_dist = double.PositiveInfinity;
 
-            foreach(var go in model.GameObjects)
+            foreach (var go in model.GameObjects)
             {
                 var dist = (go.Offset - offset) * (go.Offset - offset)
                     + (go.RoadDistance - distance) * (go.RoadDistance - distance);
-                if(dist < min_dist)
+                if (dist < min_dist)
                 {
                     min_dist = dist;
                     closest = go;
@@ -80,6 +80,8 @@ namespace Editor.TrackEditor
 
             return closest;
         }
+
+        #region Move
 
         bool movingGameObject = false;
 
@@ -195,6 +197,24 @@ namespace Editor.TrackEditor
 
                 draggedGameObject = null;
                 OnPropertyChanged("DraggingGameObject");
+            });
+        }
+
+        #endregion
+
+        #region Remove
+
+        public ICommand RemoveGameObject
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as MouseButtonEventArgs;
+                var position = args.GetPosition(mainCanvas);
+
+                var closest = ClosestGameObject(
+                    PixelsToDistance(position.X), PixelsToOffset(position.Y));
+
+                model.RemoveGameObject(closest);
             });
         }
 

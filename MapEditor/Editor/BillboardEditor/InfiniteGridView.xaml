@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Editor.BillboardEditor.InfiniteGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Editor.BillboardEditor"
+             xmlns:common="clr-namespace:Editor.Common"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:WorldXToScreenSpaceConverter x:Key="WorldXToScreenSpaceConverter"/>
+        <local:WorldYToScreenSpaceConverter x:Key="WorldYToScreenSpaceConverter"/>
+        <local:WorldSizeToScreenSpaceConverter x:Key="WorldSizeToScreenSpaceConverter"/>
+        <common:BindingProxy Data="{Binding}" x:Key="Proxy"/>
+    </UserControl.Resources>
+    
+    <Grid MouseMove="MoveField" MouseDown="StartEndMoveField"
+          MouseUp="StartEndMoveField" Background="Transparent">
+        <Canvas Name="GridCanvas" IsHitTestVisible="False"/>
+
+        <ItemsControl ItemsSource="{Binding ChildrenWpapped}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left" Value="{Binding Position.X
+                        , Converter={StaticResource WorldXToScreenSpaceConverter}
+                        , ConverterParameter={StaticResource Proxy}}"/>
+
+                    <Setter Property="Canvas.Bottom" Value="{Binding Position.Y
+                        , Converter={StaticResource WorldYToScreenSpaceConverter}
+                        , ConverterParameter={StaticResource Proxy}}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="{Binding Size.Width
+                        , Converter={StaticResource WorldSizeToScreenSpaceConverter}
+                        , ConverterParameter={StaticResource Proxy}}"
+                          Height="{Binding Size.Height
+                        , Converter={StaticResource WorldSizeToScreenSpaceConverter}
+                        , ConverterParameter={StaticResource Proxy}}">
+                        
+                        <ContentPresenter Content="{Binding Element}"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>
