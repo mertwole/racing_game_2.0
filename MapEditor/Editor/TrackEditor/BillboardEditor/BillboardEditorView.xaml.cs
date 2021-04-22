@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Editor.BillboardEditor
+namespace Editor.TrackEditor.BillboardEditor
 {
     public partial class BillboardEditorView : UserControl
     {

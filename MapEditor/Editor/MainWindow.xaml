@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Editor"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:curv_editor="clr-namespace:Editor.CurvatureEditor"
-        xmlns:heel_editor="clr-namespace:Editor.HeelEditor"
-        xmlns:track_editor="clr-namespace:Editor.TrackEditor"
-        xmlns:billboard_editor="clr-namespace:Editor.BillboardEditor"
+        
+        xmlns:track_editor="clr-namespace:Editor.TrackEditor"        
+        xmlns:collider_editor="clr-namespace:Editor.ColliderEditor"
         xmlns:fm="clr-namespace:Editor.FileManager"
+
         mc:Ignorable="d"
         Title="MainWindow" Height="540" Width="960"
         WindowStartupLocation="CenterScreen"
@@ -26,21 +26,11 @@
             <ColumnDefinition Width="4*"/>
             <!--<ColumnDefinition Width="*"/>-->
         </Grid.ColumnDefinitions>
-        
-        <!--<local:TimelineView DockPanel.Dock="Right" Grid.Column="0">
-            <curv_editor:CurvatureEditorView Height="20" HorizontalAlignment="Stretch"/>
 
-            <Grid Height="35" HorizontalAlignment="Stretch"/>
+        <track_editor:TrackEditorView Grid.Column="0"/>
 
-            <heel_editor:HeelEditorView Height="60" HorizontalAlignment="Stretch"/>
+        <!--<collider_editor:ColliderEditorView/>-->
 
-            <Grid Height="35" HorizontalAlignment="Stretch"/>
-
-            <track_editor:TrackEditorView Height="200" HorizontalAlignment="Stretch"/>
-        </local:TimelineView>-->
-
-        <billboard_editor:BillboardEditorView/>
-
-        <!--<fm:FileManagerView DockPanel.Dock="Left" Grid.Column="1"/>-->
+        <!--<fm:FileManagerView Grid.Column="1"/>-->
     </Grid>
 </Window>

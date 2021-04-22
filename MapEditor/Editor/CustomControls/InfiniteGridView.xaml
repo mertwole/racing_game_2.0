@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="Editor.BillboardEditor.InfiniteGridView"
+﻿<UserControl x:Class="Editor.CustomControls.InfiniteGridView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Editor.BillboardEditor"
+             xmlns:local="clr-namespace:Editor.CustomControls"
              xmlns:common="clr-namespace:Editor.Common"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
@@ -16,7 +16,8 @@
     </UserControl.Resources>
     
     <Grid MouseMove="MoveField" MouseDown="StartEndMoveField"
-          MouseUp="StartEndMoveField" Background="Transparent">
+          MouseUp="StartEndMoveField" MouseWheel="Zoom"
+          Background="Transparent">
         <Canvas Name="GridCanvas" IsHitTestVisible="False"/>
 
         <ItemsControl ItemsSource="{Binding ChildrenWpapped}">

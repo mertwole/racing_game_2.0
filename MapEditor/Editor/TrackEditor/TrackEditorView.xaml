@@ -4,116 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.TrackEditor"
-             xmlns:common="clr-namespace:Editor.Common"
-             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:curv_editor="clr-namespace:Editor.TrackEditor.CurvatureEditor"
+             xmlns:heel_editor="clr-namespace:Editor.TrackEditor.HeelEditor"
+             xmlns:billboard_editor="clr-namespace:Editor.TrackEditor.BillboardEditor"
+             xmlns:cc="clr-namespace:Editor.CustomControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <local:TrackEditorVM/>
-    </UserControl.DataContext>
+    <Grid>
+        <cc:TimelineView>
+            <curv_editor:CurvatureEditorView Height="20" HorizontalAlignment="Stretch"/>
 
-    <UserControl.Resources>
-        <local:DistanceToPixelsConverter x:Key="DistanceToPixelsConverter"/>
-        <local:OffsetToPixelsConverter x:Key="OffsetToPixelsConverter"/>
-        <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
-    </UserControl.Resources>
-    
-    <Grid Background="#474747" AllowDrop="True">
-        <i:Interaction.Triggers>
-            <i:EventTrigger EventName="DragEnter">
-                <common:EventToCommand Command="{Binding DragGameObjectEnter}"
-                                    PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
+            <Grid Height="35" HorizontalAlignment="Stretch"/>
 
-            <i:EventTrigger EventName="DragOver">
-                <common:EventToCommand Command="{Binding DragGameObjectOver}"
-                                    PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
+            <heel_editor:HeelEditorView Height="60" HorizontalAlignment="Stretch"/>
 
-            <i:EventTrigger EventName="Drop">
-                <common:EventToCommand Command="{Binding DropGameObject}"
-                                    PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
-        </i:Interaction.Triggers>
-        
-        <!--road-->
-        <StackPanel VerticalAlignment="Center"
-                    HorizontalAlignment="Stretch" Height="50" 
-                    Orientation="Vertical">
+            <Grid Height="35" HorizontalAlignment="Stretch"/>
 
-            <Rectangle Height="2" HorizontalAlignment="Stretch" 
-                       Fill="Orange"/>
-            
-            <Rectangle Height="46" HorizontalAlignment="Stretch" 
-                       Fill="Transparent"/>
-            
-            <Rectangle Height="2" HorizontalAlignment="Stretch" 
-                       Fill="Orange"/>
-        </StackPanel>
-
-        <!--billboards-->
-        <ItemsControl ItemsSource="{Binding GameObjects}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas IsItemsHost="True" x:Name="MainCanvas"
-                            local:TrackEditorVM.MainCanvas="{Binding ElementName=MainCanvas}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseMove">
-                                <common:EventToCommand Command="{Binding MoveGameObject}"
-                                    PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-
-                            <i:EventTrigger EventName="MouseLeftButtonUp">
-                                <common:EventToCommand Command="{Binding FinishMoveGameObject}"
-                                    PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Canvas>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-
-            <ItemsControl.ItemContainerStyle>
-                <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding RoadDistance, 
-                        Converter={StaticResource DistanceToPixelsConverter}}"/>
-
-                    <Setter Property="Canvas.Bottom" Value="{Binding Offset, 
-                        Converter={StaticResource OffsetToPixelsConverter}}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Rectangle Width="10" Height="20" 
-                               Margin="-5, 0, 0, -10" Fill="Orange">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseLeftButtonDown">
-                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}
-                                    , Path=Data.StartMoveGameObject}"
-                                    PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-
-                            <i:EventTrigger EventName="MouseMove">
-                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}
-                                    , Path=Data.MoveGameObject}"
-                                    PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                            
-                            <i:EventTrigger EventName="MouseLeftButtonUp">
-                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}
-                                    , Path=Data.FinishMoveGameObject}"
-                                    PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-
-                            <i:EventTrigger EventName="MouseRightButtonDown">
-                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}
-                                    , Path=Data.RemoveGameObject}"
-                                    PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Rectangle>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <billboard_editor:BillboardEditorView Height="200" HorizontalAlignment="Stretch"/>
+        </cc:TimelineView>
     </Grid>
 </UserControl>

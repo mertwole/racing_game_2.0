@@ -5,7 +5,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Editor
+namespace Editor.CustomControls
 {
     [ContentProperty("Children")]
     public partial class TimelineView : UserControl

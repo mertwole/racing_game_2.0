@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Editor.HeelEditor
+namespace Editor.TrackEditor.HeelEditor
 {
     public class HeelKeypoint : INotifyPropertyChanged
     {

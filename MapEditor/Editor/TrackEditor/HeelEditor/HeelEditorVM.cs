@@ -7,7 +7,7 @@ using System.Windows.Media;
 using System.Collections.Generic;
 using Editor.Common;
 
-namespace Editor.HeelEditor
+namespace Editor.TrackEditor.HeelEditor
 {
     class HeelEditorVM : INotifyPropertyChanged
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Editor.CurvatureEditor
+namespace Editor.TrackEditor.CurvatureEditor
 {
     public partial class CurvatureEditorView : UserControl
     {

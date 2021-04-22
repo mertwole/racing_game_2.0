@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Editor.CurvatureEditor
+namespace Editor.TrackEditor.CurvatureEditor
 {
     public class Curvature
     {

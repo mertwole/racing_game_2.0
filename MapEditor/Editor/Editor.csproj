@@ -69,20 +69,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BillboardEditor\BillboardEditorView.xaml.cs">
-      <DependentUpon>BillboardEditorView.xaml</DependentUpon>
+    <Compile Include="ColliderEditor\ColliderEditorModel.cs" />
+    <Compile Include="ColliderEditor\ColliderEditorView.xaml.cs">
+      <DependentUpon>ColliderEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BillboardEditor\InfiniteGridView.xaml.cs">
+    <Compile Include="ColliderEditor\ColliderEditorVM.cs" />
+    <Compile Include="CustomControls\InfiniteGridView.xaml.cs">
       <DependentUpon>InfiniteGridView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\BindingProxy.cs" />
     <Compile Include="Common\ChildFinder.cs" />
     <Compile Include="FileManager\CallCheckSelected.cs" />
-    <Compile Include="CurvatureEditor\CurvatureEditorModel.cs" />
-    <Compile Include="CurvatureEditor\CurvatureEditorView.xaml.cs">
+    <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorModel.cs" />
+    <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorView.xaml.cs">
       <DependentUpon>CurvatureEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CurvatureEditor\CurvatureEditorVM.cs" />
+    <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorVM.cs" />
     <Compile Include="Common\DoubleInputValidationRule.cs" />
     <Compile Include="Common\EventToCommand.cs" />
     <Compile Include="FileManager\FileManagerModel.cs" />
@@ -90,30 +92,35 @@
       <DependentUpon>FileManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="FileManager\FileManagerVM.cs" />
-    <Compile Include="HeelEditor\HeelEditorModel.cs" />
-    <Compile Include="HeelEditor\HeelEditorView.xaml.cs">
+    <Compile Include="TrackEditor\HeelEditor\HeelEditorModel.cs" />
+    <Compile Include="TrackEditor\HeelEditor\HeelEditorView.xaml.cs">
       <DependentUpon>HeelEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="HeelEditor\HeelEditorVM.cs" />
-    <Compile Include="HeelEditor\ListToPathSegmentCollectionConverter.cs" />
+    <Compile Include="TrackEditor\HeelEditor\HeelEditorVM.cs" />
+    <Compile Include="TrackEditor\HeelEditor\ListToPathSegmentCollectionConverter.cs" />
     <Compile Include="Common\RelayCommand.cs" />
-    <Compile Include="TimelineView.xaml.cs">
+    <Compile Include="CustomControls\TimelineView.xaml.cs">
       <DependentUpon>TimelineView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TrackEditor\BillboardEditor\BillboardEditorModel.cs" />
+    <Compile Include="TrackEditor\BillboardEditor\BillboardEditorView.xaml.cs">
+      <DependentUpon>BillboardEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TrackEditor\BillboardEditor\BillboardEditorVM.cs" />
     <Compile Include="TrackEditor\TrackEditorModel.cs" />
     <Compile Include="TrackEditor\TrackEditorView.xaml.cs">
       <DependentUpon>TrackEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\TrackEditorVM.cs" />
-    <Page Include="BillboardEditor\BillboardEditorView.xaml">
+    <Page Include="ColliderEditor\ColliderEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BillboardEditor\InfiniteGridView.xaml">
+    <Page Include="CustomControls\InfiniteGridView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CurvatureEditor\CurvatureEditorView.xaml">
+    <Page Include="TrackEditor\CurvatureEditor\CurvatureEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -121,7 +128,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="HeelEditor\HeelEditorView.xaml">
+    <Page Include="TrackEditor\HeelEditor\HeelEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,7 +144,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="TimelineView.xaml">
+    <Page Include="CustomControls\TimelineView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TrackEditor\BillboardEditor\BillboardEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

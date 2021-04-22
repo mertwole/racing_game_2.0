@@ -11,7 +11,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Editor.BillboardEditor
+namespace Editor.CustomControls
 {
     public class UIElementWpapper : INotifyPropertyChanged
     {
@@ -78,7 +78,7 @@ namespace Editor.BillboardEditor
             throw new NotImplementedException();
     }
 
-    public class ObservableGrid : Grid
+    class ObservableGrid : Grid
     {
         public delegate void ChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved);
         public event ChildrenChanged OnChildrenChanged;
@@ -95,7 +95,6 @@ namespace Editor.BillboardEditor
     {
         // Offset in pixels relative to center.
         Point fieldOffset = new Point(0, 0);
-
         double pixelsInUnit = 30;
 
         ObservableCollection<UIElementWpapper> childrenWrapped = new ObservableCollection<UIElementWpapper>();
@@ -287,6 +286,29 @@ namespace Editor.BillboardEditor
             moveStartPoint = e.GetPosition(GridCanvas);
             prevOffset = fieldOffset;
             Mouse.Capture(movingField ? GridCanvas : null);
+        }
+
+        #endregion
+
+        #region Zoom
+
+        private void Zoom(object sender, MouseWheelEventArgs e)
+        {
+            var old_pixelsInUnit = pixelsInUnit;
+            pixelsInUnit *= (1.0 + e.Delta * 0.001);
+
+            if (pixelsInUnit < 10.0)
+                pixelsInUnit = 10.0;
+            else if (pixelsInUnit > 200.0)
+                pixelsInUnit = 200.0;
+
+            var scale_factor = pixelsInUnit / old_pixelsInUnit;
+            fieldOffset = new Point(fieldOffset.X * scale_factor, fieldOffset.Y * scale_factor);
+
+            UpdateGrid();
+
+            foreach (var child in childrenWrapped)
+                child.Update();
         }
 
         #endregion
