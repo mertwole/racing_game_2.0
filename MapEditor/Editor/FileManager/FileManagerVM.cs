@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
+using System.Globalization;
+using System;
+using System.Windows.Data;
 
 namespace Editor.FileManager
 {
@@ -35,6 +38,19 @@ namespace Editor.FileManager
                     return search;
             }
             return null;
+        }
+    }
+
+    public class CallCheckSelected : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (value as IContent).CheckSelected();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 

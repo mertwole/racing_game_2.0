@@ -10,6 +10,8 @@
         xmlns:collider_editor="clr-namespace:Editor.ColliderEditor"
         xmlns:fm="clr-namespace:Editor.FileManager"
 
+        xmlns:billboard_creator="clr-namespace:Editor.BillboardCreator"
+        
         mc:Ignorable="d"
         Title="MainWindow" Height="540" Width="960"
         WindowStartupLocation="CenterScreen"
@@ -27,7 +29,9 @@
             <!--<ColumnDefinition Width="*"/>-->
         </Grid.ColumnDefinitions>
 
-        <track_editor:TrackEditorView Grid.Column="0"/>
+        <!--<track_editor:TrackEditorView Grid.Column="0"/>-->
+
+        <billboard_creator:BillboardCreatorView/>
 
         <!--<collider_editor:ColliderEditorView/>-->
 

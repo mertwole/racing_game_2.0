@@ -1,4 +1,5 @@
 ﻿using Editor.Common;
+using Editor.GameEntities;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -9,7 +10,7 @@ namespace Editor.TrackEditor.CurvatureEditor
 {
     public class CurvatureEditorVM : INotifyPropertyChanged
     {
-        CurvatureEditorModel model = new CurvatureEditorModel();
+        CurvatureEditorModel model = TrackEditorModel.CurvatureEditorModel;
 
         public bool IsCurvatureNotEditing { get => !model.IsCurvatureEditing; }
         public ObservableCollection<Curvature> Curvatures { get => model.Curvatures; }

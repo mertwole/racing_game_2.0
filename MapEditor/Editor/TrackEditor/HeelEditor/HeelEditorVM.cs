@@ -6,12 +6,33 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Collections.Generic;
 using Editor.Common;
+using System.Windows.Data;
+using System.Globalization;
+using System;
+using Editor.GameEntities;
 
 namespace Editor.TrackEditor.HeelEditor
 {
+    public class ListToPathSegmentCollectionConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var list = value as List<LineSegment>;
+            PathSegmentCollection collection = new PathSegmentCollection(list.Count);
+            foreach (var seg in list)
+                collection.Add(seg);
+            return collection;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     class HeelEditorVM : INotifyPropertyChanged
     {
-        static HeelEditorModel model = new HeelEditorModel();
+        static HeelEditorModel model = TrackEditorModel.HeelEditorModel;
 
         public ObservableCollection<HeelKeypoint> Keypoints { get => model.Keypoints; }
 

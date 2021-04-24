@@ -1,4 +1,5 @@
 ﻿using Editor.Common;
+using Editor.GameEntities;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -30,7 +31,7 @@ namespace Editor.TrackEditor.BillboardEditor
 
     public class BillboardEditorVM : INotifyPropertyChanged
     {
-        BillboardEditorModel model = new BillboardEditorModel();
+        BillboardEditorModel model = TrackEditorModel.BillboardEditorModel;
 
         public ObservableCollection<GameObject> GameObjects { get => model.GameObjects; }
 

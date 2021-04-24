@@ -1,26 +1,10 @@
-﻿using System;
+﻿using Editor.GameEntities;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Editor.TrackEditor.CurvatureEditor
 {
-    public class Curvature
-    {
-        public const double MIN_LENGTH = 10.0;
-
-        public double Start { get; set; }
-        public double Length { get; set; }
-        public double End { get => Start + Length; }
-        public double Value { get; set; }
-
-        public Curvature(double start, double length, double value)
-        {
-            Start = start;
-            Length = length;
-            Value = value;
-        }
-    }
-
     public class CurvatureEditorModel : INotifyPropertyChanged
     {
         ObservableCollection<Curvature> curvatures = new ObservableCollection<Curvature>();
@@ -132,16 +116,18 @@ namespace Editor.TrackEditor.CurvatureEditor
             curvatures.Insert(curvatureEditingId, curvature_ed);
         }
 
+        const double MIN_CURVATURE_LENGTH = 10.0;
+
         public void FinishCurvatureEdit()
         {
-            if (curvatures[curvatureEditingId].Length < Curvature.MIN_LENGTH)
+            if (curvatures[curvatureEditingId].Length < MIN_CURVATURE_LENGTH)
                 curvatures.RemoveAt(curvatureEditingId);
             IsCurvatureEditing = false;
         }
 
         public void FinishCurvatureCreate()
         {
-            if (curvatures[curvatureEditingId].Length < Curvature.MIN_LENGTH)
+            if (curvatures[curvatureEditingId].Length < MIN_CURVATURE_LENGTH)
                 curvatures.RemoveAt(curvatureEditingId);
             IsCurvatureEditing = false;
         }

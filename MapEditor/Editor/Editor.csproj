@@ -69,6 +69,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BillboardCreator\BillboardCreatorModel.cs" />
+    <Compile Include="BillboardCreator\BillboardCreatorView.xaml.cs">
+      <DependentUpon>BillboardCreatorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BillboardCreator\BillboardCreatorVM.cs" />
     <Compile Include="ColliderEditor\ColliderEditorModel.cs" />
     <Compile Include="ColliderEditor\ColliderEditorView.xaml.cs">
       <DependentUpon>ColliderEditorView.xaml</DependentUpon>
@@ -79,7 +84,11 @@
     </Compile>
     <Compile Include="Common\BindingProxy.cs" />
     <Compile Include="Common\ChildFinder.cs" />
-    <Compile Include="FileManager\CallCheckSelected.cs" />
+    <Compile Include="GameEntities\Billboard.cs" />
+    <Compile Include="GameEntities\Collider.cs" />
+    <Compile Include="GameEntities\Curvature.cs" />
+    <Compile Include="GameEntities\GameObject.cs" />
+    <Compile Include="GameEntities\HeelKeypoint.cs" />
     <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorModel.cs" />
     <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorView.xaml.cs">
       <DependentUpon>CurvatureEditorView.xaml</DependentUpon>
@@ -97,7 +106,6 @@
       <DependentUpon>HeelEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\HeelEditor\HeelEditorVM.cs" />
-    <Compile Include="TrackEditor\HeelEditor\ListToPathSegmentCollectionConverter.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="CustomControls\TimelineView.xaml.cs">
       <DependentUpon>TimelineView.xaml</DependentUpon>
@@ -112,6 +120,10 @@
       <DependentUpon>TrackEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\TrackEditorVM.cs" />
+    <Page Include="BillboardCreator\BillboardCreatorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ColliderEditor\ColliderEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
