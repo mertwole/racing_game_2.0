@@ -19,5 +19,10 @@ namespace Editor.BillboardCreator
             var img = (Bitmap)Bitmap.FromFile(file_path);
             billboard.AddLOD(new LOD(img));
         }
+
+        public void DeleteLOD(int id)
+        {
+            billboard.RemoveLOD(id);
+        }
     }
 }

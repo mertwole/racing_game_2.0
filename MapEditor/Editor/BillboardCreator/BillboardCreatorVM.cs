@@ -39,6 +39,22 @@ namespace Editor.BillboardCreator
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 
+    public class CheckSelectionVisiblity : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) =>
+            (int)values[0] == (int)values[1] ? Visibility.Visible : Visibility.Hidden;
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => null;
+    }
+
+    public class CheckSelectionVisiblityInverted : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) =>
+            (int)values[0] == (int)values[1] ? Visibility.Hidden : Visibility.Visible;
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => null;
+    }
+
     public class BillboardCreatorVM : INotifyPropertyChanged
     {
         BillboardCreatorModel model = new BillboardCreatorModel();
@@ -47,6 +63,15 @@ namespace Editor.BillboardCreator
         public Visibility DropRegionsVisiblity { get => draggedImage == null ? Visibility.Hidden : Visibility.Visible; }
 
         UIElement draggedImage;
+
+        int selectionId = -1;
+        public int SelectionId { 
+            get => selectionId; 
+            private set{ 
+                selectionId = value; 
+                OnPropertyChanged("SelectionId"); 
+            } 
+        }
 
         public ICommand StartDragImage
         {
@@ -59,7 +84,12 @@ namespace Editor.BillboardCreator
                     draggedImage = args.Source as UIElement;
                     OnPropertyChanged("DropRegionsVisiblity");
 
-                    DragDrop.DoDragDrop(draggedImage, draggedImage, DragDropEffects.Move);
+                    var dd = DragDrop.DoDragDrop(draggedImage, draggedImage, DragDropEffects.Move);
+                    if(dd == DragDropEffects.None)
+                    {
+                        draggedImage = null;
+                        OnPropertyChanged("DropRegionsVisiblity");
+                    }
                 }
             });
         }
@@ -93,6 +123,8 @@ namespace Editor.BillboardCreator
 
                 model.MoveLODTo(src_id, dest_id);
 
+                SelectionId = dest_id;
+
                 draggedImage = null;
                 OnPropertyChanged("DropRegionsVisiblity");
             });
@@ -107,6 +139,8 @@ namespace Editor.BillboardCreator
 
                 model.MoveLODTo(src_id, LODs.Count - 1);
 
+                SelectionId = LODs.Count - 1;
+
                 draggedImage = null;
                 OnPropertyChanged("DropRegionsVisiblity");
             });
@@ -117,8 +151,36 @@ namespace Editor.BillboardCreator
             get => new RelayCommand((e) =>
             {
                 var openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "Image Files(*.BMP; *.PNG) | *.BMP;*.PNG";
+                openFileDialog.Multiselect = true;
                 if (openFileDialog.ShowDialog() == true)
-                    model.AddLOD(openFileDialog.FileName);
+                    foreach(var file_name in openFileDialog.FileNames)
+                        model.AddLOD(file_name);
+            });
+        }
+
+        public ICommand SelectLOD
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as MouseEventArgs;
+
+                var selection = GetParentContentPresenter(args.Source);
+                SelectionId = ItemsControl.GetAlternationIndex(selection);
+
+                Keyboard.Focus(args.Source as IInputElement);
+                args.Handled = true;
+            });
+        }
+
+        public ICommand DeleteSelected
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as KeyboardEventArgs;
+
+                if (args.KeyboardDevice.IsKeyDown(Key.Delete))
+                    model.DeleteLOD(selectionId);
             });
         }
 

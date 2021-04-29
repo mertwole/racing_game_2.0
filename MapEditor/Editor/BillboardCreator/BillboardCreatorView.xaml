@@ -14,6 +14,8 @@
 
     <UserControl.Resources>
         <local:BitmapToImageSourceConverter x:Key="BmpToImgSrcConverter"/>
+        <local:CheckSelectionVisiblity x:Key="SelectionVisiblityConverter"/>
+        <local:CheckSelectionVisiblityInverted x:Key="SelectionVisiblityInvConverter"/>
     </UserControl.Resources>
 
     <ScrollViewer Name="Root">
@@ -27,7 +29,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
+                        <StackPanel Name="TemplateRoot">
                             <!--drop region-->
                             <Grid Height="20" Visibility="Visible" AllowDrop="True"
                                   Background="Transparent">
@@ -45,7 +47,8 @@
                             </Grid>
 
                             <Grid Width="{Binding Width}" Height="{Binding Height}" 
-                                  HorizontalAlignment="Left" Background="Transparent">
+                                  HorizontalAlignment="Left" Background="Transparent"
+                                  Focusable="True" IsEnabled="True">
 
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseMove">
@@ -53,11 +56,32 @@
                                             Command="{Binding ElementName=Root, Path=DataContext.StartDragImage}" 
                                             PassEventArgsToCommand="True"/>
                                     </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                
-                                <Border BorderBrush="#474747" BorderThickness="2" Margin="-2"/>
 
-                                <Image Source="{Binding Image, Converter={StaticResource BmpToImgSrcConverter}}"/>
+                                    <i:EventTrigger EventName="MouseDown">
+                                        <common:EventToCommand
+                                            Command="{Binding ElementName=Root, Path=DataContext.SelectLOD}" 
+                                            PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+
+                                    <i:EventTrigger EventName="KeyDown">
+                                        <common:EventToCommand
+                                            Command="{Binding ElementName=Root, Path=DataContext.DeleteSelected}" 
+                                            PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+
+                                <Border BorderBrush="#474747" BorderThickness="2" Margin="-2"/>
+                                <Border BorderBrush="Orange" BorderThickness="2" Margin="-2">
+                                    <Border.Visibility>
+                                        <MultiBinding Converter="{StaticResource SelectionVisiblityConverter}">
+                                            <Binding ElementName="Root" Path="DataContext.SelectionId"/>
+                                            <Binding RelativeSource="{RelativeSource TemplatedParent}"
+                                                     Path="(ItemsControl.AlternationIndex)"/>
+                                        </MultiBinding>
+                                    </Border.Visibility>
+                                </Border>
+
+                                <Image Source="{Binding Image, Converter={StaticResource BmpToImgSrcConverter}}" IsHitTestVisible="False"/>
                             </Grid>
                         </StackPanel>
                     </DataTemplate>
