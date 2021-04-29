@@ -4,15 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.BillboardCreator"
+             xmlns:common="clr-namespace:Editor.Common"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <local:BillboardCreatorVM/>
     </UserControl.DataContext>
 
-    <ScrollViewer>
-        <StackPanel>
-            <ItemsControl ItemsSource="{Binding LODs}">
+    <UserControl.Resources>
+        <local:BitmapToImageSourceConverter x:Key="BmpToImgSrcConverter"/>
+    </UserControl.Resources>
+
+    <ScrollViewer Name="Root">
+        <StackPanel Margin="20, 0, 0, 20">
+            <ItemsControl ItemsSource="{Binding LODs}" AlternationCount="1000">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel IsItemsHost="True"/>
@@ -21,22 +27,73 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Rectangle Width="{Binding Width}" Height="{Binding Height}" 
-                               Fill="#474747" Margin="10"
-                               RadiusX="10" RadiusY="10"/>
+                        <StackPanel>
+                            <!--drop region-->
+                            <Grid Height="20" Visibility="Visible" AllowDrop="True"
+                                  Background="Transparent">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Drop">
+                                        <common:EventToCommand 
+                                            Command="{Binding ElementName=Root, Path=DataContext.DropImage}"
+                                            PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+
+                                <Rectangle  Stroke="#474747" StrokeThickness="2" 
+                                    Height="4" HorizontalAlignment="Stretch" Margin="-2, 0, 20, 0"
+                                    Visibility="{Binding ElementName=Root, Path=DataContext.DropRegionsVisiblity}"/>
+                            </Grid>
+
+                            <Grid Width="{Binding Width}" Height="{Binding Height}" 
+                                  HorizontalAlignment="Left" Background="Transparent">
+
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseMove">
+                                        <common:EventToCommand
+                                            Command="{Binding ElementName=Root, Path=DataContext.StartDragImage}" 
+                                            PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                
+                                <Border BorderBrush="#474747" BorderThickness="2" Margin="-2"/>
+
+                                <Image Source="{Binding Image, Converter={StaticResource BmpToImgSrcConverter}}"/>
+                            </Grid>
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <Grid>
-                <Rectangle Width="100" Height="100" 
-                           RadiusX="10" RadiusY="10"
-                           Margin="10"
-                           Fill="#474747"/>
+            <StackPanel>
+                <!--drop region-->
+                <Grid Height="20" Visibility="Visible" AllowDrop="True"
+                                  Background="Transparent">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Drop">
+                            <common:EventToCommand 
+                                            Command="{Binding ElementName=Root, Path=DataContext.DropImageToEnd}"
+                                            PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
 
-                <Rectangle Width="6" Height="40" Fill="#303030" RadiusX="3" RadiusY="3"/>
-                <Rectangle Width="40" Height="6" Fill="#303030" RadiusX="3" RadiusY="3"/>
-            </Grid>
+                    <Rectangle  Stroke="#474747" StrokeThickness="2" 
+                        Height="4" HorizontalAlignment="Stretch" Margin="-2, 0, 20, 0"
+                        Visibility="{Binding ElementName=Root, Path=DataContext.DropRegionsVisiblity}"/>
+                </Grid>
+
+                <Grid HorizontalAlignment="Left" Width="100" Height="100" Background="Transparent">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <common:EventToCommand Command="{Binding AddLOD}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    
+                    <Border BorderBrush="#474747" BorderThickness="2" Margin="-2"/>
+
+                    <Rectangle Width="6" Height="40" Fill="#474747" RadiusX="3" RadiusY="3"/>
+                    <Rectangle Width="40" Height="6" Fill="#474747" RadiusX="3" RadiusY="3"/>
+                </Grid>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
