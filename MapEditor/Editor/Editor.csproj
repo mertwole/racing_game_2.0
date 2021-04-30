@@ -75,11 +75,6 @@
       <DependentUpon>BillboardCreatorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BillboardCreator\BillboardCreatorVM.cs" />
-    <Compile Include="ColliderEditor\ColliderEditorModel.cs" />
-    <Compile Include="ColliderEditor\ColliderEditorView.xaml.cs">
-      <DependentUpon>ColliderEditorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ColliderEditor\ColliderEditorVM.cs" />
     <Compile Include="CustomControls\InfiniteGridView.xaml.cs">
       <DependentUpon>InfiniteGridView.xaml</DependentUpon>
     </Compile>
@@ -90,6 +85,15 @@
     <Compile Include="GameEntities\Curvature.cs" />
     <Compile Include="GameEntities\GameObject.cs" />
     <Compile Include="GameEntities\HeelKeypoint.cs" />
+    <Compile Include="GameEntities\Vector3.cs" />
+    <Compile Include="GameObjectEditor\BillboardList\BillboardListModel.cs" />
+    <Compile Include="GameObjectEditor\BillboardList\BillboardListView.xaml.cs">
+      <DependentUpon>BillboardListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GameObjectEditor\BillboardList\BillboardListVM.cs" />
+    <Compile Include="GameObjectEditor\GameObjectEditorView.xaml.cs">
+      <DependentUpon>GameObjectEditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorModel.cs" />
     <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorView.xaml.cs">
       <DependentUpon>CurvatureEditorView.xaml</DependentUpon>
@@ -125,11 +129,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ColliderEditor\ColliderEditorView.xaml">
+    <Page Include="CustomControls\InfiniteGridView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CustomControls\InfiniteGridView.xaml">
+    <Page Include="GameObjectEditor\BillboardList\BillboardListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GameObjectEditor\GameObjectEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

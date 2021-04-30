@@ -7,7 +7,7 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
         
         xmlns:track_editor="clr-namespace:Editor.TrackEditor"        
-        xmlns:collider_editor="clr-namespace:Editor.ColliderEditor"
+        xmlns:go_editor="clr-namespace:Editor.GameObjectEditor"
         xmlns:fm="clr-namespace:Editor.FileManager"
 
         xmlns:billboard_creator="clr-namespace:Editor.BillboardCreator"
@@ -26,15 +26,17 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
-            <ColumnDefinition Width="*"/>
+            <!--<ColumnDefinition Width="*"/>-->
         </Grid.ColumnDefinitions>
 
         <!--<track_editor:TrackEditorView Grid.Column="0"/>-->
 
-        <billboard_creator:BillboardCreatorView/>
+        <!--<billboard_creator:BillboardCreatorView/>-->
 
         <!--<collider_editor:ColliderEditorView/>-->
 
-        <fm:FileManagerView Grid.Column="1"/>
+        <go_editor:GameObjectEditorView/>
+
+        <!--<fm:FileManagerView Grid.Column="1"/>-->
     </Grid>
 </Window>

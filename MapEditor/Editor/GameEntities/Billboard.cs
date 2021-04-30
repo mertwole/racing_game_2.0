@@ -23,9 +23,22 @@ namespace Editor.GameEntities
     {
         public ObservableCollection<LOD> LODs { get; private set; }
 
+        Vector3 position = new Vector3(0, 0, 0);
+        public Vector3 Position { get => position; }
+
+        float width = 1;
+        public float Width { get => width; }
+
         public Billboard()
         {
             LODs = new ObservableCollection<LOD>();
+        }
+
+        public Billboard(Billboard prototype)
+        {
+            LODs = prototype.LODs;
+            position = prototype.position;
+            width = prototype.width;
         }
 
         public void AddLOD(LOD lod)
