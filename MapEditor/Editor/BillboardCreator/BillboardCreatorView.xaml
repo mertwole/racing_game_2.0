@@ -13,7 +13,7 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <local:BitmapToImageSourceConverter x:Key="BmpToImgSrcConverter"/>
+        <common:BitmapToImageSourceConverter x:Key="BmpToImgSrcConverter"/>
         <local:CheckSelectionVisiblity x:Key="SelectionVisiblityConverter"/>
         <local:CheckSelectionVisiblityInverted x:Key="SelectionVisiblityInvConverter"/>
     </UserControl.Resources>

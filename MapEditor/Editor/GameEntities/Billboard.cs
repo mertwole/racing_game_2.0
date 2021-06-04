@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace Editor.GameEntities
@@ -24,10 +25,23 @@ namespace Editor.GameEntities
         public ObservableCollection<LOD> LODs { get; private set; }
 
         Vector3 position = new Vector3(0, 0, 0);
-        public Vector3 Position { get => position; }
+        public Vector3 Position { 
+            get => position;  
+            set { position = value;  }
+        }
 
-        float width = 1;
-        public float Width { get => width; }
+        // Bacause Two-way binding not works for structs.
+        public double X { get => position.X; set => position.X = value; }
+        public double Y { get => position.Y; set => position.Y = value; }
+        public double Z { get => position.Z; set => position.Z = value; }
+
+        public Bitmap Preview { get => LODs[0].Image; }
+
+        double width = 1;
+        public double Width { 
+            get => width;
+            set { width = value;  }
+        }
 
         public Billboard()
         {
@@ -50,6 +64,12 @@ namespace Editor.GameEntities
         {
             if(id >= 0 && id < LODs.Count) 
                 LODs.RemoveAt(id);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -75,6 +75,7 @@
       <DependentUpon>BillboardCreatorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BillboardCreator\BillboardCreatorVM.cs" />
+    <Compile Include="Common\BitmapToImageSourceConverter.cs" />
     <Compile Include="CustomControls\InfiniteGridView.xaml.cs">
       <DependentUpon>InfiniteGridView.xaml</DependentUpon>
     </Compile>
