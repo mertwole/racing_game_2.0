@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Globalization;
 using System;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace Editor.FileManager
 {
@@ -52,6 +53,25 @@ namespace Editor.FileManager
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class FileIconEnumToImage : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var file_icon = (FileIcon)value;
+
+            switch(file_icon)
+            {
+                case FileIcon.Billboard: { return new BitmapImage(new Uri("pack://application:,,,/Editor;component/Images/billboard_icon.png")); }
+                case FileIcon.GameObject: { return new BitmapImage(new Uri("pack://application:,,,/Editor;component/Images/gameobject_icon.png")); }
+                case FileIcon.Other: { return new BitmapImage(new Uri("pack://application:,,,/Editor;component/Images/other_icon.png")); }
+
+                default: { throw new Exception("Unexpected FileIcon variant"); }
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 
     public class FileManagerVM : INotifyPropertyChanged
@@ -359,28 +379,55 @@ namespace Editor.FileManager
 
         #region Context menu
 
+        TreeViewItem GetTreeViewItemByContextMenuItem(MenuItem item)
+        {
+            var context_menu = item.Parent as ContextMenu;
+            var context_menu_tvi = context_menu.PlacementTarget as FrameworkElement;
+            while (true)
+            {
+                if (context_menu_tvi is TreeViewItem)
+                    break;
+                else
+                    context_menu_tvi = VisualTreeHelper
+                    .GetParent(context_menu_tvi) as FrameworkElement;
+            }
+
+            return context_menu_tvi as TreeViewItem;
+        }
+
         public ICommand NewFolderContextMenu
         {
             get => new RelayCommand((e) =>
             {
                 var args = e as RoutedEventArgs;
+                var context_menu_tvi = GetTreeViewItemByContextMenuItem(args.Source as MenuItem);
 
-                var menu_item = args.Source as MenuItem;
-                var context_menu = menu_item.Parent as ContextMenu;
-                context_menu.Visibility = Visibility.Hidden;
-
-                var context_menu_tvi = context_menu.PlacementTarget as FrameworkElement;
-                while (true)
-                {
-                    if (context_menu_tvi is TreeViewItem)
-                        break;
-                    else
-                        context_menu_tvi = VisualTreeHelper
-                        .GetParent(context_menu_tvi) as FrameworkElement;
-                }
-
-                var location = (context_menu_tvi as TreeViewItem).Header;
+                var location = context_menu_tvi.Header;
                 model.NewFolder(location as IContent);
+            });
+        }
+
+        public ICommand NewBillboardContextMenu
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+                var context_menu_tvi = GetTreeViewItemByContextMenuItem(args.Source as MenuItem);
+
+                var location = context_menu_tvi.Header;
+                model.NewBillboard(location as IContent);
+            });
+        }
+
+        public ICommand NewGameObjectContextMenu
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+                var context_menu_tvi = GetTreeViewItemByContextMenuItem(args.Source as MenuItem);
+
+                var location = context_menu_tvi.Header;
+                model.NewGameObject(location as IContent);
             });
         }
 

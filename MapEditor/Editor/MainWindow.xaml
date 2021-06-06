@@ -25,18 +25,18 @@
         FontFamily="{DynamicResource MaterialDesignFont}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4*"/>
-            <!--<ColumnDefinition Width="*"/>-->
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!--<track_editor:TrackEditorView Grid.Column="0"/>-->
 
-        <!--<billboard_creator:BillboardCreatorView/>-->
+        <billboard_creator:BillboardCreatorView/>
 
         <!--<collider_editor:ColliderEditorView/>-->
 
-        <go_editor:GameObjectEditorView/>
+        <!--<go_editor:GameObjectEditorView/>-->
 
-        <!--<fm:FileManagerView Grid.Column="1"/>-->
+        <fm:FileManagerView Grid.Column="1"/>
     </Grid>
 </Window>

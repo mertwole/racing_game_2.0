@@ -16,6 +16,7 @@
     <UserControl.Resources>
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
         <local:CallCheckSelected x:Key="CallCheckSelected"/>
+        <local:FileIconEnumToImage x:Key="FileIconEnumToImage"/>
 
         <Style TargetType="{x:Type TextBox}" x:Key="DefaultTextBoxStyle">
             <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -301,7 +302,7 @@
 
                                 <ContextMenu.Template>
                                     <ControlTemplate>
-                                        <Grid Background="#474747" IsItemsHost="True"/>
+                                        <StackPanel Background="#474747" IsItemsHost="True"/>
                                     </ControlTemplate>
                                 </ContextMenu.Template>
 
@@ -316,6 +317,36 @@
 
                                     <MenuItem.Header>
                                         <TextBlock Text="new folder" Margin="4" Foreground="White" 
+                                                   FontSize="12"/>
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                
+                                <MenuItem Focusable="False">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                            Path=Data.NewBillboardContextMenu}" 
+                                                            PassEventArgsToCommand="True"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+
+                                    <MenuItem.Header>
+                                        <TextBlock Text="new billboard" Margin="4" Foreground="White" 
+                                                   FontSize="12"/>
+                                    </MenuItem.Header>
+                                </MenuItem>
+
+                                <MenuItem Focusable="False">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                            Path=Data.NewGameObjectContextMenu}" 
+                                                            PassEventArgsToCommand="True"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+
+                                    <MenuItem.Header>
+                                        <TextBlock Text="new game object" Margin="4" Foreground="White" 
                                                    FontSize="12"/>
                                     </MenuItem.Header>
                                 </MenuItem>
@@ -336,7 +367,8 @@
                                                 UpdateSourceTrigger=Explicit}"/>
                         </Grid>
 
-                        <md:PackIcon Kind="Folder" VerticalAlignment="Center"/>
+                        <!--icon-->
+                        <md:PackIcon Kind="Folder" Width="20" Height="20" VerticalAlignment="Center"/>
 
                         <StackPanel Width="5"/>
 
@@ -430,7 +462,9 @@
                                                 UpdateSourceTrigger=Explicit}"/>
                         </Grid>
 
-                        <md:PackIcon Kind="FileImage" VerticalAlignment="Center"/>
+                        <!--icon-->
+                        <Image Width="20" Height="20"
+                            Source="{Binding Icon, Converter={StaticResource FileIconEnumToImage}}"/>
 
                         <StackPanel Width="5"/>
 

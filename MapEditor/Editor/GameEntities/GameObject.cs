@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
+﻿using Editor.FileManager;
+using System.ComponentModel;
 
 namespace Editor.GameEntities
 {
-    public class GameObject : INotifyPropertyChanged
+    public class GameObject : SaveableEntity, INotifyPropertyChanged
     {
         double roadDistance;
         public double RoadDistance
@@ -26,6 +27,11 @@ namespace Editor.GameEntities
             }
         }
 
+        public GameObject()
+        {
+
+        }
+
         public GameObject(double road_distance, double offset)
         {
             RoadDistance = road_distance;
@@ -33,5 +39,10 @@ namespace Editor.GameEntities
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public FileIcon GetIcon()
+        {
+            return FileIcon.GameObject;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Editor.GameEntities;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Editor.FileManager
@@ -12,17 +13,17 @@ namespace Editor.FileManager
         public FileManagerModel()
         {
             root.AddContent(new Folder("1", root));
-            root.AddContent(new File("2", root));
+            root.AddContent(new File("2", root, new Billboard()));
 
-            (root.Contents[0] as Folder).AddContent(new File("3", root.Contents[0]));
-            (root.Contents[0] as Folder).AddContent(new File("4", root.Contents[0]));
+            (root.Contents[0] as Folder).AddContent(new File("3", root.Contents[0], new GameObject()));
+            (root.Contents[0] as Folder).AddContent(new File("4", root.Contents[0], new GameObject()));
 
             var folder = new Folder("5", root.Contents[0]);
-            folder.AddContent(new File("6", folder));
+            folder.AddContent(new File("6", folder, new Billboard()));
             folder.Parent = root.Contents[0];
             (root.Contents[0] as Folder).AddContent(folder);
 
-            (root.Contents[0] as Folder).AddContent(new File("7", root.Contents[0]));
+            (root.Contents[0] as Folder).AddContent(new File("7", root.Contents[0], new Billboard()));
         }
 
         public void DeleteContent(IContent content)
@@ -80,6 +81,18 @@ namespace Editor.FileManager
             MoveContent(folder, location);
         }
 
+        public void NewBillboard(IContent location)
+        {
+            var file = new File("billboard", null, new Billboard());
+            MoveContent(file, location);
+        }
+
+        public void NewGameObject(IContent location)
+        {
+            var file = new File("game object", null, new GameObject());
+            MoveContent(file, location);
+        }
+
         public void RenameItem(IContent item, string new_name)
         {
             item.Name = new_name;
@@ -131,6 +144,13 @@ namespace Editor.FileManager
         }
     }
 
+    public enum FileIcon
+    {
+        Billboard,
+        GameObject,
+        Other
+    }
+
     public class File : IContent, INotifyPropertyChanged
     {
         string name;
@@ -138,10 +158,16 @@ namespace Editor.FileManager
 
         public IContent Parent { get; set; }
 
-        public File(string name, IContent parent)
+        SaveableEntity content;
+        public SaveableEntity Content { get => content; set => content = value; }
+
+        public FileIcon Icon { get => content.GetIcon(); }
+
+        public File(string name, IContent parent, SaveableEntity content)
         {
             this.name = name;
             Parent = parent;
+            this.content = content;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

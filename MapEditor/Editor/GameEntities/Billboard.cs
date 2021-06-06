@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Editor.FileManager;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 
@@ -20,7 +21,7 @@ namespace Editor.GameEntities
         }
     }
 
-    public class Billboard
+    public class Billboard : SaveableEntity
     {
         public ObservableCollection<LOD> LODs { get; private set; }
 
@@ -70,6 +71,11 @@ namespace Editor.GameEntities
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public FileIcon GetIcon()
+        {
+            return FileIcon.Billboard;
         }
     }
 }

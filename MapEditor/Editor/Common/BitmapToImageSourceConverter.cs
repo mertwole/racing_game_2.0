@@ -9,10 +9,8 @@ namespace Editor.Common
 {
     public class BitmapToImageSourceConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public static BitmapImage Convert(Bitmap bitmap)
         {
-            var bitmap = value as Bitmap;
-
             using (MemoryStream memory = new MemoryStream())
             {
                 bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
@@ -27,6 +25,10 @@ namespace Editor.Common
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+             Convert(value as Bitmap);
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => 
+            null;
     }
 }
