@@ -93,9 +93,12 @@
       <DependentUpon>BillboardListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameObjectEditor\BillboardList\BillboardListVM.cs" />
+    <Compile Include="GameObjectEditor\GameObjectEditorModel.cs" />
     <Compile Include="GameObjectEditor\GameObjectEditorView.xaml.cs">
       <DependentUpon>GameObjectEditorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameObjectEditor\GameObjectEditorVM.cs" />
+    <Compile Include="ModelLocator.cs" />
     <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorModel.cs" />
     <Compile Include="TrackEditor\CurvatureEditor\CurvatureEditorView.xaml.cs">
       <DependentUpon>CurvatureEditorView.xaml</DependentUpon>

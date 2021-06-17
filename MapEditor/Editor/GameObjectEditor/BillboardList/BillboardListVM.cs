@@ -5,7 +5,7 @@ namespace Editor.GameObjectEditor.BillboardList
 {
     public class BillboardListVM
     {
-        BillboardListModel model = new BillboardListModel();
+        BillboardListModel model = ModelLocator.GetModel<BillboardListModel>();
 
         public ObservableCollection<Billboard> Billboards { get => model.Billboards; }
     }

@@ -8,6 +8,10 @@
              xmlns:billboard_list="clr-namespace:Editor.GameObjectEditor.BillboardList"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <local:GameObjectEditorVM/>
+    </UserControl.DataContext>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -21,11 +25,17 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <cc:InfiniteGridView Grid.Row="0"/>
+            <!--front view grid-->
+            <cc:InfiniteGridView Grid.Row="0" ClipToBounds="True"
+                                 x:Name="FrontViewGrid"
+                                 local:GameObjectEditorVM.FrontViewGrid="{Binding ElementName=FrontViewGrid}"/>
 
             <Rectangle Grid.Row="1" Fill="Orange"/>
 
-            <cc:InfiniteGridView Grid.Row="2"/>
+            <!--left view grid-->
+            <cc:InfiniteGridView Grid.Row="2" ClipToBounds="True"
+                                 x:Name="LeftViewGrid"
+                                 local:GameObjectEditorVM.FrontViewGrid="{Binding ElementName=LeftViewGrid}"/>
         </Grid>
 
         <billboard_list:BillboardListView Grid.Column="1"/>

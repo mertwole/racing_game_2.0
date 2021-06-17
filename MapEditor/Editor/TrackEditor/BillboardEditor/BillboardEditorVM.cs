@@ -31,7 +31,7 @@ namespace Editor.TrackEditor.BillboardEditor
 
     public class BillboardEditorVM : INotifyPropertyChanged
     {
-        BillboardEditorModel model = TrackEditorModel.BillboardEditorModel;
+        BillboardEditorModel model = ModelLocator.GetModel<BillboardEditorModel>();
 
         public ObservableCollection<GameObject> GameObjects { get => model.GameObjects; }
 

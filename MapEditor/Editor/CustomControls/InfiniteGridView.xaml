@@ -29,11 +29,11 @@
 
             <ItemsControl.ItemContainerStyle>
                 <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding Position.X
+                    <Setter Property="Canvas.Left" Value="{Binding LeftBottomPosition.X
                         , Converter={StaticResource WorldXToScreenSpaceConverter}
                         , ConverterParameter={StaticResource Proxy}}"/>
 
-                    <Setter Property="Canvas.Bottom" Value="{Binding Position.Y
+                    <Setter Property="Canvas.Bottom" Value="{Binding LeftBottomPosition.Y
                         , Converter={StaticResource WorldYToScreenSpaceConverter}
                         , ConverterParameter={StaticResource Proxy}}"/>
                 </Style>

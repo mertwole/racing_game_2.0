@@ -1,10 +1,15 @@
 ﻿using Editor.FileManager;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace Editor.GameEntities
 {
     public class GameObject : SaveableEntity, INotifyPropertyChanged
     {
+        ObservableCollection<Billboard> billboards = new ObservableCollection<Billboard>();
+        public ObservableCollection<Billboard> Billboards { get => billboards; }
+
         double roadDistance;
         public double RoadDistance
         {
@@ -29,7 +34,16 @@ namespace Editor.GameEntities
 
         public GameObject()
         {
+            Bitmap bmp = new Bitmap(200, 100);
+            var g = Graphics.FromImage(bmp);
+            g.Clear(Color.FromArgb(255, 100, 200, 50));
 
+            var bb = new Billboard();
+            bb.AddLOD(new LOD(bmp));
+
+            billboards.Add(new Billboard(bb));
+            billboards.Add(new Billboard(bb));
+            billboards.Add(new Billboard(bb));
         }
 
         public GameObject(double road_distance, double offset)

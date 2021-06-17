@@ -20,6 +20,10 @@ namespace Editor.CustomControls
 
         public Point Position { get; set; }
         public Size Size { get; set; }
+        public Point LeftBottomPosition
+        {
+            get => (Point)(Position - new Point(Size.Width * 0.5, Size.Height * 0.5));
+        }
 
         public UIElementWpapper(Point position, Size size, UIElement element)
         {
@@ -32,6 +36,7 @@ namespace Editor.CustomControls
         public void Update()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LeftBottomPosition"));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Size"));
         }
     }

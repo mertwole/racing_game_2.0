@@ -31,7 +31,7 @@ namespace Editor.BillboardCreator
 
     public class BillboardCreatorVM : INotifyPropertyChanged
     {
-        BillboardCreatorModel model = new BillboardCreatorModel();
+        BillboardCreatorModel model = ModelLocator.GetModel<BillboardCreatorModel>();
         public ObservableCollection<LOD> LODs { get => model.LODs; }
 
         public Visibility DropRegionsVisiblity { get => draggedImage == null ? Visibility.Hidden : Visibility.Visible; }

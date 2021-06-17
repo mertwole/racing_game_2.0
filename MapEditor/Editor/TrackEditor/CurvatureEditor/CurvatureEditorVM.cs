@@ -10,7 +10,7 @@ namespace Editor.TrackEditor.CurvatureEditor
 {
     public class CurvatureEditorVM : INotifyPropertyChanged
     {
-        CurvatureEditorModel model = TrackEditorModel.CurvatureEditorModel;
+        CurvatureEditorModel model = ModelLocator.GetModel<CurvatureEditorModel>();
 
         public bool IsCurvatureNotEditing { get => !model.IsCurvatureEditing; }
         public ObservableCollection<Curvature> Curvatures { get => model.Curvatures; }

@@ -32,7 +32,7 @@ namespace Editor.TrackEditor.HeelEditor
 
     class HeelEditorVM : INotifyPropertyChanged
     {
-        static HeelEditorModel model = TrackEditorModel.HeelEditorModel;
+        static HeelEditorModel model = ModelLocator.GetModel<HeelEditorModel>();
 
         public ObservableCollection<HeelKeypoint> Keypoints { get => model.Keypoints; }
 

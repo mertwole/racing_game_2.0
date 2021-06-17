@@ -76,7 +76,7 @@ namespace Editor.FileManager
 
     public class FileManagerVM : INotifyPropertyChanged
     {
-        FileManagerModel model = new FileManagerModel();
+        FileManagerModel model = ModelLocator.GetModel<FileManagerModel>();
 
         public ObservableCollection<IContent> Hierarchy { get => model.Hierarchy; }
 
