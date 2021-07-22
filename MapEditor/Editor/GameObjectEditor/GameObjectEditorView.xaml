@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.GameObjectEditor"
              xmlns:cc="clr-namespace:Editor.CustomControls"
+             xmlns:common="clr-namespace:Editor.Common"
              xmlns:billboard_list="clr-namespace:Editor.GameObjectEditor.BillboardList"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -12,6 +13,10 @@
         <local:GameObjectEditorVM/>
     </UserControl.DataContext>
 
+    <UserControl.Resources>
+        <common:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
+    </UserControl.Resources>
+    
     <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -29,19 +34,32 @@
                                  ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
                 <cc:InfiniteGridView.ItemsTemplate>
                     <DataTemplate>
-                        <Grid cc:InfiniteGridView.WorldWidth="{Binding Width}"
-                              cc:InfiniteGridView.WorldHeight="{Binding Width}"
-                              cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                              cc:InfiniteGridView.WorldPositionY="{Binding Y}"
-                              Background="Red">
-                        </Grid>
+                        <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                                cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                                cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                                cc:InfiniteGridView.WorldPositionY="{Binding Y}"
+                                Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                                Stretch="Fill"/>
                     </DataTemplate>
                 </cc:InfiniteGridView.ItemsTemplate>
             </cc:InfiniteGridView>
 
             <Rectangle Grid.Row="1" Fill="Orange"/>
 
-            <cc:InfiniteGridView ClipToBounds="True" Grid.Row="2"/>
+            <cc:InfiniteGridView ClipToBounds="True" 
+                                 Grid.Row="2"
+                                 ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
+                <cc:InfiniteGridView.ItemsTemplate>
+                    <DataTemplate>
+                        <Image  cc:InfiniteGridView.WorldWidth="0.1"
+                                cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                                cc:InfiniteGridView.WorldPositionX="{Binding Z}"
+                                cc:InfiniteGridView.WorldPositionY="{Binding Y}"
+                                Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                                Stretch="Fill"/>
+                    </DataTemplate>
+                </cc:InfiniteGridView.ItemsTemplate>
+            </cc:InfiniteGridView>
         </Grid>
 
         <billboard_list:BillboardListView Grid.Column="1"/>

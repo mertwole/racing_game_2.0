@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
@@ -172,16 +174,62 @@ namespace Editor.CustomControls
             InitializeComponent();
 
             GridCanvas.Loaded += (s, e) => UpdateGrid();
+            MainItemsControl.Loaded += (s, e) => MainItemsControlLoaded();
+        }
+
+        void MainItemsControlLoaded()
+        {
+            if(MainItemsControl.ItemsSource is INotifyCollectionChanged items_source)
+            {
+                items_source.CollectionChanged += ItemsChanged;
+                ItemsLoaded(MainItemsControl.ItemsSource);
+            }
+        }
+
+        Dictionary<INotifyPropertyChanged, PropertyChangedEventHandler> itemChangedEventHandlers 
+            = new Dictionary<INotifyPropertyChanged, PropertyChangedEventHandler>();
+
+        void ItemsLoaded(IEnumerable collection)
+        {
+            foreach(var item in collection)
+                if(item is INotifyPropertyChanged item_observable)
+                {
+                    PropertyChangedEventHandler handler = (s, ev) => TriggerUpdateItemsInGrid();
+                    item_observable.PropertyChanged += handler;
+                    itemChangedEventHandlers.Add(item_observable, handler);
+                }
+        }
+
+        void ItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach (var added in e.NewItems)
+                if (added is INotifyPropertyChanged added_observable)
+                {
+                    PropertyChangedEventHandler handler = (s, ev) => TriggerUpdateItemsInGrid();
+                    added_observable.PropertyChanged += handler;
+                    itemChangedEventHandlers.Add(added_observable, handler);
+                }
+                    
+            foreach(var removed in e.OldItems)
+                if (removed is INotifyPropertyChanged removed_observable)
+                {
+                    var handler = itemChangedEventHandlers[removed_observable];
+                    removed_observable.PropertyChanged -= handler;
+                    itemChangedEventHandlers.Remove(removed_observable);
+                }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         // Property that changes every time the grid moves/scales so property multibound to it
         // will update every time the grid needs to be redrawn.
-        public bool GridUpdated { get => true; }
+        public bool UpdateItemsInGrid { get => true; }
+
+        void TriggerUpdateItemsInGrid() =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("UpdateItemsInGrid"));
 
         void UpdateGrid()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("GridUpdated"));
+            TriggerUpdateItemsInGrid();
 
             GridCanvas.Children.Clear();
             // Vert lines.
@@ -222,8 +270,8 @@ namespace Editor.CustomControls
             }
         }
 
-        private void Zoom(object sender, MouseWheelEventArgs e)
-        {
+        void Zoom(object sender, MouseWheelEventArgs e)
+         {
             var old_pixelsInUnit = pixelsInUnit;
             pixelsInUnit *= 1.0 + e.Delta * 0.001;
 
@@ -242,7 +290,7 @@ namespace Editor.CustomControls
         Point moveStartPoint;
         Point prevOffset;
 
-        private void MoveField(object sender, MouseEventArgs e)
+        void MoveField(object sender, MouseEventArgs e)
         {
             if (!movingField) return;
 
@@ -253,7 +301,7 @@ namespace Editor.CustomControls
             UpdateGrid();
         }
 
-        private void StartEndMoveField(object sender, MouseButtonEventArgs e)
+        void StartEndMoveField(object sender, MouseButtonEventArgs e)
         {
             movingField = e.MiddleButton == MouseButtonState.Pressed;
             moveStartPoint = e.GetPosition(GridCanvas);

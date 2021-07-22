@@ -21,28 +21,42 @@ namespace Editor.GameEntities
         }
     }
 
-    public class Billboard : SaveableEntity
+    public class Billboard : SaveableEntity, INotifyPropertyChanged
     {
         public ObservableCollection<LOD> LODs { get; private set; }
 
         Vector3 position = new Vector3(0, 0, 0);
         public Vector3 Position { 
             get => position;  
-            set { position = value;  }
+            set 
+            { 
+                position = value; 
+                OnPropertyChanged("Position");
+                OnPropertyChanged("X");
+                OnPropertyChanged("Y");
+                OnPropertyChanged("Z");
+            }
         }
 
         // Bacause Two-way binding not works for structs.
-        public double X { get => position.X; set => position.X = value; }
-        public double Y { get => position.Y; set => position.Y = value; }
-        public double Z { get => position.Z; set => position.Z = value; }
+        public double X { get => position.X; set { position.X = value; OnPropertyChanged("X"); OnPropertyChanged("Position"); } }
+        public double Y { get => position.Y; set { position.Y = value; OnPropertyChanged("Y"); OnPropertyChanged("Position"); } }
+        public double Z { get => position.Z; set { position.Z = value; OnPropertyChanged("Z"); OnPropertyChanged("Position"); } }
 
         public Bitmap Preview { get => LODs[0].Image; }
 
         double width = 1;
         public double Width { 
             get => width;
-            set { width = value;  }
+            set 
+            { 
+                width = value; 
+                OnPropertyChanged("Width");
+                OnPropertyChanged("Height");
+            }
         }
+
+        public double Height { get => width / (double)Preview.Width * (double)Preview.Height; }
 
         public Billboard()
         {

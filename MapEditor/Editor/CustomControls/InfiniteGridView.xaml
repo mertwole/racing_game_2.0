@@ -35,7 +35,7 @@
                             <MultiBinding Converter="{StaticResource CanvasLeftConverter}">
                                 <Binding ElementName="MainGrid" Path="DataContext"/>
                                 <Binding Path="."/>
-                                <Binding ElementName="MainGrid" Path="DataContext.GridUpdated"/>
+                                <Binding ElementName="MainGrid" Path="DataContext.UpdateItemsInGrid"/>
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>
@@ -45,7 +45,7 @@
                             <MultiBinding Converter="{StaticResource CanvasBottomConverter}">
                                 <Binding ElementName="MainGrid" Path="DataContext"/>
                                 <Binding Path="."/>
-                                <Binding ElementName="MainGrid" Path="DataContext.GridUpdated"/>
+                                <Binding ElementName="MainGrid" Path="DataContext.UpdateItemsInGrid"/>
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>
@@ -55,7 +55,7 @@
                             <MultiBinding Converter="{StaticResource CanvasWidthConverter}">
                                 <Binding ElementName="MainGrid" Path="DataContext"/>
                                 <Binding Path="."/>
-                                <Binding ElementName="MainGrid" Path="DataContext.GridUpdated"/>
+                                <Binding ElementName="MainGrid" Path="DataContext.UpdateItemsInGrid"/>
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>
@@ -65,7 +65,7 @@
                             <MultiBinding Converter="{StaticResource CanvasHeightConverter}">
                                 <Binding ElementName="MainGrid" Path="DataContext"/>
                                 <Binding Path="."/>
-                                <Binding ElementName="MainGrid" Path="DataContext.GridUpdated"/>
+                                <Binding ElementName="MainGrid" Path="DataContext.UpdateItemsInGrid"/>
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>

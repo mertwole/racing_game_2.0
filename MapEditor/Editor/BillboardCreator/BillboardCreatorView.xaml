@@ -19,6 +19,13 @@
     </UserControl.Resources>
 
     <ScrollViewer Name="Root">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="KeyDown">
+                <common:EventToCommand  Command="{Binding ElementName=Root, Path=DataContext.ApplyChanges}"
+                                        PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        
         <StackPanel Margin="20, 0, 0, 20">
             <ItemsControl ItemsSource="{Binding LODs}" AlternationCount="1000">
                 <ItemsControl.ItemsPanel>
@@ -70,8 +77,10 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
 
-                                <Border BorderBrush="#474747" BorderThickness="2" Margin="-2"/>
-                                <Border BorderBrush="Orange" BorderThickness="2" Margin="-2">
+                                <Border BorderBrush="#474747" BorderThickness="2" 
+                                        Margin="-2" CornerRadius="10" ClipToBounds="True"/>
+                                <Border BorderBrush="Orange" BorderThickness="2" 
+                                        Margin="-2" CornerRadius="10" ClipToBounds="True">
                                     <Border.Visibility>
                                         <MultiBinding Converter="{StaticResource SelectionVisiblityConverter}">
                                             <Binding ElementName="Root" Path="DataContext.SelectionId"/>
@@ -81,7 +90,13 @@
                                     </Border.Visibility>
                                 </Border>
 
-                                <Image Source="{Binding Image, Converter={StaticResource BmpToImgSrcConverter}}" IsHitTestVisible="False"/>
+                                <Border x:Name="ImageRounder" CornerRadius="10" Background="White"/>
+                                <Image Source="{Binding Image, Converter={StaticResource BmpToImgSrcConverter}}" 
+                                           IsHitTestVisible="False">
+                                    <Image.OpacityMask>
+                                        <VisualBrush Visual="{Binding ElementName=ImageRounder}"/>
+                                    </Image.OpacityMask>
+                                </Image>
                             </Grid>
                         </StackPanel>
                     </DataTemplate>
@@ -112,7 +127,7 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     
-                    <Border BorderBrush="#474747" BorderThickness="2" Margin="-2"/>
+                    <Border BorderBrush="#474747" BorderThickness="2" Margin="-2" CornerRadius="10"/>
 
                     <Rectangle Width="6" Height="40" Fill="#474747" RadiusX="3" RadiusY="3"/>
                     <Rectangle Width="40" Height="6" Fill="#474747" RadiusX="3" RadiusY="3"/>

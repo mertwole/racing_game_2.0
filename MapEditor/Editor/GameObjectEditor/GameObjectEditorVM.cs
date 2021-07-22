@@ -1,5 +1,4 @@
-﻿using Editor.CustomControls;
-using Editor.GameEntities;
+﻿using Editor.GameEntities;
 namespace Editor.GameObjectEditor
 {
     public class GameObjectEditorVM

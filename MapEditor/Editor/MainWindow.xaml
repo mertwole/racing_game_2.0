@@ -9,7 +9,6 @@
         xmlns:track_editor="clr-namespace:Editor.TrackEditor"        
         xmlns:go_editor="clr-namespace:Editor.GameObjectEditor"
         xmlns:fm="clr-namespace:Editor.FileManager"
-
         xmlns:billboard_creator="clr-namespace:Editor.BillboardCreator"
         
         mc:Ignorable="d"
@@ -32,8 +31,6 @@
         <!--<track_editor:TrackEditorView Grid.Column="0"/>-->
 
         <!--<billboard_creator:BillboardCreatorView/>-->
-
-        <!--<collider_editor:ColliderEditorView/>-->
 
         <go_editor:GameObjectEditorView/>
 
