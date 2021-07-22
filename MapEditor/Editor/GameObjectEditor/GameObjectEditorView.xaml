@@ -12,7 +12,7 @@
         <local:GameObjectEditorVM/>
     </UserControl.DataContext>
 
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
@@ -25,17 +25,23 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <!--front view grid-->
-            <cc:InfiniteGridView Grid.Row="0" ClipToBounds="True"
-                                 x:Name="FrontViewGrid"
-                                 local:GameObjectEditorVM.FrontViewGrid="{Binding ElementName=FrontViewGrid}"/>
+            <cc:InfiniteGridView ClipToBounds="True" 
+                                 ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
+                <cc:InfiniteGridView.ItemsTemplate>
+                    <DataTemplate>
+                        <Grid cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                              cc:InfiniteGridView.WorldHeight="{Binding Width}"
+                              cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                              cc:InfiniteGridView.WorldPositionY="{Binding Y}"
+                              Background="Red">
+                        </Grid>
+                    </DataTemplate>
+                </cc:InfiniteGridView.ItemsTemplate>
+            </cc:InfiniteGridView>
 
             <Rectangle Grid.Row="1" Fill="Orange"/>
 
-            <!--left view grid-->
-            <cc:InfiniteGridView Grid.Row="2" ClipToBounds="True"
-                                 x:Name="LeftViewGrid"
-                                 local:GameObjectEditorVM.FrontViewGrid="{Binding ElementName=LeftViewGrid}"/>
+            <cc:InfiniteGridView ClipToBounds="True" Grid.Row="2"/>
         </Grid>
 
         <billboard_list:BillboardListView Grid.Column="1"/>

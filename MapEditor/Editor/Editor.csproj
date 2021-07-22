@@ -76,11 +76,11 @@
     </Compile>
     <Compile Include="BillboardCreator\BillboardCreatorVM.cs" />
     <Compile Include="Common\BitmapToImageSourceConverter.cs" />
+    <Compile Include="Common\BindingProxy.cs" />
+    <Compile Include="Common\ChildFinder.cs" />
     <Compile Include="CustomControls\InfiniteGridView.xaml.cs">
       <DependentUpon>InfiniteGridView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\BindingProxy.cs" />
-    <Compile Include="Common\ChildFinder.cs" />
     <Compile Include="GameEntities\Billboard.cs" />
     <Compile Include="GameEntities\Collider.cs" />
     <Compile Include="GameEntities\Curvature.cs" />

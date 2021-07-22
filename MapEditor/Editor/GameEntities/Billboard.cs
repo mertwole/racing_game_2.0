@@ -51,7 +51,7 @@ namespace Editor.GameEntities
 
         public Billboard(Billboard prototype)
         {
-            LODs = prototype.LODs;
+            LODs = new ObservableCollection<LOD>(prototype.LODs);
             position = prototype.position;
             width = prototype.width;
         }

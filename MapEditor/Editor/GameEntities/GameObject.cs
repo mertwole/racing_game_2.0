@@ -40,10 +40,15 @@ namespace Editor.GameEntities
 
             var bb = new Billboard();
             bb.AddLOD(new LOD(bmp));
+            bb.Width = 1;
+            bb.X = 2;
 
-            billboards.Add(new Billboard(bb));
-            billboards.Add(new Billboard(bb));
-            billboards.Add(new Billboard(bb));
+            var bb2 = new Billboard(bb);
+            bb2.Width = 2;
+            bb2.X = -2;
+
+            billboards.Add(bb);
+            billboards.Add(bb2);
         }
 
         public GameObject(double road_distance, double offset)

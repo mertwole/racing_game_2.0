@@ -352,9 +352,9 @@ impl Road {
             };
 
             let ground_color = if line_render_data.is_horz_line { 
-                Rgb([0, 255, 0]) 
+                Rgb([242, 206, 75]) 
             } else { 
-                Rgb([0, 160, 0])
+                Rgb([222, 142, 38])
             };
 
             if left_px > 0 {

@@ -1,237 +1,194 @@
-﻿using Editor.Common;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace Editor.CustomControls
 {
-    public class UIElementWpapper : INotifyPropertyChanged
+    #region Coordinate converters
+    // These converters convert control with attached properties
+    // InfiniteGridView:Width, InfiniteGridView:Height, InfiniteGridView:WorldPositionX, InfiniteGridView:WorldPositionY
+    // to local canvas coords.
+    // First parameter is InfiniteGridView instance and 2nd is current billboard.
+    public class CanvasLeftConverter : IMultiValueConverter
     {
-        UIElement element;
-        public UIElement Element { get => element; }
-
-        public Point Position { get; set; }
-        public Size Size { get; set; }
-        public Point LeftBottomPosition
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            get => (Point)(Position - new Point(Size.Width * 0.5, Size.Height * 0.5));
+            var grid_view = value[0] as InfiniteGridView;
+            var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            // Because previous command returns ContentPresenter.
+            if (VisualTreeHelper.GetChildrenCount(element) != 0)
+                element = VisualTreeHelper.GetChild(element, 0);
+            return grid_view.GetLocalLeft(element);
         }
 
-        public UIElementWpapper(Point position, Size size, UIElement element)
-        {
-            this.element = element;
-            Position = position;
-            Size = size;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void Update()
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Position"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LeftBottomPosition"));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Size"));
-        }
-    }
-
-    public class WorldXToScreenSpaceConverter : IValueConverter
-    {
-        // Parameter is binding proxy.
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var data_context = (parameter as BindingProxy).Data as InfiniteGridView;
-            if (data_context == null) return 0;
-            return data_context.WorldToScreenSpace(new Point((double)value, 0)).X;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => 
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
             throw new NotImplementedException();
     }
 
-    public class WorldYToScreenSpaceConverter : IValueConverter
+    public class CanvasBottomConverter : IMultiValueConverter
     {
-        // Parameter is binding proxy.
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            var data_context = (parameter as BindingProxy).Data as InfiniteGridView;
-            if (data_context == null) return 0;
-            return data_context.WorldToScreenSpace(new Point(0, (double)value)).Y;
+            var grid_view = value[0] as InfiniteGridView;
+            var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            // Because previous command returns ContentPresenter.
+            if (VisualTreeHelper.GetChildrenCount(element) != 0) 
+                element = VisualTreeHelper.GetChild(element, 0);
+
+            return grid_view.GetLocalBottom(element);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
             throw new NotImplementedException();
     }
 
-    public class WorldSizeToScreenSpaceConverter : IValueConverter
+    public class CanvasWidthConverter : IMultiValueConverter
     {
-        // Parameter is binding proxy.
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            var data_context = (parameter as BindingProxy).Data as InfiniteGridView;
-            if (data_context == null) return 0;
-            return data_context.WorldSizeToScreenSpace((double)value);
+            var grid_view = value[0] as InfiniteGridView;
+            var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            // Because previous command returns ContentPresenter.
+            if (VisualTreeHelper.GetChildrenCount(element) != 0)
+                element = VisualTreeHelper.GetChild(element, 0);
+            return grid_view.GetLocalWidth(element);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
             throw new NotImplementedException();
     }
 
-    class ObservableGrid : Grid
+    public class CanvasHeightConverter : IMultiValueConverter
     {
-        public delegate void ChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved);
-        public event ChildrenChanged OnChildrenChanged;
-
-        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            OnChildrenChanged.Invoke(visualAdded, visualRemoved);
-            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+            var grid_view = value[0] as InfiniteGridView;
+            var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            // Because previous command returns ContentPresenter.
+            if (VisualTreeHelper.GetChildrenCount(element) != 0)
+                element = VisualTreeHelper.GetChild(element, 0);
+            return grid_view.GetLocalHeight(element);
         }
-    }
 
-    [ContentProperty("Children")]
-    public partial class InfiniteGridView : UserControl
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
+            throw new NotImplementedException();
+    }
+    #endregion
+
+    public partial class InfiniteGridView : UserControl, INotifyPropertyChanged
     {
         // Offset in pixels relative to center.
         Point fieldOffset = new Point(0, 0);
         double pixelsInUnit = 30;
 
-        ObservableCollection<UIElementWpapper> childrenWrapped = new ObservableCollection<UIElementWpapper>();
-        public ObservableCollection<UIElementWpapper> ChildrenWpapped { get => childrenWrapped; }
+        #region Methods for conversion to local coords
+        public double GetLocalLeft(DependencyObject element)
+        {
+            var position = new Point(GetWorldPositionX(element), GetWorldPositionY(element));
+            var size = new Size(GetWorldWidth(element), GetWorldHeight(element));
+            var left_bottom = (Point)(position - new Point(size.Width * 0.5, size.Height * 0.5));
+            return WorldToScreenSpace(left_bottom).X;
+        }
 
-        public Point WorldToScreenSpace(Point world_pos) => 
-            new Point(world_pos.X * pixelsInUnit + fieldOffset.X + GridCanvas.ActualWidth * 0.5, 
+        public double GetLocalBottom(DependencyObject element)
+        {
+            var position = new Point(GetWorldPositionX(element), GetWorldPositionY(element));
+            var size = new Size(GetWorldWidth(element), GetWorldHeight(element));
+            var left_bottom = (Point)(position - new Point(size.Width * 0.5, size.Height * 0.5));
+            return WorldToScreenSpace(left_bottom).Y;
+        }
+
+        public double GetLocalWidth(DependencyObject element)
+        {
+            var width = GetWorldWidth(element);
+            return WorldSizeToScreenSpace(width);
+        }
+
+        public double GetLocalHeight(DependencyObject element)
+        {
+            var height = GetWorldHeight(element);
+            return WorldSizeToScreenSpace(height);
+        }
+        #endregion
+
+        public Point WorldToScreenSpace(Point world_pos) =>
+            new Point(world_pos.X * pixelsInUnit + fieldOffset.X + GridCanvas.ActualWidth * 0.5,
                 world_pos.Y * pixelsInUnit + fieldOffset.Y + GridCanvas.ActualHeight * 0.5);
 
         public double WorldSizeToScreenSpace(double world_size) =>
             world_size * pixelsInUnit;
 
-        // Children.
-        public static readonly DependencyPropertyKey ChildrenProperty =
-        DependencyProperty.RegisterReadOnly("Children",
-        typeof(UIElementCollection), typeof(InfiniteGridView), new PropertyMetadata());
-        public UIElementCollection Children {
-            get => (UIElementCollection)GetValue(ChildrenProperty.DependencyProperty);
-            private set => SetValue(ChildrenProperty, value);
-        }
-
         #region Attached properties
-
         // Attached X position.
         public static readonly DependencyProperty WorldPositionXProperty = DependencyProperty.RegisterAttached(
-        "WorldPositionX", typeof(double), typeof(InfiniteGridView), 
-        new FrameworkPropertyMetadata(0.0, WorldPositionXChanged));
+            "WorldPositionX", typeof(double), typeof(InfiniteGridView));
         public static void SetWorldPositionX(DependencyObject element, double value) =>
             element.SetValue(WorldPositionXProperty, value);
         public static double GetWorldPositionX(DependencyObject element) =>
             (double)element.GetValue(WorldPositionXProperty);
-        private static void WorldPositionXChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            var wrapper = (sender as FrameworkElement).Resources["UIElementWpapper"] as UIElementWpapper;
-            wrapper.Position = new Point((double)args.NewValue, wrapper.Position.Y);
-        }
         // Attached Y position.
         public static readonly DependencyProperty WorldPositionYProperty = DependencyProperty.RegisterAttached(
-        "WorldPositionY", typeof(double), typeof(InfiniteGridView), 
-        new FrameworkPropertyMetadata(0.0, WorldPositionYChanged));
+            "WorldPositionY", typeof(double), typeof(InfiniteGridView));
         public static void SetWorldPositionY(DependencyObject element, double value) =>
             element.SetValue(WorldPositionYProperty, value);
         public static double GetWorldPositionY(DependencyObject element) =>
             (double)element.GetValue(WorldPositionYProperty);
-        private static void WorldPositionYChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            var wrapper = (sender as FrameworkElement).Resources["UIElementWpapper"] as UIElementWpapper;
-            wrapper.Position = new Point(wrapper.Position.X, (double)args.NewValue);
-        }
         //Attached Width.
         public static readonly DependencyProperty WorldWidthProperty = DependencyProperty.RegisterAttached(
-        "WorldWidth", typeof(double), typeof(InfiniteGridView), 
-        new FrameworkPropertyMetadata(1.0, WorldWidthChanged));
+            "WorldWidth", typeof(double), typeof(InfiniteGridView));
         public static void SetWorldWidth(DependencyObject element, double value) =>
             element.SetValue(WorldWidthProperty, value);
         public static double GetWorldWidth(DependencyObject element) =>
             (double)element.GetValue(WorldWidthProperty);
-        private static void WorldWidthChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            var wrapper = (sender as FrameworkElement).Resources["UIElementWpapper"] as UIElementWpapper;
-            wrapper.Size = new Size((double)args.NewValue, wrapper.Size.Height);
-        }
         // Attached Height.
         public static readonly DependencyProperty WorldHeightProperty = DependencyProperty.RegisterAttached(
-        "WorldHeight", typeof(double), typeof(InfiniteGridView), 
-        new FrameworkPropertyMetadata(1.0, WorldHeightChanged));
+            "WorldHeight", typeof(double), typeof(InfiniteGridView));
         public static void SetWorldHeight(DependencyObject element, double value) =>
             element.SetValue(WorldHeightProperty, value);
         public static double GetWorldHeight(DependencyObject element) =>
             (double)element.GetValue(WorldHeightProperty);
-        private static void WorldHeightChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            var wrapper = (sender as FrameworkElement).Resources["UIElementWpapper"] as UIElementWpapper;
-            wrapper.Size = new Size(wrapper.Size.Width, (double)args.NewValue);
-        }
-
         #endregion
 
-        ObservableGrid invisibleChildParent = new ObservableGrid();
+        public static readonly DependencyProperty ItemsSourceProperety =
+            DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(InfiniteGridView));
+        public IEnumerable ItemsSource { get => itemsSource; set => itemsSource = value; }
+        IEnumerable itemsSource;
+        
+        public static readonly DependencyProperty ItemsTemplateProperety =
+            DependencyProperty.Register("ItemsTemplate", typeof(DataTemplate), typeof(InfiniteGridView));
+        public DataTemplate ItemsTemplate { get => itemsTemplate; set => itemsTemplate = value; }
+        DataTemplate itemsTemplate;
 
-        public static InfiniteGridView instance;
         public InfiniteGridView()
         {
-            InitializeComponent();
             DataContext = this;
+            InitializeComponent();
 
-            invisibleChildParent.DataContext = this;
-            Children = invisibleChildParent.Children;
-            invisibleChildParent.OnChildrenChanged += ChildrenChanged;
-
-            GridCanvas.Loaded += GridCanvasLoaded;
+            GridCanvas.Loaded += (s, e) => UpdateGrid();
         }
 
-        void GridCanvasLoaded(object sender, RoutedEventArgs e)
-        {
-            UpdateGrid();
-
-            foreach (var child in childrenWrapped)
-                child.Update();
-        }
-
-        void ChildrenChanged(DependencyObject added, DependencyObject removed)
-        {
-            if (added != null)
-            {
-                var size = new Size(GetWorldWidth(added), GetWorldHeight(added));
-                var position = new Point(GetWorldPositionX(added), GetWorldPositionY(added));
-                var new_element = new UIElementWpapper(position, size, added as UIElement);
-                // To change position and size in attached property changed events.
-                (added as FrameworkElement).Resources.Add("UIElementWpapper", new_element);
-                Children.Remove(added as UIElement);
-                childrenWrapped.Add(new_element);
-                var t = VisualTreeHelper.GetParent(added);
-                new_element.Update();
-            }
-
-            foreach (var wrapped_child in childrenWrapped)
-                if (wrapped_child.Element == removed)
-                {
-                    childrenWrapped.Remove(wrapped_child);
-                    return;
-                }
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        // Property that changes every time the grid moves/scales so property multibound to it
+        // will update every time the grid needs to be redrawn.
+        public bool GridUpdated { get => true; }
 
         void UpdateGrid()
         {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("GridUpdated"));
+
             GridCanvas.Children.Clear();
             // Vert lines.
             double min_visible_x = -fieldOffset.X - GridCanvas.ActualWidth * 0.5;
-            double first_line_offset = - min_visible_x % pixelsInUnit;
+            double first_line_offset = -min_visible_x % pixelsInUnit;
             double zero_line_x = GridCanvas.ActualWidth * 0.5 + fieldOffset.X;
-            for(double x = first_line_offset; x <= GridCanvas.ActualWidth; x += pixelsInUnit)
+            for (double x = first_line_offset; x <= GridCanvas.ActualWidth; x += pixelsInUnit)
             {
                 Line line = new Line();
                 line.X1 = x;
@@ -247,7 +204,7 @@ namespace Editor.CustomControls
             }
             // Horz lines.
             double min_visible_y = fieldOffset.Y - GridCanvas.ActualHeight * 0.5;
-            first_line_offset = - min_visible_y % pixelsInUnit;
+            first_line_offset = -min_visible_y % pixelsInUnit;
             double zero_line_y = GridCanvas.ActualHeight * 0.5 - fieldOffset.Y;
             for (double y = first_line_offset; y <= GridCanvas.ActualHeight; y += pixelsInUnit)
             {
@@ -265,42 +222,10 @@ namespace Editor.CustomControls
             }
         }
 
-        #region Field move
-
-        bool movingField = false;
-        Point moveStartPoint;
-        Point prevOffset;
-
-        private void MoveField(object sender, MouseEventArgs e)
-        {
-            if(movingField)
-            {
-                var mouse_pos = e.GetPosition(GridCanvas);
-                var delta = mouse_pos - moveStartPoint;
-                delta.Y *= -1;
-                fieldOffset = prevOffset + delta;
-                UpdateGrid();
-                foreach(var child in childrenWrapped)
-                    child.Update();
-            }   
-        }
-
-        private void StartEndMoveField(object sender, MouseButtonEventArgs e)
-        {
-            movingField = e.MiddleButton == MouseButtonState.Pressed;
-            moveStartPoint = e.GetPosition(GridCanvas);
-            prevOffset = fieldOffset;
-            Mouse.Capture(movingField ? GridCanvas : null);
-        }
-
-        #endregion
-
-        #region Zoom
-
         private void Zoom(object sender, MouseWheelEventArgs e)
         {
             var old_pixelsInUnit = pixelsInUnit;
-            pixelsInUnit *= (1.0 + e.Delta * 0.001);
+            pixelsInUnit *= 1.0 + e.Delta * 0.001;
 
             if (pixelsInUnit < 10.0)
                 pixelsInUnit = 10.0;
@@ -311,11 +236,29 @@ namespace Editor.CustomControls
             fieldOffset = new Point(fieldOffset.X * scale_factor, fieldOffset.Y * scale_factor);
 
             UpdateGrid();
-
-            foreach (var child in childrenWrapped)
-                child.Update();
         }
 
-        #endregion
+        bool movingField = false;
+        Point moveStartPoint;
+        Point prevOffset;
+
+        private void MoveField(object sender, MouseEventArgs e)
+        {
+            if (!movingField) return;
+
+            var mouse_pos = e.GetPosition(GridCanvas);
+            var delta = mouse_pos - moveStartPoint;
+            delta.Y *= -1;
+            fieldOffset = prevOffset + delta;
+            UpdateGrid();
+        }
+
+        private void StartEndMoveField(object sender, MouseButtonEventArgs e)
+        {
+            movingField = e.MiddleButton == MouseButtonState.Pressed;
+            moveStartPoint = e.GetPosition(GridCanvas);
+            prevOffset = fieldOffset;
+            Mouse.Capture(movingField ? GridCanvas : null);
+        }
     }
 }

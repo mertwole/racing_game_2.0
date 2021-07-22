@@ -1,4 +1,5 @@
 ﻿using Editor.GameEntities;
+using System.Drawing;
 
 namespace Editor.GameObjectEditor
 {
