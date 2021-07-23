@@ -51,6 +51,13 @@ namespace Editor.GameEntities
             billboards.Add(bb2);
         }
 
+        public GameObject(GameObject prototype)
+        {
+            roadDistance = prototype.roadDistance;
+            offset = prototype.offset;
+            billboards = new ObservableCollection<Billboard>(prototype.billboards);
+        }
+
         public GameObject(double road_distance, double offset)
         {
             RoadDistance = road_distance;

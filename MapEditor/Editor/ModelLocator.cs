@@ -2,7 +2,6 @@
 using Editor.FileManager;
 using Editor.GameEntities;
 using Editor.GameObjectEditor;
-using Editor.GameObjectEditor.BillboardList;
 using Editor.TrackEditor;
 using Editor.TrackEditor.BillboardEditor;
 using Editor.TrackEditor.CurvatureEditor;
@@ -22,10 +21,8 @@ namespace Editor
         static ModelLocator()
         {
             GameObjectEditorModel gameObjectEditorModel = new GameObjectEditorModel(new GameObject());
-            BillboardListModel billboardListModel = new BillboardListModel(gameObjectEditorModel);
 
             models.Add(typeof(GameObjectEditorModel), gameObjectEditorModel);
-            models.Add(typeof(BillboardListModel), billboardListModel);
 
 
             models.Add(typeof(BillboardEditorModel), new BillboardEditorModel());

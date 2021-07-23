@@ -12,7 +12,7 @@
         xmlns:billboard_creator="clr-namespace:Editor.BillboardCreator"
         
         mc:Ignorable="d"
-        Title="MainWindow" Height="540" Width="960"
+        Title="MainWindow" Height="1080" Width="1920"
         WindowStartupLocation="CenterScreen"
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"

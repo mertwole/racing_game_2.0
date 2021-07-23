@@ -88,11 +88,6 @@
     <Compile Include="GameEntities\HeelKeypoint.cs" />
     <Compile Include="GameEntities\SaveableEntity.cs" />
     <Compile Include="GameEntities\Vector3.cs" />
-    <Compile Include="GameObjectEditor\BillboardList\BillboardListModel.cs" />
-    <Compile Include="GameObjectEditor\BillboardList\BillboardListView.xaml.cs">
-      <DependentUpon>BillboardListView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GameObjectEditor\BillboardList\BillboardListVM.cs" />
     <Compile Include="GameObjectEditor\GameObjectEditorModel.cs" />
     <Compile Include="GameObjectEditor\GameObjectEditorView.xaml.cs">
       <DependentUpon>GameObjectEditorView.xaml</DependentUpon>
@@ -135,10 +130,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\InfiniteGridView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GameObjectEditor\BillboardList\BillboardListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

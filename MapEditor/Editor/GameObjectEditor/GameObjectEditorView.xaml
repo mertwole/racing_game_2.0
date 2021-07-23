@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Editor.GameObjectEditor"
              xmlns:cc="clr-namespace:Editor.CustomControls"
              xmlns:common="clr-namespace:Editor.Common"
-             xmlns:billboard_list="clr-namespace:Editor.GameObjectEditor.BillboardList"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -15,53 +15,120 @@
 
     <UserControl.Resources>
         <common:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
+        
+        <ControlTemplate x:Key="PerspectiveLabel" TargetType="ContentControl">
+            <Border CornerRadius="0, 6, 0, 0" Background="#474747" Width="72" Height="24"
+                    VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0">
+                <TextBlock Foreground="{StaticResource MaterialDesignDarkForeground}"
+                           Text="{TemplateBinding Content}" FontFamily="{StaticResource MaterialDesignFont}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontSize="16" FontWeight="Light"/>
+            </Border>
+        </ControlTemplate>
     </UserControl.Resources>
-    
+
     <Grid Name="MainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition Height="2"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="2"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
 
-            <cc:InfiniteGridView ClipToBounds="True" 
-                                 ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="KeyDown">
+                <common:EventToCommand  Command="{Binding ElementName=MainGrid, Path=DataContext.ApplyChanges}"
+                                    PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+        <!--add collider button-->
+        <Grid Width="40" Height="40" Margin="10" Panel.ZIndex="1"
+              VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Border Background="#484848" CornerRadius="10">
+                <Grid>
+                    <Rectangle Margin="6" StrokeThickness="2" StrokeDashCap="Flat"
+                               StrokeDashArray="4 2" Stroke="Orange"/>
+
+                    <Border Background="Orange" CornerRadius="6" Margin="4"
+                            Width="16" Height="16" HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom">
+                        <Grid>
+                            <Rectangle Fill="#303030" RadiusX="1" RadiusY="1"
+                                       Width="2" Height="12"/>
+                            <Rectangle Fill="#303030" RadiusX="1" RadiusY="1"
+                                       Width="12" Height="2"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+        
+        <!--top view-->
+        <Grid>
+            <cc:InfiniteGridView    ClipToBounds="True"
+                                    ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
                 <cc:InfiniteGridView.ItemsTemplate>
                     <DataTemplate>
-                        <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
-                                cc:InfiniteGridView.WorldHeight="{Binding Height}"
-                                cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                                cc:InfiniteGridView.WorldPositionY="{Binding Y}"
-                                Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                                Stretch="Fill"/>
+                        <Image  cc:InfiniteGridView.WorldHeight="0.1"
+                            cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Z}"
+                            Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                            Stretch="Fill"/>
                     </DataTemplate>
                 </cc:InfiniteGridView.ItemsTemplate>
             </cc:InfiniteGridView>
 
-            <Rectangle Grid.Row="1" Fill="Orange"/>
+            <ContentControl Template="{StaticResource PerspectiveLabel}" Content="top"/>
+        </Grid>
 
-            <cc:InfiniteGridView ClipToBounds="True" 
-                                 Grid.Row="2"
-                                 ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
+        <Rectangle Grid.Column="1" Fill="Orange"/>
+
+        <!--right view-->
+        <Grid Grid.Column="2">
+            <cc:InfiniteGridView    ClipToBounds="True" 
+                                    ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
                 <cc:InfiniteGridView.ItemsTemplate>
                     <DataTemplate>
                         <Image  cc:InfiniteGridView.WorldWidth="0.1"
-                                cc:InfiniteGridView.WorldHeight="{Binding Height}"
-                                cc:InfiniteGridView.WorldPositionX="{Binding Z}"
-                                cc:InfiniteGridView.WorldPositionY="{Binding Y}"
-                                Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                                Stretch="Fill"/>
+                            cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding Z}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"
+                            Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                            Stretch="Fill"/>
                     </DataTemplate>
                 </cc:InfiniteGridView.ItemsTemplate>
             </cc:InfiniteGridView>
-        </Grid>
 
-        <billboard_list:BillboardListView Grid.Column="1"/>
+            <ContentControl Template="{StaticResource PerspectiveLabel}" Content="right"/>
+        </Grid>
+        
+
+        <Rectangle Grid.Row="1" Grid.ColumnSpan="3" Fill="Orange"/>
+        
+        <!--back view-->
+        <Grid Grid.Row="2" Grid.ColumnSpan="3">
+            <cc:InfiniteGridView    ClipToBounds="True" 
+                                ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
+                <cc:InfiniteGridView.ItemsTemplate>
+                    <DataTemplate>
+                        <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                            cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"
+                            Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                            Stretch="Fill"/>
+                    </DataTemplate>
+                </cc:InfiniteGridView.ItemsTemplate>
+            </cc:InfiniteGridView>
+
+            <ContentControl Template="{StaticResource PerspectiveLabel}" Content="back"/>
+        </Grid>
     </Grid>
 </UserControl>
