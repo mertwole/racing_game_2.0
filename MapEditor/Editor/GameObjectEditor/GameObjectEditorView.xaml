@@ -25,6 +25,24 @@
                            FontSize="16" FontWeight="Light"/>
             </Border>
         </ControlTemplate>
+
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"
+               x:Key="CoordInputFiledStyle">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="Orange"/>
+            <Setter Property="BorderBrush" Value="Orange"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#484848"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="CoordNameStyle">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="FontFamily" Value="{StaticResource MaterialDesignFont}"/>
+            <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid Name="MainGrid">
@@ -129,6 +147,229 @@
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="back"/>
+        </Grid>
+        
+        <!--edited billboard properties-->
+        <Grid Grid.ColumnSpan="3" Grid.RowSpan="3" 
+              VerticalAlignment="Bottom" HorizontalAlignment="Right"
+              Width="300" Height="150" Margin="10" Visibility="Hidden">
+
+            <Border Background="#484848" CornerRadius="10"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Border Background="AliceBlue" Margin="10" CornerRadius="10"
+                        Name="PreviewOpacityMask"/>
+
+                <Rectangle Fill="Red" Margin="10" >
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{Binding PreviewOpacityMask}"/>
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+
+                <Grid Grid.Column="1" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock  Grid.Row="0" Text="size" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="0" Grid.Column="1" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+                    <TextBlock  Grid.Row="1" Text="x" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="1" Grid.Column="1" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+                    <TextBlock  Grid.Row="2" Text="y" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="2" Grid.Column="1" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+                    <TextBlock  Grid.Row="3" Text="z" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="3" Grid.Column="1" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <!--edited collider properties-->
+        <Grid Grid.ColumnSpan="3" Grid.RowSpan="3" 
+              VerticalAlignment="Bottom" HorizontalAlignment="Right"
+              Width="450" Height="150" Margin="10">
+
+            <Border Background="#484848" CornerRadius="10"/>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <Rectangle  StrokeDashArray="4 2" StrokeThickness="4"
+                            StrokeDashCap="Round"
+                            Stroke="Orange" Margin="10"/>
+                
+                <Grid Grid.Column="1" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock  Grid.Row="0" Text="x" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="0" Grid.Column="1" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+                    <TextBlock  Grid.Row="1" Text="y" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="1" Grid.Column="1" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+                    <TextBlock  Grid.Row="2" Text="z" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="2" Grid.Column="1" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+
+                    <TextBlock  Grid.Column="2" Grid.Row="0" Text="xs" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="0" Grid.Column="3" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+                    <TextBlock  Grid.Column="2" Grid.Row="1" Text="ys" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="1" Grid.Column="3" CaretIndex="1000"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+
+                    <TextBlock  Grid.Column="2" Grid.Row="2" Text="zs" Padding="5" 
+                                Style="{StaticResource CoordNameStyle}"/>
+
+                    <TextBox    Grid.Row="2" Grid.Column="3"
+                                Style="{StaticResource CoordInputFiledStyle}">
+                        <!--<TextBox.Text>
+                            <Binding Path="Value" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                                <Binding.ValidationRules>
+                                    <common:DoubleInputValidationRule/>
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>-->
+                    </TextBox>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
