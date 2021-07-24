@@ -43,6 +43,82 @@
             <Setter Property="FontFamily" Value="{StaticResource MaterialDesignFont}"/>
             <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
         </Style>
+
+        <Style TargetType="Rectangle" x:Key="ColliderStyle">
+            <Setter Property="Stroke" Value="Orange"/>
+            <Setter Property="StrokeThickness" Value="2"/>
+            <Setter Property="StrokeDashArray" Value="2 2"/>
+            <Setter Property="StrokeDashCap" Value="Round"/>
+        </Style>
+
+        <!--#region TopViewEntityDataTemplateSelector-->
+        <DataTemplate x:Key="TopViewBillboardTemplate">
+            <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                    cc:InfiniteGridView.WorldHeight="0.1"
+                    cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                    cc:InfiniteGridView.WorldPositionY="{Binding Z}"
+                    Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                    Stretch="Fill"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TopViewColliderTemplate">
+            <Rectangle  Style="{StaticResource ColliderStyle}"  
+                        cc:InfiniteGridView.WorldWidth="{Binding SizeX}"
+                        cc:InfiniteGridView.WorldHeight="{Binding SizeZ}"
+                        cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                        cc:InfiniteGridView.WorldPositionY="{Binding Z}"/>
+        </DataTemplate>
+
+        <local:EntityDataTemplateSelector   x:Key="TopViewEntityDataTemplateSelector"
+                                            BillboardDataTemplate="{StaticResource TopViewBillboardTemplate}"
+                                            ColliderDataTemplate="{StaticResource TopViewColliderTemplate}"/>
+        <!--#endregion-->
+
+        <!--#region RightViewEntityDataTemplateSelector-->
+        <DataTemplate x:Key="RightViewBillboardTemplate">
+            <Image  cc:InfiniteGridView.WorldWidth="0.1"
+                    cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                    cc:InfiniteGridView.WorldPositionX="{Binding Z}"
+                    cc:InfiniteGridView.WorldPositionY="{Binding Y}"
+                    Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                    Stretch="Fill"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="RightViewColliderTemplate">
+            <Rectangle  Style="{StaticResource ColliderStyle}"
+                        cc:InfiniteGridView.WorldWidth="{Binding SizeZ}"
+                        cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
+                        cc:InfiniteGridView.WorldPositionX="{Binding Z}"
+                        cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>
+        </DataTemplate>
+
+        <local:EntityDataTemplateSelector   x:Key="RightViewEntityDataTemplateSelector"
+                                            BillboardDataTemplate="{StaticResource RightViewBillboardTemplate}"
+                                            ColliderDataTemplate="{StaticResource RightViewColliderTemplate}"/>
+        <!--#endregion-->
+
+        <!--#region BackViewEntityDataTemplateSelector-->
+        <DataTemplate x:Key="BackViewBillboardTemplate">
+            <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                    cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                    cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                    cc:InfiniteGridView.WorldPositionY="{Binding Y}"
+                    Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                    Stretch="Fill"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="BackViewColliderTemplate">
+            <Rectangle  Style="{StaticResource ColliderStyle}"
+                        cc:InfiniteGridView.WorldWidth="{Binding SizeX}"
+                        cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
+                        cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                        cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>
+        </DataTemplate>
+
+        <local:EntityDataTemplateSelector   x:Key="BackViewEntityDataTemplateSelector"
+                                            BillboardDataTemplate="{StaticResource BackViewBillboardTemplate}"
+                                            ColliderDataTemplate="{StaticResource BackViewColliderTemplate}"/>
+        <!--#endregion-->
     </UserControl.Resources>
 
     <Grid Name="MainGrid">
@@ -86,68 +162,40 @@
                 </Grid>
             </Border>
         </Grid>
-        
+
         <!--top view-->
         <Grid>
             <cc:InfiniteGridView    ClipToBounds="True"
-                                    ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
-                <cc:InfiniteGridView.ItemsTemplate>
-                    <DataTemplate>
-                        <Image  cc:InfiniteGridView.WorldHeight="0.1"
-                            cc:InfiniteGridView.WorldWidth="{Binding Width}"
-                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Z}"
-                            Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                            Stretch="Fill"/>
-                    </DataTemplate>
-                </cc:InfiniteGridView.ItemsTemplate>
+                                    ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.BillboardsAndColliders}"
+                                    ItemsTemplateSelector="{StaticResource TopViewEntityDataTemplateSelector}">
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="top"/>
         </Grid>
 
-        <Rectangle Grid.Column="1" Fill="Orange"/>
-
         <!--right view-->
         <Grid Grid.Column="2">
             <cc:InfiniteGridView    ClipToBounds="True" 
-                                    ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
-                <cc:InfiniteGridView.ItemsTemplate>
-                    <DataTemplate>
-                        <Image  cc:InfiniteGridView.WorldWidth="0.1"
-                            cc:InfiniteGridView.WorldHeight="{Binding Height}"
-                            cc:InfiniteGridView.WorldPositionX="{Binding Z}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"
-                            Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                            Stretch="Fill"/>
-                    </DataTemplate>
-                </cc:InfiniteGridView.ItemsTemplate>
+                                    ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.BillboardsAndColliders}"
+                                    ItemsTemplateSelector="{StaticResource RightViewEntityDataTemplateSelector}">
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="right"/>
         </Grid>
-        
 
-        <Rectangle Grid.Row="1" Grid.ColumnSpan="3" Fill="Orange"/>
-        
         <!--back view-->
         <Grid Grid.Row="2" Grid.ColumnSpan="3">
             <cc:InfiniteGridView    ClipToBounds="True" 
-                                ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.GameObject.Billboards}">
-                <cc:InfiniteGridView.ItemsTemplate>
-                    <DataTemplate>
-                        <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
-                            cc:InfiniteGridView.WorldHeight="{Binding Height}"
-                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"
-                            Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                            Stretch="Fill"/>
-                    </DataTemplate>
-                </cc:InfiniteGridView.ItemsTemplate>
+                                ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.BillboardsAndColliders}"
+                                ItemsTemplateSelector="{StaticResource BackViewEntityDataTemplateSelector}">
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="back"/>
         </Grid>
+
+        <!--view separators-->
+        <Rectangle Grid.Column="1" Fill="Orange"/>
+        <Rectangle Grid.Row="1" Grid.ColumnSpan="3" Fill="Orange"/>
         
         <!--edited billboard properties-->
         <Grid Grid.ColumnSpan="3" Grid.RowSpan="3" 
@@ -165,11 +213,11 @@
                 <Border Background="AliceBlue" Margin="10" CornerRadius="10"
                         Name="PreviewOpacityMask"/>
 
-                <Rectangle Fill="Red" Margin="10" >
+                <!--<Rectangle Fill="Red" Margin="10" >
                     <Rectangle.OpacityMask>
                         <VisualBrush Visual="{Binding PreviewOpacityMask}"/>
                     </Rectangle.OpacityMask>
-                </Rectangle>
+                </Rectangle>-->
 
                 <Grid Grid.Column="1" Margin="10">
                     <Grid.ColumnDefinitions>

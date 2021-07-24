@@ -2,7 +2,7 @@
 
 namespace Editor.GameEntities
 {
-    public interface SaveableEntity
+    public interface ISaveableEntity
     {
         FileIcon GetIcon();
     }

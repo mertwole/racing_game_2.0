@@ -158,12 +158,12 @@ namespace Editor.FileManager
 
         public IContent Parent { get; set; }
 
-        SaveableEntity content;
-        public SaveableEntity Content { get => content; set => content = value; }
+        ISaveableEntity content;
+        public ISaveableEntity Content { get => content; set => content = value; }
 
         public FileIcon Icon { get => content.GetIcon(); }
 
-        public File(string name, IContent parent, SaveableEntity content)
+        public File(string name, IContent parent, ISaveableEntity content)
         {
             this.name = name;
             Parent = parent;

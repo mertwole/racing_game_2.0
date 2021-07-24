@@ -86,7 +86,7 @@
     <Compile Include="GameEntities\Curvature.cs" />
     <Compile Include="GameEntities\GameObject.cs" />
     <Compile Include="GameEntities\HeelKeypoint.cs" />
-    <Compile Include="GameEntities\SaveableEntity.cs" />
+    <Compile Include="GameEntities\ISaveableEntity.cs" />
     <Compile Include="GameEntities\Vector3.cs" />
     <Compile Include="GameObjectEditor\GameObjectEditorModel.cs" />
     <Compile Include="GameObjectEditor\GameObjectEditorView.xaml.cs">

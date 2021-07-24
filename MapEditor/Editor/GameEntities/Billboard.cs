@@ -21,7 +21,7 @@ namespace Editor.GameEntities
         }
     }
 
-    public class Billboard : SaveableEntity, INotifyPropertyChanged
+    public class Billboard : ISaveableEntity, INotifyPropertyChanged
     {
         public ObservableCollection<LOD> LODs { get; private set; }
 

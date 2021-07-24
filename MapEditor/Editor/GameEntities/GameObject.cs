@@ -5,10 +5,13 @@ using System.Drawing;
 
 namespace Editor.GameEntities
 {
-    public class GameObject : SaveableEntity, INotifyPropertyChanged
+    public class GameObject : ISaveableEntity, INotifyPropertyChanged
     {
         ObservableCollection<Billboard> billboards = new ObservableCollection<Billboard>();
         public ObservableCollection<Billboard> Billboards { get => billboards; }
+
+        ObservableCollection<Collider> colliders = new ObservableCollection<Collider>();
+        public ObservableCollection<Collider> Colliders { get => colliders; }
 
         double roadDistance;
         public double RoadDistance
@@ -49,6 +52,9 @@ namespace Editor.GameEntities
 
             billboards.Add(bb);
             billboards.Add(bb2);
+
+            var collider = new Collider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+            colliders.Add(collider);
         }
 
         public GameObject(GameObject prototype)
@@ -56,6 +62,7 @@ namespace Editor.GameEntities
             roadDistance = prototype.roadDistance;
             offset = prototype.offset;
             billboards = new ObservableCollection<Billboard>(prototype.billboards);
+            colliders = new ObservableCollection<Collider>(prototype.colliders);
         }
 
         public GameObject(double road_distance, double offset)

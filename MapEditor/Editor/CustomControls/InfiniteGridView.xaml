@@ -21,7 +21,8 @@
         
         <ItemsControl x:Name="MainItemsControl" 
                       ItemsSource="{Binding ItemsSource}"
-                      ItemTemplate="{Binding ItemsTemplate}">
+                      ItemTemplate="{Binding ItemsTemplate}"
+                      ItemTemplateSelector="{Binding ItemsTemplateSelector}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas/>

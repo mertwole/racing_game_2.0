@@ -168,6 +168,11 @@ namespace Editor.CustomControls
         public DataTemplate ItemsTemplate { get => itemsTemplate; set => itemsTemplate = value; }
         DataTemplate itemsTemplate;
 
+        public static readonly DependencyProperty ItemsTemplateSelectorProperty =
+            DependencyProperty.Register("ItemsTemplateSelector", typeof(DataTemplateSelector), typeof(InfiniteGridView));
+        public DataTemplateSelector ItemsTemplateSelector { get => itemsTemplateSelector; set => itemsTemplateSelector = value; }
+        DataTemplateSelector itemsTemplateSelector;
+
         public InfiniteGridView()
         {
             DataContext = this;
