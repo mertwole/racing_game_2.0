@@ -1,9 +1,13 @@
 ﻿using Editor.Common;
+using Editor.CustomControls;
 using Editor.GameEntities;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Collections.Specialized;
+using System;
 
 namespace Editor.GameObjectEditor
 {
@@ -36,12 +40,88 @@ namespace Editor.GameObjectEditor
         ObservableCollection<object> billboardsAndColliders = new ObservableCollection<object>();
         public ObservableCollection<object> BillboardsAndColliders { get => billboardsAndColliders; }
 
+        ObservableCollection<object> xDescendingSortedCollidersAndBillboards = new ObservableCollection<object>();
+        public ObservableCollection<object> XDescendingSortedCollidersAndBillboards { get => xDescendingSortedCollidersAndBillboards; }
+        ObservableCollection<object> yDescendingSortedCollidersAndBillboards = new ObservableCollection<object>();
+        public ObservableCollection<object> YDescendingSortedCollidersAndBillboards { get => yDescendingSortedCollidersAndBillboards; }
+        ObservableCollection<object> zDescendingSortedCollidersAndBillboards = new ObservableCollection<object>();
+        public ObservableCollection<object> ZDescendingSortedCollidersAndBillboards { get => zDescendingSortedCollidersAndBillboards; }
+
         public GameObjectEditorVM()
         {
+            billboardsAndColliders.CollectionChanged += UpdateSortedCollections;
+
             foreach (var billboard in GameObject.Billboards)
                 billboardsAndColliders.Add(billboard);
             foreach (var collider in GameObject.Colliders)
                 billboardsAndColliders.Add(collider);
+        }
+
+        void InsertInSortedCollection(object item, ObservableCollection<object> collection, Comparison<object> comparison)
+        {
+            for(int i = 0; i < collection.Count; i++)
+                if(comparison(collection[i], item) > 0)
+                {
+                    collection.Insert(i, item);
+                    return;
+                }
+
+            collection.Add(item);
+        }
+
+        void UpdateSortedCollections(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            int compareXDescending(object x, object y)
+            {
+                var x_coord = 0.0;
+                if (x is Collider cx) x_coord = cx.X - cx.SizeX * 0.5;
+                else if (x is Billboard bx) x_coord = bx.X - bx.Width * 0.5;
+                var y_coord = 0.0;
+                if (y is Collider cy) y_coord = cy.X - cy.SizeX * 0.5;
+                else if (y is Billboard by) y_coord = by.X - by.Width * 0.5;
+
+                return -Math.Sign(x_coord - y_coord);
+            }
+
+            int compareYDescending(object x, object y)
+            {
+                var x_coord = 0.0;
+                if (x is Collider cx) x_coord = cx.Y - cx.SizeY * 0.5;
+                else if (x is Billboard bx) x_coord = bx.Y - bx.Height * 0.5;
+                var y_coord = 0.0;
+                if (y is Collider cy) y_coord = cy.Y - cy.SizeY * 0.5;
+                else if (y is Billboard by) y_coord = by.Y - by.Height * 0.5;
+
+                return -Math.Sign(x_coord - y_coord);
+            }
+
+            int compareZDescending(object x, object y)
+            {
+                var x_coord = 0.0;
+                if (x is Collider cx) x_coord = cx.Z - cx.SizeZ * 0.5;
+                else if (x is Billboard bx) x_coord = bx.Z;
+                var y_coord = 0.0;
+                if (y is Collider cy) y_coord = cy.Z - cy.SizeZ * 0.5;
+                else if (y is Billboard by) y_coord = by.Z;
+
+                return -Math.Sign(x_coord - y_coord);
+            }
+
+            if(e.OldItems != null)
+                foreach(var deleted in e.OldItems)
+                {
+                    xDescendingSortedCollidersAndBillboards.Remove(deleted);
+                    yDescendingSortedCollidersAndBillboards.Remove(deleted);
+                    zDescendingSortedCollidersAndBillboards.Remove(deleted);
+                }
+
+            if(e.NewItems != null)
+                foreach(var added in e.NewItems)
+                {
+                    InsertInSortedCollection(added, xDescendingSortedCollidersAndBillboards, compareXDescending);
+                    InsertInSortedCollection(added, yDescendingSortedCollidersAndBillboards, compareYDescending);
+                    InsertInSortedCollection(added, zDescendingSortedCollidersAndBillboards, compareZDescending);
+                }
         }
 
         public ICommand ApplyChanges
@@ -52,6 +132,38 @@ namespace Editor.GameObjectEditor
 
                 if ((e as KeyEventArgs).Key == Key.S && args.KeyboardDevice.IsKeyDown(Key.LeftCtrl))
                     model.ApplyChanges();
+            });
+        }
+
+        T FindParentOfType<T>(DependencyObject element) where T : class
+        {
+            var parent = VisualTreeHelper.GetParent(element);
+            if (parent == null) return null;
+            if (parent is T par) return par;
+            return FindParentOfType<T>(parent);
+        }
+
+        public ICommand SelectCollider
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as MouseEventArgs;
+
+                var container = FindParentOfType<ContentPresenter>(args.Source as DependencyObject);
+                var inf_grid_view = FindParentOfType<InfiniteGridView>(container);
+                var collider = inf_grid_view.ItemFromContainer(container);
+            });
+        }
+
+        public ICommand SelectBillboard
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as MouseEventArgs;
+
+                var container = FindParentOfType<ContentPresenter>(args.Source as DependencyObject);
+                var inf_grid_view = FindParentOfType<InfiniteGridView>(container);
+                var billboard = inf_grid_view.ItemFromContainer(container);
             });
         }
     }

@@ -162,7 +162,7 @@ namespace Editor.CustomControls
             DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(InfiniteGridView));
         public IEnumerable ItemsSource { get => itemsSource; set => itemsSource = value; }
         IEnumerable itemsSource;
-        
+
         public static readonly DependencyProperty ItemsTemplateProperety =
             DependencyProperty.Register("ItemsTemplate", typeof(DataTemplate), typeof(InfiniteGridView));
         public DataTemplate ItemsTemplate { get => itemsTemplate; set => itemsTemplate = value; }
@@ -178,9 +178,14 @@ namespace Editor.CustomControls
             DataContext = this;
             InitializeComponent();
 
+            SizeChanged += (s, e) => UpdateGrid();
+
             GridCanvas.Loaded += (s, e) => UpdateGrid();
             MainItemsControl.Loaded += (s, e) => MainItemsControlLoaded();
         }
+
+        public object ItemFromContainer(DependencyObject container) =>
+            MainItemsControl.ItemContainerGenerator.ItemFromContainer(container);
 
         void MainItemsControlLoaded()
         {

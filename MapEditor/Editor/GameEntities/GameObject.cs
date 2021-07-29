@@ -43,12 +43,19 @@ namespace Editor.GameEntities
 
             var bb = new Billboard();
             bb.AddLOD(new LOD(bmp));
-            bb.Width = 1;
-            bb.X = 2;
+            bb.Width = 4;
+            bb.X = 0;
+            bb.Z = -1;
 
-            var bb2 = new Billboard(bb);
-            bb2.Width = 2;
-            bb2.X = -2;
+            bmp = new Bitmap(200, 100);
+            g = Graphics.FromImage(bmp);
+            g.Clear(Color.FromArgb(255, 100, 50, 200));
+
+            var bb2 = new Billboard();
+            bb2.AddLOD(new LOD(bmp));
+            bb2.Width = 1;
+            bb2.X = 2;
+            bb2.Z = 0;
 
             billboards.Add(bb);
             billboards.Add(bb2);
