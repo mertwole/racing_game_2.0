@@ -131,6 +131,9 @@
                                             BorderThickness="0"
                                             CaretBrush="{StaticResource FontBrush}"
                                             CaretIndex="1000">
+                                    <i:Interaction.Behaviors>
+                                        <common:TextBoxEnterKeyUpdateBehavior/>
+                                    </i:Interaction.Behaviors>
                                     <TextBox.ContextMenu>
                                         <ContextMenu>
                                             <i:Interaction.Triggers>

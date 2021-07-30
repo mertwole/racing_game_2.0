@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Collections.Specialized;
 using System;
+using System.ComponentModel;
 
 namespace Editor.GameObjectEditor
 {
@@ -27,11 +28,11 @@ namespace Editor.GameObjectEditor
             if(item is Collider)
                 return colliderDataTemplate;
 
-            throw new System.Exception("Wrong data type : expected Billboard or Collider.");
+            throw new Exception("Wrong data type : expected Billboard or Collider.");
         }
     }
 
-    public class GameObjectEditorVM
+    public class GameObjectEditorVM : INotifyPropertyChanged
     {
         GameObjectEditorModel model = ModelLocator.GetModel<GameObjectEditorModel>();
 
@@ -143,6 +144,14 @@ namespace Editor.GameObjectEditor
             return FindParentOfType<T>(parent);
         }
 
+        object selectedEntity = null;
+
+        public Collider SelectedCollider { get => selectedEntity as Collider; }
+        public Billboard SelectedBillboard { get => selectedEntity as Billboard; }
+
+        public bool ColliderSelected { get => selectedEntity is Collider; }
+        public bool BillboardSelected { get => selectedEntity is Billboard; }
+
         public ICommand SelectCollider
         {
             get => new RelayCommand((e) =>
@@ -152,6 +161,13 @@ namespace Editor.GameObjectEditor
                 var container = FindParentOfType<ContentPresenter>(args.Source as DependencyObject);
                 var inf_grid_view = FindParentOfType<InfiniteGridView>(container);
                 var collider = inf_grid_view.ItemFromContainer(container);
+
+                selectedEntity = collider;
+
+                OnPropertyChanged("BillboardSelected");
+                OnPropertyChanged("ColliderSelected");
+
+                OnPropertyChanged("SelectedCollider");
             });
         }
 
@@ -164,7 +180,20 @@ namespace Editor.GameObjectEditor
                 var container = FindParentOfType<ContentPresenter>(args.Source as DependencyObject);
                 var inf_grid_view = FindParentOfType<InfiniteGridView>(container);
                 var billboard = inf_grid_view.ItemFromContainer(container);
+
+                selectedEntity = billboard;
+
+                OnPropertyChanged("ColliderSelected");
+                OnPropertyChanged("BillboardSelected");
+
+                OnPropertyChanged("SelectedBillboard");
             });
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

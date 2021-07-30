@@ -78,6 +78,7 @@
     <Compile Include="Common\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\BindingProxy.cs" />
     <Compile Include="Common\ChildFinder.cs" />
+    <Compile Include="Common\TextBoxEnterKeyUpdateBehaviour.cs" />
     <Compile Include="CustomControls\InfiniteGridView.xaml.cs">
       <DependentUpon>InfiniteGridView.xaml</DependentUpon>
     </Compile>
