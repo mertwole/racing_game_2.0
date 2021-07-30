@@ -184,8 +184,28 @@ namespace Editor.CustomControls
             MainItemsControl.Loaded += (s, e) => MainItemsControlLoaded();
         }
 
-        public object ItemFromContainer(DependencyObject container) =>
-            MainItemsControl.ItemContainerGenerator.ItemFromContainer(container);
+        public object FindItemByChildControl(DependencyObject control)
+        {
+            T FindParentOfType<T>(DependencyObject element) where T : class
+            {
+                var parent = VisualTreeHelper.GetParent(element);
+                if (parent == null) return null;
+                if (parent is T par) return par;
+                return FindParentOfType<T>(parent);
+            }
+
+            var container = control;
+
+            while (true) // Find ContentPresenter that represents container in ItemsControl.
+            {
+                container = FindParentOfType<ContentPresenter>(container);
+                if (container == null) return null;
+                var item = MainItemsControl.ItemContainerGenerator.ItemFromContainer(container);
+                if (item == DependencyProperty.UnsetValue) continue;
+
+                return item;
+            }
+        }
 
         void MainItemsControlLoaded()
         {

@@ -152,41 +152,20 @@ namespace Editor.GameObjectEditor
         public bool ColliderSelected { get => selectedEntity is Collider; }
         public bool BillboardSelected { get => selectedEntity is Billboard; }
 
-        public ICommand SelectCollider
+        public ICommand SelectObject
         {
             get => new RelayCommand((e) =>
             {
                 var args = e as MouseEventArgs;
+                var sender = args.Source as DependencyObject;
+                var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
 
-                var container = FindParentOfType<ContentPresenter>(args.Source as DependencyObject);
-                var inf_grid_view = FindParentOfType<InfiniteGridView>(container);
-                var collider = inf_grid_view.ItemFromContainer(container);
-
-                selectedEntity = collider;
-
-                OnPropertyChanged("BillboardSelected");
-                OnPropertyChanged("ColliderSelected");
-
-                OnPropertyChanged("SelectedCollider");
-            });
-        }
-
-        public ICommand SelectBillboard
-        {
-            get => new RelayCommand((e) =>
-            {
-                var args = e as MouseEventArgs;
-
-                var container = FindParentOfType<ContentPresenter>(args.Source as DependencyObject);
-                var inf_grid_view = FindParentOfType<InfiniteGridView>(container);
-                var billboard = inf_grid_view.ItemFromContainer(container);
-
-                selectedEntity = billboard;
+                selectedEntity = inf_grid_view.FindItemByChildControl(sender);
 
                 OnPropertyChanged("ColliderSelected");
                 OnPropertyChanged("BillboardSelected");
-
                 OnPropertyChanged("SelectedBillboard");
+                OnPropertyChanged("SelectedCollider");
             });
         }
 

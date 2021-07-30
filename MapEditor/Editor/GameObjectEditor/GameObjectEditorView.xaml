@@ -45,54 +45,53 @@
             <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
         </Style>
 
-        <Style TargetType="Rectangle" x:Key="ColliderStyle">
-            <Setter Property="Stroke" Value="Orange"/>
-            <Setter Property="StrokeThickness" Value="2"/>
-            <Setter Property="StrokeDashArray" Value="2 2"/>
-            <Setter Property="StrokeDashCap" Value="Round"/>
-            <Setter Property="Margin" Value="-1"/>
-            <Setter Property="IsHitTestVisible" Value="False"/>
-        </Style>
+        <Image  x:Key="BillboardImage"  
+                Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                Stretch="Fill" x:Shared="False">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDown">
+                    <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.SelectObject}"
+                            PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Image>
 
-        <!--#region TopViewEntityDataTemplateSelector-->
-        <DataTemplate x:Key="TopViewBillboardTemplate">
-            <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
-                    cc:InfiniteGridView.WorldHeight="0.1"
-                    cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                    cc:InfiniteGridView.WorldPositionY="{Binding Z}"
-                    Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                    Stretch="Fill">
+        <Grid x:Key="ColliderView" x:Shared="False">
+            <Border BorderThickness="8" BorderBrush="Transparent" Margin="-4">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <common:EventToCommand 
                                 Command="{Binding 
                                 RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
-                                Path=DataContext.SelectBillboard}"
+                                Path=DataContext.SelectObject}"
                                 PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Image>
+            </Border>
+
+            <Rectangle  Stroke="Orange" StrokeThickness="2"
+                        StrokeDashArray="2 2" StrokeDashCap="Round"
+                        Margin="-1" IsHitTestVisible="False"/>
+        </Grid>
+        
+        <!--#region TopViewEntityDataTemplateSelector-->
+        <DataTemplate x:Key="TopViewBillboardTemplate">
+            <ContentControl Content="{StaticResource BillboardImage}"
+                            cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                            cc:InfiniteGridView.WorldHeight="0.1"
+                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Z}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="TopViewColliderTemplate">
-            <Grid   cc:InfiniteGridView.WorldWidth="{Binding SizeX}"
-                    cc:InfiniteGridView.WorldHeight="{Binding SizeZ}"
-                    cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                    cc:InfiniteGridView.WorldPositionY="{Binding Z}">
-
-                <Border BorderThickness="8" BorderBrush="Red" Margin="-4">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDown">
-                            <common:EventToCommand 
-                                Command="{Binding 
-                                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
-                                Path=DataContext.SelectCollider}"
-                                PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Border>
-                <Rectangle  Style="{StaticResource ColliderStyle}"/>
-            </Grid>
+            <ContentControl Content="{StaticResource ColliderView}"   
+                            cc:InfiniteGridView.WorldWidth="{Binding SizeX}"
+                            cc:InfiniteGridView.WorldHeight="{Binding SizeZ}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Z}"/>
         </DataTemplate>
 
         <local:EntityDataTemplateSelector   x:Key="TopViewEntityDataTemplateSelector"
@@ -102,43 +101,20 @@
 
         <!--#region RightViewEntityDataTemplateSelector-->
         <DataTemplate x:Key="RightViewBillboardTemplate">
-            <Image  cc:InfiniteGridView.WorldWidth="0.1"
-                    cc:InfiniteGridView.WorldHeight="{Binding Height}"
-                    cc:InfiniteGridView.WorldPositionX="{Binding Z}"
-                    cc:InfiniteGridView.WorldPositionY="{Binding Y}"
-                    Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                    Stretch="Fill">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDown">
-                        <common:EventToCommand 
-                                Command="{Binding 
-                                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
-                                Path=DataContext.SelectBillboard}"
-                                PassEventArgsToCommand="True"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Image>
+            <ContentControl Content="{StaticResource BillboardImage}"
+                            cc:InfiniteGridView.WorldWidth="0.1"
+                            cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding Z}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="RightViewColliderTemplate">
-            <Grid   cc:InfiniteGridView.WorldWidth="{Binding SizeZ}"
-                    cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
-                    cc:InfiniteGridView.WorldPositionX="{Binding Z}"
-                    cc:InfiniteGridView.WorldPositionY="{Binding Y}">
-
-                <Border BorderThickness="8" BorderBrush="Red" Margin="-4">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDown">
-                            <common:EventToCommand 
-                                Command="{Binding 
-                                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
-                                Path=DataContext.SelectCollider}"
-                                PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Border>
-                <Rectangle  Style="{StaticResource ColliderStyle}"/>
-            </Grid>
+            <ContentControl Content="{StaticResource ColliderView}"   
+                            cc:InfiniteGridView.WorldWidth="{Binding SizeZ}"
+                            cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding Z}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}">
+            </ContentControl>
         </DataTemplate>
 
         <local:EntityDataTemplateSelector   x:Key="RightViewEntityDataTemplateSelector"
@@ -148,43 +124,20 @@
 
         <!--#region BackViewEntityDataTemplateSelector-->
         <DataTemplate x:Key="BackViewBillboardTemplate">
-            <Image  cc:InfiniteGridView.WorldWidth="{Binding Width}"
-                    cc:InfiniteGridView.WorldHeight="{Binding Height}"
-                    cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                    cc:InfiniteGridView.WorldPositionY="{Binding Y}"
-                    Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                    Stretch="Fill">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDown">
-                        <common:EventToCommand 
-                                Command="{Binding 
-                                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
-                                Path=DataContext.SelectBillboard}"
-                                PassEventArgsToCommand="True"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Image>
+            <ContentControl Content="{StaticResource BillboardImage}"
+                            cc:InfiniteGridView.WorldWidth="{Binding Width}"
+                            cc:InfiniteGridView.WorldHeight="{Binding Height}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>  
         </DataTemplate>
 
         <DataTemplate x:Key="BackViewColliderTemplate">
-            <Grid   cc:InfiniteGridView.WorldWidth="{Binding SizeX}"
-                    cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
-                    cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                    cc:InfiniteGridView.WorldPositionY="{Binding Y}">
-
-                <Border BorderThickness="8" BorderBrush="Red" Margin="-4">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDown">
-                            <common:EventToCommand 
-                                Command="{Binding 
-                                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
-                                Path=DataContext.SelectCollider}"
-                                PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Border>
-                <Rectangle  Style="{StaticResource ColliderStyle}"/>
-            </Grid>
+            <ContentControl Content="{StaticResource ColliderView}"   
+                            cc:InfiniteGridView.WorldWidth="{Binding SizeX}"
+                            cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
+                            cc:InfiniteGridView.WorldPositionX="{Binding X}"
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}">
+            </ContentControl>
         </DataTemplate>
 
         <local:EntityDataTemplateSelector   x:Key="BackViewEntityDataTemplateSelector"
