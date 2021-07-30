@@ -103,10 +103,32 @@
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <common:EventToCommand 
-                                Command="{Binding 
-                                RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
-                                Path=DataContext.SelectObject}"
-                                PassEventArgsToCommand="True"/>
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.SelectObject}"
+                            PassEventArgsToCommand="True"/>
+
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.StartMoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="MouseMove">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.MoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="MouseUp">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.FinishMoveObject}"
+                            PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Border>

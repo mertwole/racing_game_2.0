@@ -242,13 +242,6 @@ namespace Editor.GameObjectEditor
                 var sender = args.Source as DependencyObject;
 
                 var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
-
-                if (inf_grid_view == null)
-                {
-                    return;
-                    inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
-                }
-
                 var obj = inf_grid_view.FindItemByChildControl(sender);
                 var new_pos_screen_space = args.GetPosition(inf_grid_view);
                 new_pos_screen_space.Y = inf_grid_view.ActualHeight - new_pos_screen_space.Y;
