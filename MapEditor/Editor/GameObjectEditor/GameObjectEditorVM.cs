@@ -209,6 +209,86 @@ namespace Editor.GameObjectEditor
             });
         }
 
+        bool movingObject = false;
+
+        public ICommand StartMoveObject
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as MouseEventArgs;
+
+                if (args.LeftButton == MouseButtonState.Released) return;
+
+                var sender = args.Source as DependencyObject;
+                var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
+                var obj = inf_grid_view.FindItemByChildControl(sender);
+
+                movingObject = true;
+                model.StartMoveObject(obj);
+                Mouse.Capture(sender as IInputElement);
+            });
+        }
+
+        public ICommand MoveObject
+        {
+            get => new RelayCommand((e) =>
+            {
+                if (!movingObject) return;
+
+                var args = e as MouseEventArgs;
+
+                if (args.LeftButton != MouseButtonState.Pressed) return;
+
+                var sender = args.Source as DependencyObject;
+
+                var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
+
+                if (inf_grid_view == null)
+                {
+                    return;
+                    inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
+                }
+
+                var obj = inf_grid_view.FindItemByChildControl(sender);
+                var new_pos_screen_space = args.GetPosition(inf_grid_view);
+                new_pos_screen_space.Y = inf_grid_view.ActualHeight - new_pos_screen_space.Y;
+                var new_pos_2D = inf_grid_view.ScreenSpaceToWorld(new_pos_screen_space);
+
+                Vector3 new_pos = new Vector3();
+                if (obj is Billboard bb) new_pos = bb.Position;
+                if (obj is Collider collider) new_pos = collider.Position;
+
+                switch (inf_grid_view.Name)
+                {
+                    case "TopView":
+                        new_pos.X = new_pos_2D.X;
+                        new_pos.Z = new_pos_2D.Y;
+                        break;
+                    case "RightView":
+                        new_pos.Z = new_pos_2D.X;
+                        new_pos.Y = new_pos_2D.Y;
+                        break;
+                    case "BackView":
+                        new_pos.X = new_pos_2D.X;
+                        new_pos.Y = new_pos_2D.Y;
+                        break;
+                }
+
+                model.MoveObject(new_pos);
+            });
+        }
+
+        public ICommand FinishMoveObject
+        {
+            get => new RelayCommand((e) =>
+            {
+                if ((e as MouseEventArgs).LeftButton == MouseButtonState.Pressed) return;
+
+                movingObject = false;
+                Mouse.Capture(null);
+            });
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {

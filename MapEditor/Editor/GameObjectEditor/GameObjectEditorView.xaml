@@ -56,11 +56,34 @@
                             RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
                             Path=DataContext.SelectObject}"
                             PassEventArgsToCommand="True"/>
+
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.StartMoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="MouseMove">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.MoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="MouseUp">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.FinishMoveObject}"
+                            PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Image>
 
-            <Border BorderThickness="2" Margin="-2" BorderBrush="Orange">
+            <Border BorderThickness="2" Margin="-2" BorderBrush="Orange"
+                    IsHitTestVisible="False">
                 <Border.Visibility>
                     <MultiBinding Converter="{StaticResource ObjectOutlineVisiblityConverter}">
                         <Binding Path="."/>
@@ -75,6 +98,7 @@
         </Grid>
 
         <Grid x:Key="ColliderView" x:Shared="False">
+            <!--selection region-->
             <Border BorderThickness="8" BorderBrush="Transparent" Margin="-4">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
@@ -87,7 +111,8 @@
                 </i:Interaction.Triggers>
             </Border>
 
-            <Border BorderThickness="2" Margin="-1" BorderBrush="Orange">
+            <Border BorderThickness="2" Margin="-1" BorderBrush="Orange"
+                    IsHitTestVisible="False">
                 <Border.Visibility>
                     <MultiBinding Converter="{StaticResource ObjectOutlineVisiblityConverter}">
                         <Binding Path="."/>
@@ -223,7 +248,7 @@
 
         <!--top view-->
         <Grid>
-            <cc:InfiniteGridView    ClipToBounds="True"
+            <cc:InfiniteGridView    ClipToBounds="True" x:Name="TopView"
                                     ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.YDescendingSortedCollidersAndBillboards}"
                                     ItemsTemplateSelector="{StaticResource TopViewEntityDataTemplateSelector}">
             </cc:InfiniteGridView>
@@ -233,7 +258,7 @@
 
         <!--right view-->
         <Grid Grid.Column="2">
-            <cc:InfiniteGridView    ClipToBounds="True" 
+            <cc:InfiniteGridView    ClipToBounds="True" x:Name="RightView"
                                     ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.XDescendingSortedCollidersAndBillboards}"
                                     ItemsTemplateSelector="{StaticResource RightViewEntityDataTemplateSelector}">
             </cc:InfiniteGridView>
@@ -243,9 +268,9 @@
 
         <!--back view-->
         <Grid Grid.Row="2" Grid.ColumnSpan="3">
-            <cc:InfiniteGridView    ClipToBounds="True" 
-                                ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.ZDescendingSortedCollidersAndBillboards}"
-                                ItemsTemplateSelector="{StaticResource BackViewEntityDataTemplateSelector}">
+            <cc:InfiniteGridView    ClipToBounds="True" x:Name="BackView"
+                                    ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.ZDescendingSortedCollidersAndBillboards}"
+                                    ItemsTemplateSelector="{StaticResource BackViewEntityDataTemplateSelector}">
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="back"/>

@@ -13,6 +13,24 @@ namespace Editor.GameObjectEditor
             this.gameObject = gameObject;
         }
 
+        object toMove = null;
+
+        public void StartMoveObject(object to_move)
+        {
+            toMove = to_move;
+        }
+
+        public void MoveObject(Vector3 new_pos)
+        {
+            if(toMove is Collider collider)
+                collider.Position = new_pos;
+            else
+            {
+                var billboard = toMove as Billboard;
+                billboard.Position = new_pos;
+            }
+        }
+
         FileManager.File loadedFrom = null;
         bool dirty = false;
 

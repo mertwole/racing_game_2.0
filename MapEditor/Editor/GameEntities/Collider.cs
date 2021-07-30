@@ -4,8 +4,33 @@ namespace Editor.GameEntities
 {
     public class Collider : INotifyPropertyChanged
     {
+        Vector3 size;
+        public Vector3 Size
+        {
+            get => size;
+            set
+            {
+                size = value;
+                OnPropertyChanged("Size");
+                OnPropertyChanged("SizeX");
+                OnPropertyChanged("SizeY");
+                OnPropertyChanged("SizeZ");
+            }
+        }
+
         Vector3 position;
-        Vector3 size;  
+        public Vector3 Position
+        {
+            get => position;
+            set
+            {
+                position = value;
+                OnPropertyChanged("Position");
+                OnPropertyChanged("X");
+                OnPropertyChanged("Y");
+                OnPropertyChanged("Z");
+            }
+        }
 
         public Collider(Vector3 position, Vector3 size)
         {

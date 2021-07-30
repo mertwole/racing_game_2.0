@@ -127,6 +127,11 @@ namespace Editor.CustomControls
         public double WorldSizeToScreenSpace(double world_size) =>
             world_size * pixelsInUnit;
 
+        public Point ScreenSpaceToWorld(Point screen_space) =>
+            new Point((screen_space.X - GridCanvas.ActualWidth * 0.5 - fieldOffset.X) / pixelsInUnit, 
+                      (screen_space.Y - GridCanvas.ActualHeight * 0.5 - fieldOffset.Y) / pixelsInUnit);
+
+
         #region Attached properties
         // Attached X position.
         public static readonly DependencyProperty WorldPositionXProperty = DependencyProperty.RegisterAttached(
@@ -225,6 +230,7 @@ namespace Editor.CustomControls
                 if(item is INotifyPropertyChanged item_observable)
                 {
                     PropertyChangedEventHandler handler = (s, ev) => TriggerUpdateItemsInGrid();
+                    if (itemChangedEventHandlers.ContainsKey(item_observable)) continue;
                     item_observable.PropertyChanged += handler;
                     itemChangedEventHandlers.Add(item_observable, handler);
                 }
@@ -232,21 +238,24 @@ namespace Editor.CustomControls
 
         void ItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (var added in e.NewItems)
-                if (added is INotifyPropertyChanged added_observable)
-                {
-                    PropertyChangedEventHandler handler = (s, ev) => TriggerUpdateItemsInGrid();
-                    added_observable.PropertyChanged += handler;
-                    itemChangedEventHandlers.Add(added_observable, handler);
-                }
-                    
-            foreach(var removed in e.OldItems)
-                if (removed is INotifyPropertyChanged removed_observable)
-                {
-                    var handler = itemChangedEventHandlers[removed_observable];
-                    removed_observable.PropertyChanged -= handler;
-                    itemChangedEventHandlers.Remove(removed_observable);
-                }
+            if(e.NewItems != null)
+                foreach (var added in e.NewItems)
+                    if (added is INotifyPropertyChanged added_observable)
+                    {
+                        PropertyChangedEventHandler handler = (s, ev) => TriggerUpdateItemsInGrid();
+                        if (itemChangedEventHandlers.ContainsKey(added_observable)) continue;
+                        added_observable.PropertyChanged += handler;
+                        itemChangedEventHandlers.Add(added_observable, handler);
+                    }
+                  
+            if(e.OldItems != null)
+                foreach(var removed in e.OldItems)
+                    if (removed is INotifyPropertyChanged removed_observable)
+                    {
+                        var handler = itemChangedEventHandlers[removed_observable];
+                        removed_observable.PropertyChanged -= handler;
+                        itemChangedEventHandlers.Remove(removed_observable);
+                    }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
