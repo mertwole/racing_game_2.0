@@ -15,6 +15,7 @@
 
     <UserControl.Resources>
         <common:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
+        <local:ObjectOutlineVisiblityConverter x:Key="ObjectOutlineVisiblityConverter"/>
 
         <ControlTemplate x:Key="PerspectiveLabel" TargetType="ContentControl">
             <Border CornerRadius="0, 6, 0, 0" Background="#474747" Width="72" Height="24"
@@ -45,19 +46,33 @@
             <Setter Property="Foreground" Value="{StaticResource MaterialDesignDarkForeground}"/>
         </Style>
 
-        <Image  x:Key="BillboardImage"  
-                Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                Stretch="Fill" x:Shared="False">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDown">
-                    <common:EventToCommand 
+        <Grid x:Key="BillboardView" x:Shared="False">
+            <Image  Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
+                    Stretch="Fill">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <common:EventToCommand 
                             Command="{Binding 
                             RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
                             Path=DataContext.SelectObject}"
                             PassEventArgsToCommand="True"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </Image>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Image>
+
+            <Border BorderThickness="2" Margin="-2" BorderBrush="Orange">
+                <Border.Visibility>
+                    <MultiBinding Converter="{StaticResource ObjectOutlineVisiblityConverter}">
+                        <Binding Path="."/>
+                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}"
+                                 Path="DataContext"/>
+                        <!--binding that updates state of outline when smth changes-->
+                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}"
+                                 Path="DataContext.UpdateSelectedObject"/>
+                    </MultiBinding>
+                </Border.Visibility>
+            </Border>
+        </Grid>
 
         <Grid x:Key="ColliderView" x:Shared="False">
             <Border BorderThickness="8" BorderBrush="Transparent" Margin="-4">
@@ -72,6 +87,19 @@
                 </i:Interaction.Triggers>
             </Border>
 
+            <Border BorderThickness="2" Margin="-1" BorderBrush="Orange">
+                <Border.Visibility>
+                    <MultiBinding Converter="{StaticResource ObjectOutlineVisiblityConverter}">
+                        <Binding Path="."/>
+                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}"
+                                 Path="DataContext"/>
+                        <!--binding that updates state of outline when smth changes-->
+                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}"
+                                 Path="DataContext.UpdateSelectedObject"/>
+                    </MultiBinding>
+                </Border.Visibility>
+            </Border>
+            
             <Rectangle  Stroke="Orange" StrokeThickness="2"
                         StrokeDashArray="2 2" StrokeDashCap="Round"
                         Margin="-1" IsHitTestVisible="False"/>
@@ -79,7 +107,7 @@
         
         <!--#region TopViewEntityDataTemplateSelector-->
         <DataTemplate x:Key="TopViewBillboardTemplate">
-            <ContentControl Content="{StaticResource BillboardImage}"
+            <ContentControl Content="{StaticResource BillboardView}"
                             cc:InfiniteGridView.WorldWidth="{Binding Width}"
                             cc:InfiniteGridView.WorldHeight="0.1"
                             cc:InfiniteGridView.WorldPositionX="{Binding X}"
@@ -101,7 +129,7 @@
 
         <!--#region RightViewEntityDataTemplateSelector-->
         <DataTemplate x:Key="RightViewBillboardTemplate">
-            <ContentControl Content="{StaticResource BillboardImage}"
+            <ContentControl Content="{StaticResource BillboardView}"
                             cc:InfiniteGridView.WorldWidth="0.1"
                             cc:InfiniteGridView.WorldHeight="{Binding Height}"
                             cc:InfiniteGridView.WorldPositionX="{Binding Z}"
@@ -124,7 +152,7 @@
 
         <!--#region BackViewEntityDataTemplateSelector-->
         <DataTemplate x:Key="BackViewBillboardTemplate">
-            <ContentControl Content="{StaticResource BillboardImage}"
+            <ContentControl Content="{StaticResource BillboardView}"
                             cc:InfiniteGridView.WorldWidth="{Binding Width}"
                             cc:InfiniteGridView.WorldHeight="{Binding Height}"
                             cc:InfiniteGridView.WorldPositionX="{Binding X}"
@@ -162,7 +190,12 @@
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="KeyDown">
                 <common:EventToCommand  Command="{Binding ElementName=MainGrid, Path=DataContext.ApplyChanges}"
-                                    PassEventArgsToCommand="True"/>
+                                        PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+
+            <i:EventTrigger EventName="MouseDown">
+                <common:EventToCommand Command="{Binding ElementName=MainGrid, Path=DataContext.UnselectObject}"
+                                       PassEventArgsToCommand="True"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
 

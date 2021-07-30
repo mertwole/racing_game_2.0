@@ -9,6 +9,8 @@ using System.Windows.Media;
 using System.Collections.Specialized;
 using System;
 using System.ComponentModel;
+using System.Windows.Data;
+using System.Globalization;
 
 namespace Editor.GameObjectEditor
 {
@@ -30,6 +32,23 @@ namespace Editor.GameObjectEditor
 
             throw new Exception("Wrong data type : expected Billboard or Collider.");
         }
+    }
+
+    // Takes Billboard or Collider as the first value and GameObjectEtorVM as the second.
+    public class ObjectOutlineVisiblityConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var vm = values[1] as GameObjectEditorVM;
+
+            if (values[0] == vm.SelectedCollider) return Visibility.Visible;
+            if (values[0] == vm.SelectedBillboard) return Visibility.Visible;
+
+            return Visibility.Collapsed;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
+            throw new NotImplementedException();
     }
 
     public class GameObjectEditorVM : INotifyPropertyChanged
@@ -152,11 +171,15 @@ namespace Editor.GameObjectEditor
         public bool ColliderSelected { get => selectedEntity is Collider; }
         public bool BillboardSelected { get => selectedEntity is Billboard; }
 
+        // OnPropertyChanged("UpdateSelectedObject") called every time when Collider/Billboard selected/deselected.
+        public bool UpdateSelectedObject { get => true; }
+
         public ICommand SelectObject
         {
             get => new RelayCommand((e) =>
             {
                 var args = e as MouseEventArgs;
+                args.Handled = true;
                 var sender = args.Source as DependencyObject;
                 var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
 
@@ -166,6 +189,23 @@ namespace Editor.GameObjectEditor
                 OnPropertyChanged("BillboardSelected");
                 OnPropertyChanged("SelectedBillboard");
                 OnPropertyChanged("SelectedCollider");
+                OnPropertyChanged("UpdateSelectedObject");
+            });
+        }
+
+        public ICommand UnselectObject
+        {
+            get => new RelayCommand((e) =>
+            {
+                if ((e as MouseEventArgs).LeftButton != MouseButtonState.Pressed) return;
+
+                selectedEntity = null;
+
+                OnPropertyChanged("ColliderSelected");
+                OnPropertyChanged("BillboardSelected");
+                OnPropertyChanged("SelectedBillboard");
+                OnPropertyChanged("SelectedCollider");
+                OnPropertyChanged("UpdateSelectedObject");
             });
         }
 
