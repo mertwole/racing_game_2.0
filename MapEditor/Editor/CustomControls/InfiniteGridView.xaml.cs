@@ -17,13 +17,14 @@ namespace Editor.CustomControls
     // These converters convert control with attached properties
     // InfiniteGridView:Width, InfiniteGridView:Height, InfiniteGridView:WorldPositionX, InfiniteGridView:WorldPositionY
     // to local canvas coords.
-    // First parameter is InfiniteGridView instance and 2nd is current billboard.
+    // First parameter is InfiniteGridView instance and 2nd is current visual.
     public class CanvasLeftConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
             var grid_view = value[0] as InfiniteGridView;
             var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            if (element == null) return 0.0;
             // Because previous command returns ContentPresenter.
             if (VisualTreeHelper.GetChildrenCount(element) != 0)
                 element = VisualTreeHelper.GetChild(element, 0);
@@ -40,6 +41,7 @@ namespace Editor.CustomControls
         {
             var grid_view = value[0] as InfiniteGridView;
             var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            if (element == null) return 0.0;
             // Because previous command returns ContentPresenter.
             if (VisualTreeHelper.GetChildrenCount(element) != 0) 
                 element = VisualTreeHelper.GetChild(element, 0);
@@ -57,6 +59,7 @@ namespace Editor.CustomControls
         {
             var grid_view = value[0] as InfiniteGridView;
             var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            if (element == null) return 0.0;
             // Because previous command returns ContentPresenter.
             if (VisualTreeHelper.GetChildrenCount(element) != 0)
                 element = VisualTreeHelper.GetChild(element, 0);
@@ -73,6 +76,7 @@ namespace Editor.CustomControls
         {
             var grid_view = value[0] as InfiniteGridView;
             var element = grid_view.MainItemsControl.ItemContainerGenerator.ContainerFromItem(value[1]);
+            if (element == null) return 0.0;
             // Because previous command returns ContentPresenter.
             if (VisualTreeHelper.GetChildrenCount(element) != 0)
                 element = VisualTreeHelper.GetChild(element, 0);

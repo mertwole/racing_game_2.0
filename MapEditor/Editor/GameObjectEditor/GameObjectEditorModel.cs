@@ -31,6 +31,14 @@ namespace Editor.GameObjectEditor
             }
         }
 
+        public void DeleteObject(object obj)
+        {
+            if (obj is Billboard bb && gameObject.Billboards.Contains(bb))
+                gameObject.Billboards.Remove(bb);
+            else if (gameObject.Colliders.Contains(obj as Collider))
+                gameObject.Colliders.Remove(obj as Collider);
+        }
+
         FileManager.File loadedFrom = null;
         bool dirty = false;
 

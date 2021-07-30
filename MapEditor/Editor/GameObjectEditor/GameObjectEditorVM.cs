@@ -71,22 +71,24 @@ namespace Editor.GameObjectEditor
         {
             billboardsAndColliders.CollectionChanged += UpdateSortedCollections;
 
+            GameObject.Billboards.CollectionChanged += UpdateBillboardsAndCollidersCollection;
+            GameObject.Colliders.CollectionChanged += UpdateBillboardsAndCollidersCollection;
+
             foreach (var billboard in GameObject.Billboards)
                 billboardsAndColliders.Add(billboard);
             foreach (var collider in GameObject.Colliders)
                 billboardsAndColliders.Add(collider);
         }
 
-        void InsertInSortedCollection(object item, ObservableCollection<object> collection, Comparison<object> comparison)
+        void UpdateBillboardsAndCollidersCollection(object sender, NotifyCollectionChangedEventArgs e)
         {
-            for(int i = 0; i < collection.Count; i++)
-                if(comparison(collection[i], item) > 0)
-                {
-                    collection.Insert(i, item);
-                    return;
-                }
+            if (e.NewItems != null)
+                foreach (var added in e.NewItems)
+                    billboardsAndColliders.Add(added);
 
-            collection.Add(item);
+            if (e.OldItems != null)
+                foreach (var removed in e.OldItems)
+                    billboardsAndColliders.Remove(removed);
         }
 
         void UpdateSortedCollections(object sender, NotifyCollectionChangedEventArgs e)
@@ -127,7 +129,19 @@ namespace Editor.GameObjectEditor
                 return -Math.Sign(x_coord - y_coord);
             }
 
-            if(e.OldItems != null)
+            void InsertInSortedCollection(object item, ObservableCollection<object> collection, Comparison<object> comparison)
+            {
+                for (int i = 0; i < collection.Count; i++)
+                    if (comparison(collection[i], item) > 0)
+                    {
+                        collection.Insert(i, item);
+                        return;
+                    }
+
+                collection.Add(item);
+            }
+
+            if (e.OldItems != null)
                 foreach(var deleted in e.OldItems)
                 {
                     xDescendingSortedCollidersAndBillboards.Remove(deleted);
@@ -180,9 +194,11 @@ namespace Editor.GameObjectEditor
             {
                 var args = e as MouseEventArgs;
                 args.Handled = true;
-                var sender = args.Source as DependencyObject;
-                var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
 
+                var sender = args.Source as DependencyObject;
+                Keyboard.Focus(sender as IInputElement); // Focus for delete operation.
+
+                var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
                 selectedEntity = inf_grid_view.FindItemByChildControl(sender);
 
                 OnPropertyChanged("ColliderSelected");
@@ -279,6 +295,24 @@ namespace Editor.GameObjectEditor
 
                 movingObject = false;
                 Mouse.Capture(null);
+            });
+        }
+
+        public ICommand DeleteObject
+        {
+            get => new RelayCommand((e) =>
+            {
+                if ((e as KeyEventArgs).Key != Key.Delete) return;
+
+                model.DeleteObject(selectedEntity);
+
+                selectedEntity = null;
+
+                OnPropertyChanged("ColliderSelected");
+                OnPropertyChanged("BillboardSelected");
+                OnPropertyChanged("SelectedBillboard");
+                OnPropertyChanged("SelectedCollider");
+                OnPropertyChanged("UpdateSelectedObject");
             });
         }
 

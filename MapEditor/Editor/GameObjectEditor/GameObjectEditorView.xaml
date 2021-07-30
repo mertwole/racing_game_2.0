@@ -48,7 +48,7 @@
 
         <Grid x:Key="BillboardView" x:Shared="False">
             <Image  Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                    Stretch="Fill">
+                    Stretch="Fill" Focusable="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <common:EventToCommand 
@@ -77,6 +77,14 @@
                             Command="{Binding 
                             RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
                             Path=DataContext.FinishMoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="KeyDown">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.DeleteObject}"
                             PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -99,7 +107,7 @@
 
         <Grid x:Key="ColliderView" x:Shared="False">
             <!--selection region-->
-            <Border BorderThickness="8" BorderBrush="Transparent" Margin="-4">
+            <Border BorderThickness="8" BorderBrush="Transparent" Margin="-4" Focusable="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <common:EventToCommand 
@@ -128,6 +136,14 @@
                             Command="{Binding 
                             RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
                             Path=DataContext.FinishMoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="KeyDown">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.DeleteObject}"
                             PassEventArgsToCommand="True"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
