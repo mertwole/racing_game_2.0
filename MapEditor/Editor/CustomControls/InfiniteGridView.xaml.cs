@@ -135,7 +135,6 @@ namespace Editor.CustomControls
             new Point((screen_space.X - GridCanvas.ActualWidth * 0.5 - fieldOffset.X) / pixelsInUnit, 
                       (screen_space.Y - GridCanvas.ActualHeight * 0.5 - fieldOffset.Y) / pixelsInUnit);
 
-
         #region Attached properties
         // Attached X position.
         public static readonly DependencyProperty WorldPositionXProperty = DependencyProperty.RegisterAttached(
@@ -191,6 +190,7 @@ namespace Editor.CustomControls
 
             GridCanvas.Loaded += (s, e) => UpdateGrid();
             MainItemsControl.Loaded += (s, e) => MainItemsControlLoaded();
+            MainItemsControl.LayoutUpdated += (s, e) => TriggerUpdateItemsInGrid();
         }
 
         public object FindItemByChildControl(DependencyObject control)

@@ -266,18 +266,26 @@
         <Grid Width="40" Height="40" Margin="10" Panel.ZIndex="1"
               VerticalAlignment="Top" HorizontalAlignment="Left">
             <Border Background="#484848" CornerRadius="10">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <common:EventToCommand Command="{Binding AddCollider}"
+                                       PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
                 <Grid>
                     <Rectangle Margin="6" StrokeThickness="2" StrokeDashCap="Flat"
-                               StrokeDashArray="4 2" Stroke="Orange"/>
+                               StrokeDashArray="4 2" Stroke="Orange"
+                               IsHitTestVisible="False"/>
 
                     <Border Background="Orange" CornerRadius="6" Margin="4"
                             Width="16" Height="16" HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom">
+                            VerticalAlignment="Bottom" IsHitTestVisible="False">
                         <Grid>
                             <Rectangle Fill="#303030" RadiusX="1" RadiusY="1"
-                                       Width="2" Height="12"/>
+                                       Width="2" Height="12" IsHitTestVisible="False"/>
                             <Rectangle Fill="#303030" RadiusX="1" RadiusY="1"
-                                       Width="12" Height="2"/>
+                                       Width="12" Height="2" IsHitTestVisible="False"/>
                         </Grid>
                     </Border>
                 </Grid>

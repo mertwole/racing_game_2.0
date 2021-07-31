@@ -316,6 +316,16 @@ namespace Editor.GameObjectEditor
             });
         }
 
+        public ICommand AddCollider
+        {
+            get => new RelayCommand((e) =>
+            {
+                if ((e as MouseEventArgs).LeftButton == MouseButtonState.Released) return;
+
+                model.AddCollider();
+            });
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {

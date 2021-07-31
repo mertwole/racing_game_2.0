@@ -39,6 +39,12 @@ namespace Editor.GameObjectEditor
                 gameObject.Colliders.Remove(obj as Collider);
         }
 
+        public void AddCollider()
+        {
+            var collider = new Collider(new Vector3(), new Vector3(1, 1, 1));
+            gameObject.Colliders.Add(collider);
+        }
+
         FileManager.File loadedFrom = null;
         bool dirty = false;
 
