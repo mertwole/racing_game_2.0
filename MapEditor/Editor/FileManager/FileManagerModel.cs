@@ -1,6 +1,7 @@
 ﻿using Editor.GameEntities;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace Editor.FileManager
 {
@@ -12,18 +13,29 @@ namespace Editor.FileManager
 
         public FileManagerModel()
         {
-            root.AddContent(new Folder("1", root));
-            root.AddContent(new File("2", root, new Billboard()));
+            Bitmap bmp = new Bitmap(200, 100);
+            var g = Graphics.FromImage(bmp);
+            g.Clear(Color.FromArgb(255, 100, 200, 50));
 
-            (root.Contents[0] as Folder).AddContent(new File("3", root.Contents[0], new GameObject()));
-            (root.Contents[0] as Folder).AddContent(new File("4", root.Contents[0], new GameObject()));
+            var bb = new Billboard();
+            bb.AddLOD(new LOD(bmp));
+            bb.Width = 4;
+            bb.X = 0;
+            bb.Z = -1;
 
-            var folder = new Folder("5", root.Contents[0]);
-            folder.AddContent(new File("6", folder, new Billboard()));
-            folder.Parent = root.Contents[0];
-            (root.Contents[0] as Folder).AddContent(folder);
+            root.AddContent(new File("test_billboard_green", root, bb));
 
-            (root.Contents[0] as Folder).AddContent(new File("7", root.Contents[0], new Billboard()));
+            bmp = new Bitmap(300, 100);
+            g = Graphics.FromImage(bmp);
+            g.Clear(Color.FromArgb(255, 100, 50, 200));
+
+            bb = new Billboard();
+            bb.AddLOD(new LOD(bmp));
+            bb.Width = 4;
+            bb.X = 0;
+            bb.Z = -1;
+
+            root.AddContent(new File("test_billboard_blue", root, bb));
         }
 
         public void DeleteContent(IContent content)

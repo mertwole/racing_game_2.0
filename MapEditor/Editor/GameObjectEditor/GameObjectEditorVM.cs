@@ -11,6 +11,8 @@ using System;
 using System.ComponentModel;
 using System.Windows.Data;
 using System.Globalization;
+using System.Collections.Generic;
+using Editor.FileManager;
 
 namespace Editor.GameObjectEditor
 {
@@ -331,6 +333,25 @@ namespace Editor.GameObjectEditor
                 if ((e as MouseEventArgs).LeftButton == MouseButtonState.Released) return;
 
                 model.AddCollider();
+            });
+        }
+
+        public ICommand DropBillboard
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as DragEventArgs;
+
+                var contents = (HashSet<IContent>)args.Data.GetData(typeof(HashSet<IContent>));
+                if (contents == null) return;
+
+                var files = new List<File>();
+                foreach (var content in contents)
+                    if (content is File file)
+                        files.Add(file);
+
+                foreach (var file in files)
+                    model.AddBillboardFromFile(file);
             });
         }
 

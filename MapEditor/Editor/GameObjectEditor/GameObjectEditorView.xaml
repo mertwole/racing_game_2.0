@@ -237,7 +237,7 @@
         <!--#endregion-->
     </UserControl.Resources>
 
-    <Grid Name="MainGrid">
+    <Grid Name="MainGrid" AllowDrop="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="2"/>
@@ -252,12 +252,17 @@
 
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="KeyDown">
-                <common:EventToCommand  Command="{Binding ElementName=MainGrid, Path=DataContext.ApplyChanges}"
+                <common:EventToCommand  Command="{Binding ApplyChanges}"
                                         PassEventArgsToCommand="True"/>
             </i:EventTrigger>
 
             <i:EventTrigger EventName="MouseDown">
-                <common:EventToCommand Command="{Binding ElementName=MainGrid, Path=DataContext.UnselectObject}"
+                <common:EventToCommand Command="{Binding UnselectObject}"
+                                       PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+
+            <i:EventTrigger EventName="Drop">
+                <common:EventToCommand Command="{Binding DropBillboard}"
                                        PassEventArgsToCommand="True"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>

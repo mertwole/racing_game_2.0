@@ -1,4 +1,5 @@
-﻿using Editor.GameEntities;
+﻿using Editor.FileManager;
+using Editor.GameEntities;
 using System.ComponentModel;
 
 namespace Editor.GameObjectEditor
@@ -43,6 +44,12 @@ namespace Editor.GameObjectEditor
         {
             var collider = new Collider(new Vector3(), new Vector3(1, 1, 1));
             gameObject.Colliders.Add(collider);
+        }
+
+        public void AddBillboardFromFile(File file)
+        {
+            if(file.Content is Billboard billboard)
+                gameObject.Billboards.Add(new Billboard(billboard));
         }
 
         FileManager.File loadedFrom = null;
