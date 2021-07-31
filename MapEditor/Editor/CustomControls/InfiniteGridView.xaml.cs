@@ -135,6 +135,9 @@ namespace Editor.CustomControls
             new Point((screen_space.X - GridCanvas.ActualWidth * 0.5 - fieldOffset.X) / pixelsInUnit, 
                       (screen_space.Y - GridCanvas.ActualHeight * 0.5 - fieldOffset.Y) / pixelsInUnit);
 
+        public Point ScreenSpaceToWorldSize(Point screen_space) =>
+            new Point(screen_space.X / pixelsInUnit, screen_space.Y / pixelsInUnit);
+
         #region Attached properties
         // Attached X position.
         public static readonly DependencyProperty WorldPositionXProperty = DependencyProperty.RegisterAttached(

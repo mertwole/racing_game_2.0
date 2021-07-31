@@ -226,6 +226,8 @@ namespace Editor.GameObjectEditor
         }
 
         bool movingObject = false;
+        Point startMoveScreenPos;
+        Vector3 startMoveWorldPos;
 
         public ICommand StartMoveObject
         {
@@ -240,6 +242,10 @@ namespace Editor.GameObjectEditor
                 var obj = inf_grid_view.FindItemByChildControl(sender);
 
                 movingObject = true;
+                startMoveScreenPos = args.GetPosition(inf_grid_view);
+                if (obj is Collider collider) startMoveWorldPos = collider.Position;
+                if (obj is Billboard billboard) startMoveWorldPos = billboard.Position;
+
                 model.StartMoveObject(obj);
                 Mouse.Capture(sender as IInputElement);
             });
@@ -259,9 +265,11 @@ namespace Editor.GameObjectEditor
 
                 var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
                 var obj = inf_grid_view.FindItemByChildControl(sender);
+
                 var new_pos_screen_space = args.GetPosition(inf_grid_view);
-                new_pos_screen_space.Y = inf_grid_view.ActualHeight - new_pos_screen_space.Y;
-                var new_pos_2D = inf_grid_view.ScreenSpaceToWorld(new_pos_screen_space);
+                var delta_move = new_pos_screen_space - startMoveScreenPos;
+                delta_move.Y *= -1;
+                var delta_world = inf_grid_view.ScreenSpaceToWorldSize(new Point(delta_move.X, delta_move.Y));
 
                 Vector3 new_pos = new Vector3();
                 if (obj is Billboard bb) new_pos = bb.Position;
@@ -270,16 +278,16 @@ namespace Editor.GameObjectEditor
                 switch (inf_grid_view.Name)
                 {
                     case "TopView":
-                        new_pos.X = new_pos_2D.X;
-                        new_pos.Z = new_pos_2D.Y;
+                        new_pos.X = startMoveWorldPos.X + delta_world.X;
+                        new_pos.Z = startMoveWorldPos.Z + delta_world.Y;
                         break;
                     case "RightView":
-                        new_pos.Z = new_pos_2D.X;
-                        new_pos.Y = new_pos_2D.Y;
+                        new_pos.Z = startMoveWorldPos.Z + delta_world.X;
+                        new_pos.Y = startMoveWorldPos.Y + delta_world.Y;
                         break;
                     case "BackView":
-                        new_pos.X = new_pos_2D.X;
-                        new_pos.Y = new_pos_2D.Y;
+                        new_pos.X = startMoveWorldPos.X + delta_world.X;
+                        new_pos.Y = startMoveWorldPos.Y + delta_world.Y;
                         break;
                 }
 
