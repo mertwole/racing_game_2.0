@@ -71,94 +71,118 @@ namespace Editor.GameObjectEditor
 
         public GameObjectEditorVM()
         {
-            billboardsAndColliders.CollectionChanged += UpdateSortedCollections;
-
             GameObject.Billboards.CollectionChanged += UpdateBillboardsAndCollidersCollection;
             GameObject.Colliders.CollectionChanged += UpdateBillboardsAndCollidersCollection;
 
+            InitialBillboardsAndCollidersFill(GameObject);
+        }
+
+        #region BillboardsAndColliders stuff
+
+        void InitialBillboardsAndCollidersFill(GameObject gameObject)
+        {
             foreach (var billboard in GameObject.Billboards)
+            {
                 billboardsAndColliders.Add(billboard);
+
+                xDescendingSortedCollidersAndBillboards.Add(billboard);
+                yDescendingSortedCollidersAndBillboards.Add(billboard);
+                zDescendingSortedCollidersAndBillboards.Add(billboard);
+            }
             foreach (var collider in GameObject.Colliders)
+            {
                 billboardsAndColliders.Add(collider);
+
+                xDescendingSortedCollidersAndBillboards.Add(collider);
+                yDescendingSortedCollidersAndBillboards.Add(collider);
+                zDescendingSortedCollidersAndBillboards.Add(collider);
+            }
+
+            UpdateSortedCollections();
         }
 
         void UpdateBillboardsAndCollidersCollection(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
                 foreach (var added in e.NewItems)
+                {
                     billboardsAndColliders.Add(added);
+
+                    xDescendingSortedCollidersAndBillboards.Add(added);
+                    yDescendingSortedCollidersAndBillboards.Add(added);
+                    zDescendingSortedCollidersAndBillboards.Add(added);
+
+                    UpdateSortedCollections();
+                }
+                    
 
             if (e.OldItems != null)
                 foreach (var removed in e.OldItems)
+                {
                     billboardsAndColliders.Remove(removed);
+
+                    xDescendingSortedCollidersAndBillboards.Remove(removed);
+                    yDescendingSortedCollidersAndBillboards.Remove(removed);
+                    zDescendingSortedCollidersAndBillboards.Remove(removed);
+                }
         }
 
-        void UpdateSortedCollections(object sender, NotifyCollectionChangedEventArgs e)
+        Vector3 GetClosestToViewerPoint(object obj)
         {
-            int compareXDescending(object x, object y)
+            if(obj is Collider collider)
             {
-                var x_coord = 0.0;
-                if (x is Collider cx) x_coord = cx.X - cx.SizeX * 0.5;
-                else if (x is Billboard bx) x_coord = bx.X - bx.Width * 0.5;
-                var y_coord = 0.0;
-                if (y is Collider cy) y_coord = cy.X - cy.SizeX * 0.5;
-                else if (y is Billboard by) y_coord = by.X - by.Width * 0.5;
-
-                return -Math.Sign(x_coord - y_coord);
+                return new Vector3(
+                    collider.X - collider.SizeX * 0.5, 
+                    collider.Y - collider.SizeY * 0.5, 
+                    collider.Z - collider.SizeZ * 0.5);
+            }
+            else if(obj is Billboard billboard)
+            {
+                return new Vector3(
+                    billboard.X - billboard.Width * 0.5,
+                    billboard.Y - billboard.Height * 0.5,
+                    billboard.Z);
             }
 
-            int compareYDescending(object x, object y)
-            {
-                var x_coord = 0.0;
-                if (x is Collider cx) x_coord = cx.Y - cx.SizeY * 0.5;
-                else if (x is Billboard bx) x_coord = bx.Y - bx.Height * 0.5;
-                var y_coord = 0.0;
-                if (y is Collider cy) y_coord = cy.Y - cy.SizeY * 0.5;
-                else if (y is Billboard by) y_coord = by.Y - by.Height * 0.5;
-
-                return -Math.Sign(x_coord - y_coord);
-            }
-
-            int compareZDescending(object x, object y)
-            {
-                var x_coord = 0.0;
-                if (x is Collider cx) x_coord = cx.Z - cx.SizeZ * 0.5;
-                else if (x is Billboard bx) x_coord = bx.Z;
-                var y_coord = 0.0;
-                if (y is Collider cy) y_coord = cy.Z - cy.SizeZ * 0.5;
-                else if (y is Billboard by) y_coord = by.Z;
-
-                return -Math.Sign(x_coord - y_coord);
-            }
-
-            void InsertInSortedCollection(object item, ObservableCollection<object> collection, Comparison<object> comparison)
-            {
-                for (int i = 0; i < collection.Count; i++)
-                    if (comparison(collection[i], item) > 0)
-                    {
-                        collection.Insert(i, item);
-                        return;
-                    }
-
-                collection.Add(item);
-            }
-
-            if (e.OldItems != null)
-                foreach(var deleted in e.OldItems)
-                {
-                    xDescendingSortedCollidersAndBillboards.Remove(deleted);
-                    yDescendingSortedCollidersAndBillboards.Remove(deleted);
-                    zDescendingSortedCollidersAndBillboards.Remove(deleted);
-                }
-
-            if(e.NewItems != null)
-                foreach(var added in e.NewItems)
-                {
-                    InsertInSortedCollection(added, xDescendingSortedCollidersAndBillboards, compareXDescending);
-                    InsertInSortedCollection(added, yDescendingSortedCollidersAndBillboards, compareYDescending);
-                    InsertInSortedCollection(added, zDescendingSortedCollidersAndBillboards, compareZDescending);
-                }
+            return new Vector3();
         }
+
+        int compareXDescending(object x, object y) =>
+            -Math.Sign(GetClosestToViewerPoint(x).X - GetClosestToViewerPoint(y).X);
+
+        int compareYDescending(object x, object y) =>
+            -Math.Sign(GetClosestToViewerPoint(x).Y - GetClosestToViewerPoint(y).Y);
+
+        int compareZDescending(object x, object y) =>
+            -Math.Sign(GetClosestToViewerPoint(x).Z - GetClosestToViewerPoint(y).Z);
+
+        void OrderObservableCollectionByList(ObservableCollection<object> observable, List<object> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (observable.IndexOf(list[i]) != i)
+                {
+                    observable.Remove(list[i]);
+                    observable.Insert(i, list[i]);
+                }
+            }
+        }
+
+        void UpdateSortedCollections()
+        {
+            var items = new List<object>(billboardsAndColliders);
+
+            items.Sort(compareXDescending);
+            OrderObservableCollectionByList(xDescendingSortedCollidersAndBillboards, items);
+
+            items.Sort(compareYDescending);
+            OrderObservableCollectionByList(yDescendingSortedCollidersAndBillboards, items);
+
+            items.Sort(compareZDescending);
+            OrderObservableCollectionByList(zDescendingSortedCollidersAndBillboards, items);
+        }
+
+        #endregion
 
         public ICommand ApplyChanges
         {
@@ -243,13 +267,14 @@ namespace Editor.GameObjectEditor
                 var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
                 var obj = inf_grid_view.FindItemByChildControl(sender);
 
-                movingObject = true;
                 startMoveScreenPos = args.GetPosition(inf_grid_view);
                 if (obj is Collider collider) startMoveWorldPos = collider.Position;
                 if (obj is Billboard billboard) startMoveWorldPos = billboard.Position;
 
                 model.StartMoveObject(obj);
                 Mouse.Capture(sender as IInputElement);
+
+                movingObject = true;
             });
         }
 
@@ -294,6 +319,8 @@ namespace Editor.GameObjectEditor
                 }
 
                 model.MoveObject(new_pos);
+
+                UpdateSortedCollections();
             });
         }
 
