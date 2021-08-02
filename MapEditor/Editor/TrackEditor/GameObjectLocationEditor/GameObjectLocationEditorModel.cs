@@ -1,9 +1,9 @@
 ﻿using Editor.GameEntities;
 using System.Collections.ObjectModel;
 
-namespace Editor.TrackEditor.BillboardEditor
+namespace Editor.TrackEditor.GameObjectLocationEditor
 {
-    public class BillboardEditorModel
+    public class GameObjectLocationEditorModel
     {
         ObservableCollection<GameObject> gameObjects = new ObservableCollection<GameObject>();
         public ObservableCollection<GameObject> GameObjects { get => gameObjects; }

@@ -70,11 +70,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BillboardCreator\BillboardCreatorModel.cs" />
-    <Compile Include="BillboardCreator\BillboardCreatorView.xaml.cs">
-      <DependentUpon>BillboardCreatorView.xaml</DependentUpon>
+    <Compile Include="BillboardEditor\BillboardEditorModel.cs" />
+    <Compile Include="BillboardEditor\BillboardEditorView.xaml.cs">
+      <DependentUpon>BillboardEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BillboardCreator\BillboardCreatorVM.cs" />
+    <Compile Include="BillboardEditor\BillboardEditorVM.cs" />
     <Compile Include="Common\BitmapToImageSourceConverter.cs" />
     <Compile Include="Common\BindingProxy.cs" />
     <Compile Include="Common\ChildFinder.cs" />
@@ -121,17 +121,17 @@
     <Compile Include="CustomControls\TimelineView.xaml.cs">
       <DependentUpon>TimelineView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TrackEditor\BillboardEditor\BillboardEditorModel.cs" />
-    <Compile Include="TrackEditor\BillboardEditor\BillboardEditorView.xaml.cs">
-      <DependentUpon>BillboardEditorView.xaml</DependentUpon>
+    <Compile Include="TrackEditor\GameObjectLocationEditor\GameObjectLocationEditorModel.cs" />
+    <Compile Include="TrackEditor\GameObjectLocationEditor\GameObjectLocationEditorView.xaml.cs">
+      <DependentUpon>GameObjectLocationEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TrackEditor\BillboardEditor\BillboardEditorVM.cs" />
+    <Compile Include="TrackEditor\GameObjectLocationEditor\GameObjectLocationEditorVM.cs" />
     <Compile Include="TrackEditor\TrackEditorModel.cs" />
     <Compile Include="TrackEditor\TrackEditorView.xaml.cs">
       <DependentUpon>TrackEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\TrackEditorVM.cs" />
-    <Page Include="BillboardCreator\BillboardCreatorView.xaml">
+    <Page Include="BillboardEditor\BillboardEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -175,7 +175,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TrackEditor\BillboardEditor\BillboardEditorView.xaml">
+    <Page Include="TrackEditor\GameObjectLocationEditor\GameObjectLocationEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

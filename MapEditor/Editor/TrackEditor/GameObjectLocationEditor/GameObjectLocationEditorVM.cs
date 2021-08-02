@@ -9,12 +9,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace Editor.TrackEditor.BillboardEditor
+namespace Editor.TrackEditor.GameObjectLocationEditor
 {
     public class DistanceToPixelsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            BillboardEditorVM.instance.DistanceToPixels((double)value);
+            GameObjectLocationEditorVM.instance.DistanceToPixels((double)value);
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => null;
@@ -23,15 +23,15 @@ namespace Editor.TrackEditor.BillboardEditor
     public class OffsetToPixelsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            BillboardEditorVM.instance.OffsetToPixels((double)value);
+            GameObjectLocationEditorVM.instance.OffsetToPixels((double)value);
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => null;
     }
 
-    public class BillboardEditorVM : INotifyPropertyChanged
+    public class GameObjectLocationEditorVM : INotifyPropertyChanged
     {
-        BillboardEditorModel model = ModelLocator.GetModel<BillboardEditorModel>();
+        GameObjectLocationEditorModel model = ModelLocator.GetModel<GameObjectLocationEditorModel>();
 
         public ObservableCollection<GameObject> GameObjects { get => model.GameObjects; }
 
@@ -39,7 +39,7 @@ namespace Editor.TrackEditor.BillboardEditor
         public static readonly DependencyProperty MainCanvasProperty =
         DependencyProperty.RegisterAttached(
         "MainCanvas", typeof(Canvas),
-        typeof(BillboardEditorVM), new FrameworkPropertyMetadata(OnMainCanvasChanged));
+        typeof(GameObjectLocationEditorVM), new FrameworkPropertyMetadata(OnMainCanvasChanged));
 
         public static void SetMainCanvas(DependencyObject element, Canvas value) => element.SetValue(MainCanvasProperty, value);
         public static Canvas GetMainCanvas(DependencyObject element) => (Canvas)element.GetValue(MainCanvasProperty);
@@ -221,11 +221,11 @@ namespace Editor.TrackEditor.BillboardEditor
 
         #endregion
 
-        public static BillboardEditorVM instance;
-        public BillboardEditorVM()
+        public static GameObjectLocationEditorVM instance;
+        public GameObjectLocationEditorVM()
         {
             if (instance != null)
-                throw new Exception("Trying to create another instance of singleton TrackEditorVM");
+                throw new Exception("Trying to create another instance of singleton GameObjectLocationEditorVM");
             instance = this;
         }
 

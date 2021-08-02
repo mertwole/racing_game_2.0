@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Editor.TrackEditor"
              xmlns:curv_editor="clr-namespace:Editor.TrackEditor.CurvatureEditor"
              xmlns:heel_editor="clr-namespace:Editor.TrackEditor.HeelEditor"
-             xmlns:billboard_editor="clr-namespace:Editor.TrackEditor.BillboardEditor"
+             xmlns:go_location_editor="clr-namespace:Editor.TrackEditor.GameObjectLocationEditor"
              xmlns:cc="clr-namespace:Editor.CustomControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -20,7 +20,7 @@
 
             <Grid Height="35" HorizontalAlignment="Stretch"/>
 
-            <billboard_editor:BillboardEditorView Height="200" HorizontalAlignment="Stretch"/>
+            <go_location_editor:GameObjectLocationEditorView Height="200" HorizontalAlignment="Stretch"/>
         </cc:TimelineView>
     </Grid>
 </UserControl>

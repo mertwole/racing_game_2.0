@@ -11,7 +11,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Editor.BillboardCreator
+namespace Editor.BillboardEditor
 {
     public class CheckSelectionVisiblity : IMultiValueConverter
     {
@@ -29,10 +29,11 @@ namespace Editor.BillboardCreator
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => null;
     }
 
-    public class BillboardCreatorVM : INotifyPropertyChanged
+    public class BillboardEditorVM : INotifyPropertyChanged
     {
-        BillboardCreatorModel model = ModelLocator.GetModel<BillboardCreatorModel>();
-        public ObservableCollection<LOD> LODs { get => model.LODs; }
+        BillboardEditorModel model;
+        public BillboardEditorModel Model { set { model = value; OnPropertyChanged("LODs"); } }
+        public ObservableCollection<LOD> LODs { get => model == null ? new ObservableCollection<LOD>() : model.LODs; }
 
         public Visibility DropRegionsVisiblity { get => draggedImage == null ? Visibility.Hidden : Visibility.Visible; }
 

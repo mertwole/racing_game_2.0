@@ -1,10 +1,10 @@
-﻿using Editor.BillboardCreator;
+﻿using Editor.BillboardEditor;
 using Editor.FileManager;
 using Editor.GameEntities;
 using Editor.GameObjectEditor;
 using Editor.TabbedEditors;
 using Editor.TrackEditor;
-using Editor.TrackEditor.BillboardEditor;
+using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.CurvatureEditor;
 using Editor.TrackEditor.HeelEditor;
 using System;
@@ -21,16 +21,10 @@ namespace Editor
 
         static ModelLocator()
         {
-            GameObjectEditorModel gameObjectEditorModel = new GameObjectEditorModel(new GameObject());
-
-            models.Add(typeof(GameObjectEditorModel), gameObjectEditorModel);
-
-            models.Add(typeof(BillboardEditorModel), new BillboardEditorModel());
+            models.Add(typeof(GameObjectLocationEditorModel), new GameObjectLocationEditorModel());
             models.Add(typeof(CurvatureEditorModel), new CurvatureEditorModel());
             models.Add(typeof(HeelEditorModel), new HeelEditorModel());
             models.Add(typeof(TrackEditorModel), new TrackEditorModel());
-
-            models.Add(typeof(BillboardCreatorModel), new BillboardCreatorModel());
 
             models.Add(typeof(FileManagerModel), new FileManagerModel());
 

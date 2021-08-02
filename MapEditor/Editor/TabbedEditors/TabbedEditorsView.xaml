@@ -4,18 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Editor.TabbedEditors"
-             
-             xmlns:track_editor="clr-namespace:Editor.TrackEditor"        
-             xmlns:go_editor="clr-namespace:Editor.GameObjectEditor"
-             xmlns:billboard_creator="clr-namespace:Editor.BillboardCreator"
-             
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:common="clr-namespace:Editor.Common"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <local:TabbedEditorsVM/>
     </UserControl.DataContext>
     
-    <Grid>
+    <Grid Name="MainGrid">
         <TabControl Background="{DynamicResource MaterialDesignPaper}"
                     BorderThickness="0, 2, 0, 0" Margin="-2, 8, -2, -2"
                     BorderBrush="Orange" ItemsSource="{Binding Tabs}">
@@ -53,7 +50,14 @@
 
                         <Image Source="../Images/close_icon.png" Stretch="UniformToFill"
                                Margin="12, 12, 0, 12"
-                               Visibility="{Binding CanBeClosed, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                               Visibility="{Binding CanBeClosed, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <common:EventToCommand Command="{Binding ElementName=MainGrid, Path=DataContext.CloseTab}"
+                                    PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Image>
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>

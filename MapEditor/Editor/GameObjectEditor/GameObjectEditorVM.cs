@@ -55,8 +55,8 @@ namespace Editor.GameObjectEditor
 
     public class GameObjectEditorVM : INotifyPropertyChanged
     {
-        GameObjectEditorModel model = ModelLocator.GetModel<GameObjectEditorModel>();
-
+        GameObjectEditorModel model;
+        public GameObjectEditorModel Model { set { model = value; OnPropertyChanged("GameObject"); Init(); } }
         public GameObject GameObject { get => model.GameObject; }
 
         ObservableCollection<object> billboardsAndColliders = new ObservableCollection<object>();
@@ -69,7 +69,7 @@ namespace Editor.GameObjectEditor
         ObservableCollection<object> zDescendingSortedCollidersAndBillboards = new ObservableCollection<object>();
         public ObservableCollection<object> ZDescendingSortedCollidersAndBillboards { get => zDescendingSortedCollidersAndBillboards; }
 
-        public GameObjectEditorVM()
+        void Init()
         {
             GameObject.Billboards.CollectionChanged += UpdateBillboardsAndCollidersCollection;
             GameObject.Colliders.CollectionChanged += UpdateBillboardsAndCollidersCollection;

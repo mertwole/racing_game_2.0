@@ -2,12 +2,17 @@
 using System.Collections.ObjectModel;
 using System.Drawing;
 
-namespace Editor.BillboardCreator
+namespace Editor.BillboardEditor
 {
-    public class BillboardCreatorModel
+    public class BillboardEditorModel
     {
-        Billboard billboard = new Billboard();
+        Billboard billboard;
         public ObservableCollection<LOD> LODs { get => billboard.LODs; }
+
+        public BillboardEditorModel(Billboard billboard)
+        {
+            this.billboard = billboard;
+        }
 
         public void MoveLODTo(int lod_id, int move_to)
         {
