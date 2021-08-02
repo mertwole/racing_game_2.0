@@ -36,6 +36,8 @@ namespace Editor.FileManager
             bb.Z = -1;
 
             root.AddContent(new File("test_billboard_blue", root, bb));
+
+            root.AddContent(new Folder("test", root));
         }
 
         public void DeleteContent(IContent content)

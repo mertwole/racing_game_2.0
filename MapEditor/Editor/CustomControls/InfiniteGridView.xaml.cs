@@ -259,6 +259,7 @@ namespace Editor.CustomControls
                 foreach(var removed in e.OldItems)
                     if (removed is INotifyPropertyChanged removed_observable)
                     {
+                        if (!itemChangedEventHandlers.ContainsKey(removed_observable)) continue;
                         var handler = itemChangedEventHandlers[removed_observable];
                         removed_observable.PropertyChanged -= handler;
                         itemChangedEventHandlers.Remove(removed_observable);

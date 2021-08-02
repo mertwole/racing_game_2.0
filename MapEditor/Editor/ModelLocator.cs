@@ -2,6 +2,7 @@
 using Editor.FileManager;
 using Editor.GameEntities;
 using Editor.GameObjectEditor;
+using Editor.TabbedEditors;
 using Editor.TrackEditor;
 using Editor.TrackEditor.BillboardEditor;
 using Editor.TrackEditor.CurvatureEditor;
@@ -24,7 +25,6 @@ namespace Editor
 
             models.Add(typeof(GameObjectEditorModel), gameObjectEditorModel);
 
-
             models.Add(typeof(BillboardEditorModel), new BillboardEditorModel());
             models.Add(typeof(CurvatureEditorModel), new CurvatureEditorModel());
             models.Add(typeof(HeelEditorModel), new HeelEditorModel());
@@ -33,6 +33,8 @@ namespace Editor
             models.Add(typeof(BillboardCreatorModel), new BillboardCreatorModel());
 
             models.Add(typeof(FileManagerModel), new FileManagerModel());
+
+            models.Add(typeof(TabbedEditorsModel), new TabbedEditorsModel());
         }
 
         public static T GetModel<T>()

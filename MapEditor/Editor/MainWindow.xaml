@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Editor"
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-        
+  
         xmlns:track_editor="clr-namespace:Editor.TrackEditor"        
         xmlns:go_editor="clr-namespace:Editor.GameObjectEditor"
         xmlns:fm="clr-namespace:Editor.FileManager"
         xmlns:billboard_creator="clr-namespace:Editor.BillboardCreator"
+        
+        xmlns:tabbed_editors="clr-namespace:Editor.TabbedEditors"
         
         mc:Ignorable="d"
         Title="MainWindow" Height="1080" Width="1920"
@@ -25,15 +27,14 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!--<track_editor:TrackEditorView Grid.Column="0"/>-->
+        <tabbed_editors:TabbedEditorView/>
 
-        <!--<billboard_creator:BillboardCreatorView/>-->
+        <Rectangle Fill="Orange" Grid.Column="1"/>
 
-        <go_editor:GameObjectEditorView/>
-
-        <fm:FileManagerView Grid.Column="1"/>
+        <fm:FileManagerView Grid.Column="2"/>
     </Grid>
 </Window>
