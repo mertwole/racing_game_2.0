@@ -1,22 +1,40 @@
 ﻿using Editor.Common;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Editor.TabbedEditors
 {
-    class TabbedEditorsVM
+    class TabbedEditorsVM : INotifyPropertyChanged
     {
         TabbedEditorsModel model = ModelLocator.GetModel<TabbedEditorsModel>();
 
         public ObservableCollection<EditorTab> Tabs { get => model.Tabs; }
+
+        EditorTab activeTab;
+        public EditorTab ActiveTab { get => activeTab; set => activeTab = value; }
+
+        public TabbedEditorsVM()
+        {
+            Tabs.CollectionChanged += (s, e) => 
+            { 
+                if (e.NewItems != null)
+                {
+                    // Doesn't work if called from current thread.
+                    Dispatcher.CurrentDispatcher.BeginInvoke((Action)(
+                        () => {
+                            activeTab = (EditorTab)e.NewItems[0];
+                            OnPropertyChanged("ActiveTab");
+                        }
+                    ));
+                }
+            };
+        }
 
         T FindParentOfType<T>(DependencyObject element) where T : class
         {
@@ -37,6 +55,12 @@ namespace Editor.TabbedEditors
 
                 model.CloseTab(tab as EditorTab);
             });
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 }

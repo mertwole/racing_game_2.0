@@ -96,8 +96,8 @@
     <Compile Include="GameObjectEditor\GameObjectEditorVM.cs" />
     <Compile Include="IEditorTabModel.cs" />
     <Compile Include="ModelLocator.cs" />
-    <Compile Include="TabbedEditors\SaveChangesDialog\SaveChangesDialog.xaml.cs">
-      <DependentUpon>SaveChangesDialog.xaml</DependentUpon>
+    <Compile Include="TabbedEditors\ApplyChangesDialog.xaml.cs">
+      <DependentUpon>ApplyChangesDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="TabbedEditors\TabbedEditorsModel.cs" />
     <Compile Include="TabbedEditors\TabbedEditorsView.xaml.cs">
@@ -147,7 +147,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TabbedEditors\SaveChangesDialog\SaveChangesDialog.xaml">
+    <Page Include="TabbedEditors\ApplyChangesDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

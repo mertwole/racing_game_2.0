@@ -15,7 +15,8 @@
     <Grid Name="MainGrid">
         <TabControl Background="{DynamicResource MaterialDesignPaper}"
                     BorderThickness="0, 2, 0, 0" Margin="-2, 8, -2, -2"
-                    BorderBrush="Orange" ItemsSource="{Binding Tabs}">
+                    BorderBrush="Orange" ItemsSource="{Binding Tabs}"
+                    SelectedItem="{Binding ActiveTab, Mode=TwoWay}">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Template">

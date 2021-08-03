@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace Editor.TabbedEditors.SaveChangesDialog
+namespace Editor.TabbedEditors
 {
-    public partial class SaveChangesDialog : Window
+    public partial class ApplyChangesDialog : Window
     {
         private const int GWL_STYLE = -16;
         private const int WS_SYSMENU = 0x80000;
@@ -23,7 +23,7 @@ namespace Editor.TabbedEditors.SaveChangesDialog
 
         public Choise choise;
 
-        public SaveChangesDialog()
+        public ApplyChangesDialog()
         {
             Loaded += (s, e) => RemoveCloseButton();
 

@@ -1,0 +1,22 @@
+﻿<Window x:Class="Editor.TabbedEditors.ApplyChangesDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Editor.TabbedEditors"
+        mc:Ignorable="d" ShowInTaskbar="False" SizeToContent="WidthAndHeight"
+        Title="Apply changes?" WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    <Grid>
+        <StackPanel Orientation="Vertical" Background="#484848">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="apply" Click="KeepSelected" Margin="8"/>
+
+                <Button Content="discard" Click="DiscardSelected" Margin="8"/>
+
+                <Button Content="keep editing" Click="ContinueEditingSelected" Margin="8"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
