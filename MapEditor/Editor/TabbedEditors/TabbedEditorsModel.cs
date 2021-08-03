@@ -63,7 +63,20 @@ namespace Editor.TabbedEditors
         {
             if(tab.IsDirty)
             {
-                // TODO : Ask to save.
+                var modal = new SaveChangesDialog.SaveChangesDialog();
+                modal.ShowDialog();
+                switch(modal.choise)
+                {
+                    case SaveChangesDialog.SaveChangesDialog.Choise.Keep:
+                        tab.Save();
+                        tabs.Remove(tab);
+                        break;
+                    case SaveChangesDialog.SaveChangesDialog.Choise.Discard:
+                        tabs.Remove(tab);
+                        break;
+                    case SaveChangesDialog.SaveChangesDialog.Choise.ContinueEditing:
+                        break;
+                }
             }
             else
                 tabs.Remove(tab);

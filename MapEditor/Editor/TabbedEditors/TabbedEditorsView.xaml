@@ -11,7 +11,7 @@
     <UserControl.DataContext>
         <local:TabbedEditorsVM/>
     </UserControl.DataContext>
-    
+
     <Grid Name="MainGrid">
         <TabControl Background="{DynamicResource MaterialDesignPaper}"
                     BorderThickness="0, 2, 0, 0" Margin="-2, 8, -2, -2"

@@ -38,6 +38,12 @@ namespace Editor.GameEntities
             this.size = size;
         }
 
+        public Collider(Collider prototype)
+        {
+            position = prototype.position;
+            size = prototype.size;
+        }
+
         // Bacause Two-way binding not works for structs.
         public double X { get => position.X; set { position.X = value; OnPropertyChanged("X"); OnPropertyChanged("Position"); } }
         public double Y { get => position.Y; set { position.Y = value; OnPropertyChanged("Y"); OnPropertyChanged("Position"); } }

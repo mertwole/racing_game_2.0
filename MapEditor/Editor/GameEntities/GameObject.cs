@@ -68,8 +68,15 @@ namespace Editor.GameEntities
         {
             roadDistance = prototype.roadDistance;
             offset = prototype.offset;
-            billboards = new ObservableCollection<Billboard>(prototype.billboards);
-            colliders = new ObservableCollection<Collider>(prototype.colliders);
+
+            billboards = new ObservableCollection<Billboard>();
+            foreach (var billboard in prototype.billboards)
+                billboards.Add(new Billboard(billboard));
+
+            colliders = new ObservableCollection<Collider>();
+            foreach (var collider in prototype.colliders)
+                colliders.Add(new Collider(collider));
+
         }
 
         public GameObject(double road_distance, double offset)
