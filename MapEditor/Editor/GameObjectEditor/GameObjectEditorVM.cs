@@ -56,7 +56,7 @@ namespace Editor.GameObjectEditor
     public class GameObjectEditorVM : INotifyPropertyChanged
     {
         GameObjectEditorModel model;
-        public GameObjectEditorModel Model { set { model = value; OnPropertyChanged("GameObject"); Init(); } }
+        public GameObjectEditorModel Model { set { model = value; Init(); OnPropertyChanged("GameObject"); } }
         public GameObject GameObject { get => model.GameObject; }
 
         ObservableCollection<object> billboardsAndColliders = new ObservableCollection<object>();

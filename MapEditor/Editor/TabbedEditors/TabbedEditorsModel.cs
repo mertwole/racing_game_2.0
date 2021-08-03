@@ -57,9 +57,6 @@ namespace Editor.TabbedEditors
         public TabbedEditorsModel()
         {
             tabs.Add(new EditorTab(new TrackEditorView(), new TrackEditorModel(), "track editor", false));
-
-            var file = new FileManager.File("test go", null, new GameObject());
-            OpenFileEditor(file);
         }
 
         public void CloseTab(EditorTab tab)
@@ -83,14 +80,13 @@ namespace Editor.TabbedEditors
             {
                 case GameObject _:
                     var go_eitor_view = new GameObjectEditorView();
-                    var go_eitor_model = new GameObjectEditorModel(new GameObject());
+                    var go_eitor_model = new GameObjectEditorModel(file);
                     (go_eitor_view.DataContext as GameObjectEditorVM).Model = go_eitor_model;
-                    go_eitor_model.LoadFromFile(file);
                     tabs.Add(new EditorTab(go_eitor_view, go_eitor_model, "test go name: " + file.Name, true));
                     break;
                 case Billboard _:
                     var bb_editor_view = new BillboardEditorView();
-                    var bb_editor_model = new BillboardEditorModel(new Billboard());
+                    var bb_editor_model = new BillboardEditorModel(file);
                     (bb_editor_view.DataContext as BillboardEditorVM).Model = bb_editor_model;
                     tabs.Add(new EditorTab(bb_editor_view, bb_editor_model, "test bb name: " + file.Name, true));
                     break;

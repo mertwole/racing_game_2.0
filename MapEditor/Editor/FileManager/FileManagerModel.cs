@@ -116,6 +116,12 @@ namespace Editor.FileManager
             parent.Contents.Remove(item);
             parent.AddContent(item);
         }
+
+        public void OpenFileEditor(File file)
+        {
+            var tabbed_editors_model = ModelLocator.GetModel<TabbedEditors.TabbedEditorsModel>();
+            tabbed_editors_model.OpenFileEditor(file);
+        }
     }
 
     public interface IContent

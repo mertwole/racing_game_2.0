@@ -446,6 +446,12 @@
                                             Path=Data.DragItemsEnter}"
                                             PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
+
+                            <i:EventTrigger EventName="MouseDown">
+                                <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                Path=Data.OpenFileEditor}"
+                                                PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
                         </i:Interaction.Triggers>
 
                         <Grid IsHitTestVisible="False">
@@ -471,7 +477,7 @@
                         <!--name-->
                         <Grid>
                             <TextBlock Text="{Binding ElementName=NameTextBox, Path=Text}" Focusable="True" Foreground="White"
-                                       VerticalAlignment="Center">
+                                       VerticalAlignment="Center" HorizontalAlignment="Left">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseDown">
                                         <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 

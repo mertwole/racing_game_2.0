@@ -457,6 +457,22 @@ namespace Editor.FileManager
 
         #endregion
 
+        public ICommand OpenFileEditor
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as MouseButtonEventArgs;
+
+                // If selectedItems.Count > 1 then it's mis-doubleclick.
+                if (args.ClickCount == 2 && selectedItems.Count <= 1)
+                {
+                    args.Handled = true;
+                    var item = (args.Source as StackPanel).DataContext as IContent;
+                    model.OpenFileEditor(item as File);
+                }
+            });
+        }
+
         static FileManagerVM instance;
         public FileManagerVM()
         {

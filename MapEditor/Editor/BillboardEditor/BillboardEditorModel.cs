@@ -10,9 +10,20 @@ namespace Editor.BillboardEditor
         Billboard billboard;
         public ObservableCollection<LOD> LODs { get => billboard.LODs; }
 
-        public BillboardEditorModel(Billboard billboard)
+        FileManager.File loadedFrom = null;
+        bool dirty = false;
+        public bool IsDirty => dirty;
+
+        public BillboardEditorModel(FileManager.File file)
         {
-            this.billboard = billboard;
+            if (!(file.Content is Billboard))
+                throw new System.Exception("Unexpected file type. Expected file containing Billboard.");
+
+            billboard = new Billboard(file.Content as Billboard);
+            loadedFrom = file;
+
+            dirty = false;
+            OnPropertyChanged("IsDirty");
         }
 
         public void MoveLODTo(int lod_id, int move_to)
@@ -40,27 +51,11 @@ namespace Editor.BillboardEditor
             OnPropertyChanged("IsDirty");
         }
 
-        FileManager.File loadedFrom = null;
-        bool dirty = false;
-        public bool IsDirty => dirty;
-
         public void ApplyChanges()
         {
             if (loadedFrom == null) return;
 
             loadedFrom.Content = new Billboard(billboard);
-
-            dirty = false;
-            OnPropertyChanged("IsDirty");
-        }
-
-        public void LoadFromFile(FileManager.File file)
-        {
-            if (!(file.Content is Billboard))
-                throw new System.Exception("Unexpected file type. Expected file containing Billboard.");
-
-            billboard = new Billboard(file.Content as Billboard);
-            loadedFrom = file;
 
             dirty = false;
             OnPropertyChanged("IsDirty");

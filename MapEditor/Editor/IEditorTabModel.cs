@@ -6,6 +6,5 @@ namespace Editor
     {
         bool IsDirty { get; }
         void ApplyChanges();
-        void LoadFromFile(FileManager.File file);
     }
 }

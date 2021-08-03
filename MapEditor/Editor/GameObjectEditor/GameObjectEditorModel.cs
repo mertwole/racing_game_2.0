@@ -9,9 +9,21 @@ namespace Editor.GameObjectEditor
         GameObject gameObject; 
         public GameObject GameObject { get => gameObject; set => gameObject = value; }
 
-        public GameObjectEditorModel(GameObject gameObject)
+        FileManager.File loadedFrom = null;
+        bool dirty = false;
+        public bool IsDirty => dirty;
+
+        public GameObjectEditorModel(FileManager.File file)
         {
-            this.gameObject = gameObject;
+            if (!(file.Content is GameObject))
+                throw new System.Exception("Unexpected file type. Expected file containing GameObject.");
+
+            gameObject = new GameObject(file.Content as GameObject);
+            loadedFrom = file;
+            dirty = false;
+
+            OnPropertyChanged("IsDirty");
+            OnPropertyChanged("GameObject");
         }
 
         object toMove = null;
@@ -63,23 +75,6 @@ namespace Editor.GameObjectEditor
                 dirty = true;
                 OnPropertyChanged("IsDirty");
             }
-        }
-
-        FileManager.File loadedFrom = null;
-        bool dirty = false;
-        public bool IsDirty => dirty;
-
-        public void LoadFromFile(FileManager.File file)
-        {
-            if (!(file.Content is GameObject))
-                throw new System.Exception("Unexpected file type. Expected file containing GameObject.");
-
-            gameObject = new GameObject(file.Content as GameObject);
-            loadedFrom = file;
-            dirty = false;
-
-            OnPropertyChanged("IsDirty");
-            OnPropertyChanged("GameObject");
         }
 
         public void ApplyChanges()
