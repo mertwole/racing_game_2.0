@@ -142,9 +142,6 @@ namespace Editor.BillboardEditor
 
                 var selection = GetParentContentPresenter(args.Source);
                 SelectionId = ItemsControl.GetAlternationIndex(selection);
-
-                Keyboard.Focus(args.Source as IInputElement);
-                args.Handled = true;
             });
         }
 
@@ -155,7 +152,7 @@ namespace Editor.BillboardEditor
                 var args = e as KeyboardEventArgs;
 
                 if (args.KeyboardDevice.IsKeyDown(Key.Delete))
-                    model.DeleteLOD(selectionId);
+                    model.DeleteLOD(selectionId);                            
             });
         }
 

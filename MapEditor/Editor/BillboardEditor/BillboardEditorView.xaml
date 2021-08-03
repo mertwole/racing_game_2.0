@@ -24,6 +24,11 @@
                 <common:EventToCommand  Command="{Binding ElementName=Root, Path=DataContext.ApplyChanges}"
                                         PassEventArgsToCommand="True"/>
             </i:EventTrigger>
+
+            <i:EventTrigger EventName="KeyDown">
+                <common:EventToCommand  Command="{Binding ElementName=Root, Path=DataContext.DeleteSelected}" 
+                                        PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
         </i:Interaction.Triggers>
         
         <StackPanel Margin="20, 0, 0, 20">
@@ -69,18 +74,14 @@
                                             Command="{Binding ElementName=Root, Path=DataContext.SelectLOD}" 
                                             PassEventArgsToCommand="True"/>
                                     </i:EventTrigger>
-
-                                    <i:EventTrigger EventName="KeyDown">
-                                        <common:EventToCommand
-                                            Command="{Binding ElementName=Root, Path=DataContext.DeleteSelected}" 
-                                            PassEventArgsToCommand="True"/>
-                                    </i:EventTrigger>
                                 </i:Interaction.Triggers>
 
                                 <Border BorderBrush="#474747" BorderThickness="2" 
-                                        Margin="-2" CornerRadius="10" ClipToBounds="True"/>
+                                        Margin="-2" CornerRadius="10" ClipToBounds="True"
+                                        IsHitTestVisible="False"/>
                                 <Border BorderBrush="Orange" BorderThickness="2" 
-                                        Margin="-2" CornerRadius="10" ClipToBounds="True">
+                                        Margin="-2" CornerRadius="10" ClipToBounds="True"
+                                        IsHitTestVisible="False">
                                     <Border.Visibility>
                                         <MultiBinding Converter="{StaticResource SelectionVisiblityConverter}">
                                             <Binding ElementName="Root" Path="DataContext.SelectionId"/>
@@ -90,7 +91,8 @@
                                     </Border.Visibility>
                                 </Border>
 
-                                <Border x:Name="ImageRounder" CornerRadius="10" Background="White"/>
+                                <Border x:Name="ImageRounder" CornerRadius="10" Background="White"
+                                        IsHitTestVisible="False"/>
                                 <Image Source="{Binding Image, Converter={StaticResource BmpToImgSrcConverter}}" 
                                            IsHitTestVisible="False">
                                     <Image.OpacityMask>
