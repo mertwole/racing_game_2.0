@@ -48,6 +48,9 @@
                         <Label Content="{Binding ShownName}" VerticalAlignment="Center"
                                VerticalContentAlignment="Center"/>
 
+                        <Label Content="*" VerticalAlignment="Center" VerticalContentAlignment="Center"
+                               Visibility="{Binding IsDirty, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
                         <Image Source="../Images/close_icon.png" Stretch="UniformToFill"
                                Margin="12, 12, 0, 12"
                                Visibility="{Binding CanBeClosed, Converter={StaticResource BooleanToVisibilityConverter}}">

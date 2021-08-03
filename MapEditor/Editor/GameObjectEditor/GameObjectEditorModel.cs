@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Editor.GameObjectEditor
 {
-    public class GameObjectEditorModel : INotifyPropertyChanged
+    public class GameObjectEditorModel : INotifyPropertyChanged, IEditorTabModel
     {
         GameObject gameObject; 
         public GameObject GameObject { get => gameObject; set => gameObject = value; }
@@ -30,6 +30,9 @@ namespace Editor.GameObjectEditor
                 var billboard = toMove as Billboard;
                 billboard.Position = new_pos;
             }
+
+            dirty = true;
+            OnPropertyChanged("IsDirty");
         }
 
         public void DeleteObject(object obj)
@@ -38,22 +41,33 @@ namespace Editor.GameObjectEditor
                 gameObject.Billboards.Remove(bb);
             else if (gameObject.Colliders.Contains(obj as Collider))
                 gameObject.Colliders.Remove(obj as Collider);
+
+            dirty = true;
+            OnPropertyChanged("IsDirty");
         }
 
         public void AddCollider()
         {
             var collider = new Collider(new Vector3(), new Vector3(1, 1, 1));
             gameObject.Colliders.Add(collider);
+            dirty = true;
+            OnPropertyChanged("IsDirty");
         }
 
         public void AddBillboardFromFile(File file)
         {
             if(file.Content is Billboard billboard)
+            {
                 gameObject.Billboards.Add(new Billboard(billboard));
+
+                dirty = true;
+                OnPropertyChanged("IsDirty");
+            }
         }
 
         FileManager.File loadedFrom = null;
         bool dirty = false;
+        public bool IsDirty => dirty;
 
         public void LoadFromFile(FileManager.File file)
         {
@@ -64,7 +78,8 @@ namespace Editor.GameObjectEditor
             loadedFrom = file;
             dirty = false;
 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("GameObject"));
+            OnPropertyChanged("IsDirty");
+            OnPropertyChanged("GameObject");
         }
 
         public void ApplyChanges()
@@ -73,8 +88,14 @@ namespace Editor.GameObjectEditor
 
             loadedFrom.Content = new GameObject(gameObject);
             dirty = false;
+
+            OnPropertyChanged("IsDirty");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
     }
 }

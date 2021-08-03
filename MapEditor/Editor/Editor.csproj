@@ -94,6 +94,7 @@
       <DependentUpon>GameObjectEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameObjectEditor\GameObjectEditorVM.cs" />
+    <Compile Include="IEditorTabModel.cs" />
     <Compile Include="ModelLocator.cs" />
     <Compile Include="TabbedEditors\TabbedEditorsModel.cs" />
     <Compile Include="TabbedEditors\TabbedEditorsView.xaml.cs">

@@ -38,6 +38,8 @@ namespace Editor.FileManager
             root.AddContent(new File("test_billboard_blue", root, bb));
 
             root.AddContent(new Folder("test", root));
+
+            root.AddContent(new File("test go", root, new GameObject()));
         }
 
         public void DeleteContent(IContent content)
