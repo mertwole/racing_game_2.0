@@ -16,7 +16,7 @@
         <local:ListToPathSegmentCollectionConverter x:Key="ListToPathSegmentCollectionConverter"/>
     </UserControl.Resources>
     
-    <Grid Background="#474747">
+    <Grid Background="#474747" Name="Root">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="MouseLeftButtonDown">
                 <common:EventToCommand Command="{Binding CreateNewKeypoint}"
@@ -85,8 +85,19 @@
         <ItemsControl ItemsSource="{Binding Keypoints}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas IsItemsHost="True" x:Name="MainCanvas" 
-                            local:HeelEditorVM.MainCanvas="{Binding ElementName=MainCanvas}"/>
+                    <Canvas IsItemsHost="True" x:Name="MainCanvas">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <common:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.MainCanvasLoaded}"
+                                    PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+
+                            <i:EventTrigger EventName="SizeChanged">
+                                <common:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.MainCanvasSizeChanged}"
+                                    PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Canvas>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 
@@ -105,16 +116,6 @@
                             <i:EventTrigger EventName="MouseLeftButtonDown">
                                 <common:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.StartMoveKeypoint}"
                                     PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-
-                            <i:EventTrigger EventName="MouseMove">
-                                <common:EventToCommand Command="{Binding ElementName=MainCanvas, Path=DataContext.MoveKeypoint}"
-                                    PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-
-                            <i:EventTrigger EventName="MouseLeftButtonUp">
-                                <common:EventToCommand 
-                                    Command="{Binding ElementName=MainCanvas, Path=DataContext.FinishMoveKeypoint}"/>
                             </i:EventTrigger>
 
                             <i:EventTrigger EventName="MouseRightButtonDown">

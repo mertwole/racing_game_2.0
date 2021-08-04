@@ -32,11 +32,96 @@ namespace Editor.TrackEditor.HeelEditor
 
     class HeelEditorVM : INotifyPropertyChanged
     {
-        static HeelEditorModel model = ModelLocator.GetModel<HeelEditorModel>();
+        HeelEditorModel model = ModelLocator.GetModel<HeelEditorModel>();
+        //public HeelEditorModel Model { set => model = value; Init(); }
 
         public ObservableCollection<HeelKeypoint> Keypoints { get => model.Keypoints; }
 
         bool editingKeypoint = false;
+
+        double mainCanvasWidth = 0;
+        double mainCanvasHeight = 0;
+
+        public HeelEditorVM()
+        {
+            model.Keypoints.CollectionChanged += (s, e) => UpdateGraph();
+        }
+
+        void Init()
+        {
+            model.Keypoints.CollectionChanged += (s, e) => UpdateGraph();
+        }
+
+        // Graph rendering
+        List<LineSegment> graphPoints = new List<LineSegment>();
+        public List<LineSegment> GraphPoints { get => graphPoints; }
+
+        void UpdateGraph()
+        {
+            for (int i = 0; i < graphPoints.Count - 2; i++)
+            {
+                var seg = graphPoints[i];
+                seg.Point = new Point(seg.Point.X, mainCanvasHeight - model.GetHeightByPosition(seg.Point.X));
+            }
+
+            OnPropertyChanged("GraphPoints");
+        }
+
+        public ICommand MainCanvasLoaded
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+                var main_canvas = args.Source as Canvas;
+                mainCanvasWidth = main_canvas.ActualWidth;
+                mainCanvasHeight = main_canvas.ActualHeight;
+
+                model.Init(mainCanvasWidth);
+
+                for (int i = 0; i < mainCanvasWidth; i++)
+                    graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
+
+                graphPoints[0].IsStroked = false;
+
+                graphPoints.Add(new LineSegment(new Point(mainCanvasWidth, mainCanvasHeight), false));
+                graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
+
+                UpdateGraph();
+            });
+        }
+
+        public ICommand MainCanvasSizeChanged
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+                var main_canvas = args.Source as Canvas;
+                mainCanvasWidth = main_canvas.ActualWidth;
+                mainCanvasHeight = main_canvas.ActualHeight;
+
+                model.Init(mainCanvasWidth);
+
+                graphPoints.Clear();
+
+                for (int i = 0; i < mainCanvasWidth; i++)
+                    graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
+
+                graphPoints[0].IsStroked = false;
+
+                graphPoints.Add(new LineSegment(new Point(mainCanvasWidth, mainCanvasHeight), false));
+                graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
+
+                UpdateGraph();
+            });
+        }
+
+        FrameworkElement FindParentByName(FrameworkElement element, string name)
+        {
+            var parent = VisualTreeHelper.GetParent(element) as FrameworkElement;
+            if (parent == null) return null;
+            if (parent.Name == name) return parent;
+            return FindParentByName(parent, name);
+        }
 
         public ICommand CreateNewKeypoint
         {
@@ -45,9 +130,10 @@ namespace Editor.TrackEditor.HeelEditor
                 var args = e as MouseButtonEventArgs;
                 if (args.ClickCount == 2)
                 {
-                    var position = args.GetPosition(mainCanvas);
+                    var root = FindParentByName(args.Source as FrameworkElement, "Root");
+                    var position = args.GetPosition(root);
 
-                    model.AddNewKeypoint(position.X, mainCanvas.ActualHeight - position.Y);
+                    model.AddNewKeypoint(position.X, mainCanvasHeight - position.Y);
                 }
             });
         }
@@ -56,13 +142,14 @@ namespace Editor.TrackEditor.HeelEditor
         {
             get => new RelayCommand((e) =>
             {
-                Mouse.Capture(mainCanvas);
+                var args = e as MouseButtonEventArgs;
+                var root = FindParentByName(args.Source as FrameworkElement, "Root");
+                var position = args.GetPosition(root);
+
+                Mouse.Capture(root);
                 editingKeypoint = true;
 
-                var args = e as MouseButtonEventArgs;
-                var position = args.GetPosition(mainCanvas);
-
-                model.StartMoveKeypoint(position.X, mainCanvas.ActualHeight - position.Y);
+                model.StartMoveKeypoint(position.X, mainCanvasHeight - position.Y);
             });
         }
 
@@ -74,15 +161,18 @@ namespace Editor.TrackEditor.HeelEditor
                     return;
 
                 var args = e as MouseEventArgs;
-                var pos = args.GetPosition(mainCanvas);
+                var root = FindParentByName(args.Source as FrameworkElement, "Root");
+                if((args.Source as FrameworkElement).Name == "Root")
+                    root = args.Source as FrameworkElement;
+                var pos = args.GetPosition(root);
                 // Validate position.
                 if (pos.Y < 0) pos.Y = 0;
-                else if (pos.Y > mainCanvas.ActualHeight) pos.Y = mainCanvas.ActualHeight;
+                else if (pos.Y > mainCanvasHeight) pos.Y = mainCanvasHeight;
 
                 if (pos.X < 0) pos.X = 0;
-                else if (pos.X > mainCanvas.ActualWidth) pos.X = mainCanvas.ActualWidth;
+                else if (pos.X > mainCanvasWidth) pos.X = mainCanvasWidth;
 
-                model.MoveKeypoint(pos.X, mainCanvas.ActualHeight - pos.Y);
+                model.MoveKeypoint(pos.X, mainCanvasHeight - pos.Y);
             });
         }
 
@@ -102,69 +192,11 @@ namespace Editor.TrackEditor.HeelEditor
             get => new RelayCommand((e) =>
             {
                 var args = e as MouseButtonEventArgs;
-                var position = args.GetPosition(mainCanvas);
+                var root = FindParentByName(args.Source as FrameworkElement, "Root");
+                var position = args.GetPosition(root);
 
-                model.RemoveKeypoint(position.X, mainCanvas.ActualHeight - position.Y);
+                model.RemoveKeypoint(position.X, mainCanvasHeight - position.Y);
             });
-        }
-
-        // MainCanvas
-        public static readonly DependencyProperty MainCanvasProperty =
-        DependencyProperty.RegisterAttached(
-        "MainCanvas", typeof(Canvas),
-        typeof(HeelEditorVM), new FrameworkPropertyMetadata(OnMainCanvasChanged));
-
-        public static void SetMainCanvas(DependencyObject element, Canvas value) => element.SetValue(MainCanvasProperty, value);
-        public static Canvas GetMainCanvas(DependencyObject element) => (Canvas)element.GetValue(MainCanvasProperty);
-
-        static Canvas mainCanvas = null;
-        public static void OnMainCanvasChanged
-        (DependencyObject obj, DependencyPropertyChangedEventArgs args)
-        {
-            mainCanvas = obj as Canvas;
-            instance.CanvasCreated();
-        }
-
-        static HeelEditorVM instance = null;
-        public HeelEditorVM()
-        {
-            if (instance != null)
-                throw new System.Exception("Trying to create another instance of singleton HeelEditorVM");
-            instance = this;
-
-            model.Keypoints.CollectionChanged += (s, e) => UpdateGraph();
-        }
-
-        // Graph rendering
-        List<LineSegment> graphPoints = new List<LineSegment>();
-        public List<LineSegment> GraphPoints { get => graphPoints; }
-
-        void CanvasCreated()
-        {
-            mainCanvas.Loaded += (s, e) => {
-                model.Init(mainCanvas.ActualWidth);
-
-                for (int i = 0; i < mainCanvas.ActualWidth; i++)
-                    graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
-
-                graphPoints[0].IsStroked = false;
-
-                graphPoints.Add(new LineSegment(new Point(mainCanvas.ActualWidth, mainCanvas.ActualHeight), false));
-                graphPoints.Add(new LineSegment(new Point(0, mainCanvas.ActualHeight), false));
-
-                UpdateGraph();
-            };
-        }
-
-        void UpdateGraph()
-        {
-            for (int i = 0; i < graphPoints.Count - 2; i++)
-            {
-                var seg = graphPoints[i];
-                seg.Point = new Point(seg.Point.X, mainCanvas.ActualHeight - model.GetHeightByPosition(seg.Point.X));
-            }
-
-            OnPropertyChanged("GraphPoints");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

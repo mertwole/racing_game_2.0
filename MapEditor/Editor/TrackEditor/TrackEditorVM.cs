@@ -8,5 +8,6 @@ namespace Editor.TrackEditor
 {
     class TrackEditorVM
     {
+
     }
 }
