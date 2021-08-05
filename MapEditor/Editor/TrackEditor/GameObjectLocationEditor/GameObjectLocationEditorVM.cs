@@ -1,6 +1,8 @@
 ﻿using Editor.Common;
+using Editor.FileManager;
 using Editor.GameEntities;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
@@ -168,6 +170,23 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         public bool DraggingGameObject { get => draggedGameObject == null; }
         GameObject draggedGameObject = null;
 
+        GameObject GetGameObjectFromDragEventArgs(DragEventArgs args)
+        {
+            var contents = (HashSet<IContent>)args.Data.GetData(typeof(HashSet<IContent>));
+            if (contents == null) return null;
+
+            var files = new List<File>();
+            foreach (var content in contents)
+                if (content is File file)
+                    files.Add(file);
+
+            foreach (var file in files)
+                if (file.Content is GameObject go)
+                    return go;
+
+            return null;
+        }
+
         public ICommand DragGameObjectEnter
         {
             get => new RelayCommand((e) =>
@@ -176,11 +195,17 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
                     return;
 
                 var args = e as DragEventArgs;
+
+                var game_object = GetGameObjectFromDragEventArgs(args);
+                if (game_object == null) return;
+
                 var position = args.GetPosition(args.Source as IInputElement);
                 draggedGameObject = model.AddGameObject(
-                    PixelsToDistance(position.X), PixelsToOffset(position.Y));
-                OnPropertyChanged("DraggingGameObject");
+                    PixelsToDistance(position.X), PixelsToOffset(position.Y), game_object);
+
                 model.StartMoveGameObject(draggedGameObject);
+
+                OnPropertyChanged("DraggingGameObject");
             });
         }
 
@@ -188,6 +213,9 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         {
             get => new RelayCommand((e) =>
             {
+                if (draggedGameObject == null)
+                    return;
+
                 var args = e as DragEventArgs;
                 var position = args.GetPosition(args.Source as IInputElement);
 

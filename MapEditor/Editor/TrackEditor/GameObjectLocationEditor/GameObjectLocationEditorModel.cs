@@ -30,13 +30,17 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             trackEditor.Dirtied();
         }
 
-        public GameObject AddGameObject(double distance, double offset)
+        public GameObject AddGameObject(double distance, double offset, GameObject game_object)
         {
+            game_object.Offset = offset;
+            game_object.RoadDistance = distance;
+
+            var new_go = new GameObject(game_object);
+            GameObjects.Add(new_go);
+
             trackEditor.Dirtied();
 
-            var go = new GameObject(distance, offset);
-            GameObjects.Add(go);
-            return go;
+            return new_go;
         }
 
         public void RemoveGameObject(GameObject gameObject)
