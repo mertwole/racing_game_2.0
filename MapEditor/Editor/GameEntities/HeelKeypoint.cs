@@ -15,6 +15,12 @@ namespace Editor.GameEntities
             X = x; Y = y;
         }
 
+        public HeelKeypoint(HeelKeypoint prototype)
+        {
+            x = prototype.x;
+            y = prototype.y;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {

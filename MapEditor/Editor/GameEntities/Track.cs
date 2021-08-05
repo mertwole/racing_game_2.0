@@ -8,6 +8,12 @@ namespace Editor.GameEntities
         ObservableCollection<HeelKeypoint> keypoints = new ObservableCollection<HeelKeypoint>();
         public ObservableCollection<HeelKeypoint> Keypoints { get => keypoints; }
 
+        ObservableCollection<Curvature> curvatures = new ObservableCollection<Curvature>();
+        public ObservableCollection<Curvature> Curvatures { get => curvatures; }
+
+        ObservableCollection<GameObject> gameObjects = new ObservableCollection<GameObject>();
+        public ObservableCollection<GameObject> GameObjects { get => gameObjects; }
+
         public Track()
         {
 
@@ -15,7 +21,14 @@ namespace Editor.GameEntities
 
         public Track(Track prototype)
         {
-            keypoints = new ObservableCollection<HeelKeypoint>(prototype.keypoints);
+            foreach (var keypoint in prototype.keypoints)
+                keypoints.Add(new HeelKeypoint(keypoint));
+
+            foreach (var curvature in prototype.curvatures)
+                curvatures.Add(curvature);
+
+            foreach (var game_object in prototype.gameObjects)
+                gameObjects.Add(game_object);
         }
 
         public FileIcon GetIcon()

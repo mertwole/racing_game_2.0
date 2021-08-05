@@ -29,11 +29,11 @@ namespace Editor.TrackEditor
 
             curvatureEditorView = new CurvatureEditorView();
             var c_vm = curvatureEditorView.DataContext as CurvatureEditorVM;
-            c_vm.Model = new CurvatureEditorModel();
+            c_vm.Model = new CurvatureEditorModel(this);
 
             gameObjectLocationEditorView = new GameObjectLocationEditorView();
             var go_vm = gameObjectLocationEditorView.DataContext as GameObjectLocationEditorVM;
-            go_vm.Model = new GameObjectLocationEditorModel();
+            go_vm.Model = new GameObjectLocationEditorModel(this);
 
             heelEditorView = new HeelEditorView();
             var h_vm = heelEditorView.DataContext as HeelEditorVM;

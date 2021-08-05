@@ -1,30 +1,48 @@
 ﻿using Editor.GameEntities;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 
 namespace Editor.TrackEditor.CurvatureEditor
 {
     public class CurvatureEditorModel : INotifyPropertyChanged
     {
-        ObservableCollection<Curvature> curvatures = new ObservableCollection<Curvature>();
-        public ObservableCollection<Curvature> Curvatures { get => curvatures; }
+        public ObservableCollection<Curvature> Curvatures { get => trackEditor.Track.Curvatures; }
         bool isCurvatureEditing = false;
         public bool IsCurvatureEditing { 
             get => isCurvatureEditing; 
             private set { isCurvatureEditing = value; OnPropertyChanged("IsCurvatureEditing"); } 
         }
 
+        TrackEditorModel trackEditor;
+        public CurvatureEditorModel(TrackEditorModel track_editor)
+        {
+            trackEditor = track_editor;
+            trackEditor.Track.Curvatures.CollectionChanged += CurvaturesChanged;
+            foreach (Curvature curv in trackEditor.Track.Curvatures)
+                curv.PropertyChanged += (s, _) => trackEditor.Dirtied();
+        }
+
+        private void CurvaturesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if(e.NewItems != null)
+                foreach(Curvature added in e.NewItems)
+                    added.PropertyChanged += (s, _) => trackEditor.Dirtied();
+        }
+
         public void CreateCurvature(double position)
         {
-            foreach (var curv in curvatures)
+            foreach (var curv in Curvatures)
                 if (curv.End > position && curv.Start < position)
                     return;
 
             IsCurvatureEditing = true;
             curvatureStart = position;
-            curvatures.Add(new Curvature(position, 0.0, 0.1));
-            curvatureEditingId = curvatures.Count - 1;
+            Curvatures.Add(new Curvature(position, 0.0, 0.1));
+            curvatureEditingId = Curvatures.Count - 1;
+
+            trackEditor.Dirtied();
         }
 
         public void CreatingCurvature(double position)
@@ -39,9 +57,9 @@ namespace Editor.TrackEditor.CurvatureEditor
             var closest_curvature_edge = double.PositiveInfinity;
             int closest_curvature_id = -1;
 
-            for(int i = 0; i < curvatures.Count; i++)
+            for(int i = 0; i < Curvatures.Count; i++)
             {
-                var curvature = curvatures[i];
+                var curvature = Curvatures[i];
 
                 var closest_dist = Math.Abs(position - closest_curvature_edge);
                 var start_dist = Math.Abs(position - curvature.Start);
@@ -88,9 +106,9 @@ namespace Editor.TrackEditor.CurvatureEditor
 
         void EditCurvature(double position)
         {
-            var curvature_ed = curvatures[curvatureEditingId];
+            var curvature_ed = Curvatures[curvatureEditingId];
             // Validate position.
-            foreach(var curv in curvatures)
+            foreach(var curv in Curvatures)
             {
                 if (curv == curvature_ed)
                     continue;
@@ -112,34 +130,38 @@ namespace Editor.TrackEditor.CurvatureEditor
             curvature_ed.Length = Math.Abs(position - curvatureStart);
 
             // Elsewhere ObservableCollection not calls CollectionChanged.
-            curvatures.RemoveAt(curvatureEditingId);
-            curvatures.Insert(curvatureEditingId, curvature_ed);
+            Curvatures.RemoveAt(curvatureEditingId);
+            Curvatures.Insert(curvatureEditingId, curvature_ed);
+
+            trackEditor.Dirtied();
         }
 
         const double MIN_CURVATURE_LENGTH = 10.0;
 
         public void FinishCurvatureEdit()
         {
-            if (curvatures[curvatureEditingId].Length < MIN_CURVATURE_LENGTH)
-                curvatures.RemoveAt(curvatureEditingId);
+            if (Curvatures[curvatureEditingId].Length < MIN_CURVATURE_LENGTH)
+                Curvatures.RemoveAt(curvatureEditingId);
             IsCurvatureEditing = false;
         }
 
         public void FinishCurvatureCreate()
         {
-            if (curvatures[curvatureEditingId].Length < MIN_CURVATURE_LENGTH)
-                curvatures.RemoveAt(curvatureEditingId);
+            if (Curvatures[curvatureEditingId].Length < MIN_CURVATURE_LENGTH)
+                Curvatures.RemoveAt(curvatureEditingId);
             IsCurvatureEditing = false;
         }
 
         public void DeleteCurvatureAt(double position)
         {
-            for(int i = 0; i < curvatures.Count; i++)
+            trackEditor.Dirtied();
+
+            for (int i = 0; i < Curvatures.Count; i++)
             {
-                var curvature = curvatures[i];
+                var curvature = Curvatures[i];
                 if (curvature.Start <= position && curvature.End >= position)
                 {
-                    curvatures.RemoveAt(i);
+                    Curvatures.RemoveAt(i);
                     return;
                 }  
             }
