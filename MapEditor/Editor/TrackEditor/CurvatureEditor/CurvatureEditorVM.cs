@@ -3,8 +3,8 @@ using Editor.GameEntities;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Editor.TrackEditor.CurvatureEditor
 {
@@ -23,6 +23,26 @@ namespace Editor.TrackEditor.CurvatureEditor
         }
         State state = State.None;
 
+        public CurvatureEditorVM()
+        {
+            Init();
+        }
+
+        void Init()
+        {
+            model.PropertyChanged += (sender, name) => {
+                if (name.PropertyName == "IsCurvatureEditing") OnPropertyChanged("IsCurvatureNotEditing");
+            };
+        }
+
+        FrameworkElement FindParentByName(FrameworkElement element, string name)
+        {
+            var parent = VisualTreeHelper.GetParent(element) as FrameworkElement;
+            if (parent == null) return null;
+            if (parent.Name == name) return parent;
+            return FindParentByName(parent, name);
+        }
+
         public ICommand StartCreate
         {
             get => new RelayCommand((e) =>
@@ -30,10 +50,11 @@ namespace Editor.TrackEditor.CurvatureEditor
                 state = State.CreatingCurvature;
 
                 var args = e as MouseButtonEventArgs;
+                var sender = args.Source as IInputElement;
 
-                model.CreateCurvature(args.GetPosition(mainCanvas).X);
+                model.CreateCurvature(args.GetPosition(sender).X);
 
-                Mouse.Capture(mainCanvas);
+                Mouse.Capture(sender);
             });
         }
 
@@ -58,7 +79,8 @@ namespace Editor.TrackEditor.CurvatureEditor
             get => new RelayCommand((e) =>
             {
                 var args = e as MouseEventArgs;
-                var position = args.GetPosition(mainCanvas).X;
+                var sender = args.Source as IInputElement;
+                var position = args.GetPosition(sender).X;
 
                 switch (state)
                 {
@@ -77,9 +99,10 @@ namespace Editor.TrackEditor.CurvatureEditor
                 var args = e as MouseEventArgs;
                 args.Handled = true;
 
-                model.StartCurvatureEdit(args.GetPosition(mainCanvas).X);
+                var root = FindParentByName(args.Source as FrameworkElement, "Root");
+                model.StartCurvatureEdit(args.GetPosition(root).X);
 
-                Mouse.Capture(mainCanvas);
+                Mouse.Capture(root);
             });
         }
 
@@ -87,28 +110,13 @@ namespace Editor.TrackEditor.CurvatureEditor
         {
             get => new RelayCommand((e) =>
             {
-                model.DeleteCurvatureAt(Mouse.GetPosition(mainCanvas).X);
+                var args = e as MouseEventArgs;
+                if (args.RightButton == MouseButtonState.Released) return;
+
+                var sender = args.Source;
+                var root = FindParentByName(sender as FrameworkElement, "Root");
+                model.DeleteCurvatureAt(Mouse.GetPosition(root).X);
             });
-        }
-
-        // MainCanvas
-        public static readonly DependencyProperty MainCanvasProperty =
-        DependencyProperty.RegisterAttached(
-        "MainCanvas", typeof(Canvas),
-        typeof(CurvatureEditorVM), new FrameworkPropertyMetadata(OnMainCanvasChanged));
-
-        public static void SetMainCanvas(DependencyObject element, DataGrid value) => element.SetValue(MainCanvasProperty, value);
-        public static Canvas GetMainCanvas(DependencyObject element) => (Canvas)element.GetValue(MainCanvasProperty);
-
-        static Canvas mainCanvas = null;
-        public static void OnMainCanvasChanged
-        (DependencyObject obj, DependencyPropertyChangedEventArgs args) => mainCanvas = obj as Canvas;
-
-        public CurvatureEditorVM()
-        {
-            model.PropertyChanged += (sender, name) => { 
-                if (name.PropertyName == "IsCurvatureEditing") OnPropertyChanged("IsCurvatureNotEditing"); 
-            };
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

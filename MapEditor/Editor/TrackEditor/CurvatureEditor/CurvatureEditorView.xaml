@@ -16,7 +16,7 @@
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
 
-    <Grid Background="#474747">
+    <Grid Background="#474747" Name="Root">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="MouseLeftButtonDown">
                 <common:EventToCommand Command="{Binding StartCreate}"
@@ -38,7 +38,7 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas IsItemsHost="True" HorizontalAlignment="Stretch" 
-                            x:Name="MainCanvas" local:CurvatureEditorVM.MainCanvas="{Binding ElementName=MainCanvas}"/>
+                            x:Name="MainCanvas"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 
@@ -134,18 +134,20 @@
                                     <i:Interaction.Behaviors>
                                         <common:TextBoxEnterKeyUpdateBehavior/>
                                     </i:Interaction.Behaviors>
-                                    <TextBox.ContextMenu>
-                                        <ContextMenu>
-                                            <i:Interaction.Triggers>
-                                                <i:EventTrigger EventName="Opened">
-                                                    <common:EventToCommand 
+
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="PreviewMouseRightButtonDown">
+                                            <common:EventToCommand 
                                                         Command="{Binding Source={StaticResource Proxy}, 
-                                                        Path=Data.DeleteCurvatureAt}"/>
-                                                </i:EventTrigger>
-                                            </i:Interaction.Triggers>
-                                        </ContextMenu>
+                                                        Path=Data.DeleteCurvatureAt}"
+                                                        PassEventArgsToCommand="True"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+
+                                    <TextBox.ContextMenu>
+                                        <ContextMenu/>
                                     </TextBox.ContextMenu>
-                                    
+
                                     <TextBox.Text>
                                         <Binding Path="Value" Mode="TwoWay" 
                                                  ConverterCulture="en-US">
