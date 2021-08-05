@@ -18,7 +18,7 @@
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
     
-    <Grid Background="#474747" AllowDrop="True">
+    <Grid Background="#474747" AllowDrop="True" Name="Root">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="DragEnter">
                 <common:EventToCommand Command="{Binding DragGameObjectEnter}"
@@ -34,37 +34,46 @@
                 <common:EventToCommand Command="{Binding DropGameObject}"
                                     PassEventArgsToCommand="True"/>
             </i:EventTrigger>
+
+            <i:EventTrigger EventName="MouseMove">
+                <common:EventToCommand Command="{Binding MoveGameObject}"
+                                    PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+
+            <i:EventTrigger EventName="MouseLeftButtonUp">
+                <common:EventToCommand Command="{Binding FinishMoveGameObject}"
+                                    PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
         </i:Interaction.Triggers>
         
         <!--road-->
         <StackPanel VerticalAlignment="Center"
                     HorizontalAlignment="Stretch" Height="50" 
-                    Orientation="Vertical">
+                    Orientation="Vertical" IsHitTestVisible="False">
 
             <Rectangle Height="2" HorizontalAlignment="Stretch" 
-                       Fill="Orange"/>
+                       Fill="Orange" IsHitTestVisible="False"/>
             
             <Rectangle Height="46" HorizontalAlignment="Stretch" 
-                       Fill="Transparent"/>
+                       Fill="Transparent" IsHitTestVisible="False"/>
             
             <Rectangle Height="2" HorizontalAlignment="Stretch" 
-                       Fill="Orange"/>
+                       Fill="Orange" IsHitTestVisible="False"/>
         </StackPanel>
 
         <!--billboards-->
         <ItemsControl ItemsSource="{Binding GameObjects}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas IsItemsHost="True" x:Name="MainCanvas"
-                            local:GameObjectLocationEditorVM.MainCanvas="{Binding ElementName=MainCanvas}">
+                    <Canvas IsItemsHost="True" x:Name="MainCanvas">
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseMove">
-                                <common:EventToCommand Command="{Binding MoveGameObject}"
+                            <i:EventTrigger EventName="Loaded">
+                                <common:EventToCommand Command="{Binding MainCanvasLoaded}"
                                     PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
 
-                            <i:EventTrigger EventName="MouseLeftButtonUp">
-                                <common:EventToCommand Command="{Binding FinishMoveGameObject}"
+                            <i:EventTrigger EventName="SizeChanged">
+                                <common:EventToCommand Command="{Binding MainCanvasSizeChanged}"
                                     PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
@@ -74,11 +83,23 @@
 
             <ItemsControl.ItemContainerStyle>
                 <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding RoadDistance, 
-                        Converter={StaticResource DistanceToPixelsConverter}}"/>
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource DistanceToPixelsConverter}">
+                                <Binding Path="RoadDistance"/>
+                                <Binding Source="{StaticResource Proxy}" Path="Data"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
 
-                    <Setter Property="Canvas.Bottom" Value="{Binding Offset, 
-                        Converter={StaticResource OffsetToPixelsConverter}}"/>
+                    <Setter Property="Canvas.Bottom">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource OffsetToPixelsConverter}">
+                                <Binding Path="Offset"/>
+                                <Binding Source="{StaticResource Proxy}" Path="Data"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ItemsControl.ItemContainerStyle>
 

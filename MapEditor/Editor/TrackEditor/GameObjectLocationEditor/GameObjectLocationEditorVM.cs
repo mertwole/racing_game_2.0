@@ -8,59 +8,73 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Editor.TrackEditor.GameObjectLocationEditor
 {
-    public class DistanceToPixelsConverter : IValueConverter
+    // Values[0] is distance and values[1] is GameObjectLocationEditorVM instance.
+    public class DistanceToPixelsConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            GameObjectLocationEditorVM.instance.DistanceToPixels((double)value);
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) =>
+            (values[1] as GameObjectLocationEditorVM).DistanceToPixels((double)values[0]);
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object values, Type[] targetType, object parameter, CultureInfo culture)
             => null;
     }
 
-    public class OffsetToPixelsConverter : IValueConverter
+    // Values[0] is offset and values[1] is GameObjectLocationEditorVM instance.
+    public class OffsetToPixelsConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
-            GameObjectLocationEditorVM.instance.OffsetToPixels((double)value);
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) =>
+            (values[1] as GameObjectLocationEditorVM).OffsetToPixels((double)values[0]);
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object values, Type[] targetType, object parameter, CultureInfo culture)
             => null;
     }
 
     public class GameObjectLocationEditorVM : INotifyPropertyChanged
     {
         GameObjectLocationEditorModel model = ModelLocator.GetModel<GameObjectLocationEditorModel>();
+        public GameObjectLocationEditorModel Model { set => model = value; }
 
         public ObservableCollection<GameObject> GameObjects { get => model.GameObjects; }
 
-        // MainCanvas
-        public static readonly DependencyProperty MainCanvasProperty =
-        DependencyProperty.RegisterAttached(
-        "MainCanvas", typeof(Canvas),
-        typeof(GameObjectLocationEditorVM), new FrameworkPropertyMetadata(OnMainCanvasChanged));
+        double mainCanvasWidth = 0;
+        double mainCanvasHeight = 0;
 
-        public static void SetMainCanvas(DependencyObject element, Canvas value) => element.SetValue(MainCanvasProperty, value);
-        public static Canvas GetMainCanvas(DependencyObject element) => (Canvas)element.GetValue(MainCanvasProperty);
+        public ICommand MainCanvasLoaded
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+                var main_canvas = args.Source as Canvas;
+                mainCanvasWidth = main_canvas.ActualWidth;
+                mainCanvasHeight = main_canvas.ActualHeight;
+            });
+        }
 
-        static Canvas mainCanvas = null;
-        public static void OnMainCanvasChanged
-        (DependencyObject obj, DependencyPropertyChangedEventArgs args) => mainCanvas = obj as Canvas;
-
+        public ICommand MainCanvasSizeChanged
+        {
+            get => new RelayCommand((e) =>
+            {
+                var args = e as RoutedEventArgs;
+                var main_canvas = args.Source as Canvas;
+                mainCanvasWidth = main_canvas.ActualWidth;
+                mainCanvasHeight = main_canvas.ActualHeight;
+            });
+        }
 
         public double DistanceToPixels(double distance) => 
-            (distance / model.TrackLength) * mainCanvas.ActualWidth;
+            (distance / model.TrackLength) * mainCanvasWidth;
 
         public double PixelsToDistance(double pixels) =>
-            (pixels / mainCanvas.ActualWidth) * model.TrackLength;
+            (pixels / mainCanvasWidth) * model.TrackLength;
 
         public double OffsetToPixels(double offset) =>
-            (-offset / model.TrackWidth + 0.5) * mainCanvas.ActualHeight;
+            (-offset / model.TrackWidth + 0.5) * mainCanvasHeight;
 
         public double PixelsToOffset(double pixels) =>
-            (pixels / mainCanvas.ActualHeight - 0.5) * model.TrackWidth;
-
+            (pixels / mainCanvasHeight - 0.5) * model.TrackWidth;
 
 
         GameObject ClosestGameObject(double distance, double offset)
@@ -82,6 +96,14 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             return closest;
         }
 
+        FrameworkElement FindParentByName(FrameworkElement element, string name)
+        {
+            var parent = VisualTreeHelper.GetParent(element) as FrameworkElement;
+            if (parent == null) return null;
+            if (parent.Name == name) return parent;
+            return FindParentByName(parent, name);
+        }
+
         #region Move
 
         bool movingGameObject = false;
@@ -90,11 +112,13 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         {
             get => new RelayCommand((e) =>
             {
-                Mouse.Capture(mainCanvas);
+                var args = e as MouseButtonEventArgs;
+                var root = FindParentByName(args.Source as FrameworkElement, "Root");
+
+                Mouse.Capture(root);
                 movingGameObject = true;
 
-                var args = e as MouseButtonEventArgs;
-                var position = args.GetPosition(mainCanvas);
+                var position = args.GetPosition(root);
 
                 var closest_go = ClosestGameObject(
                     PixelsToDistance(position.X), PixelsToOffset(position.Y));
@@ -111,16 +135,16 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
                     return;
 
                 var args = e as MouseEventArgs;
-                var position = args.GetPosition(mainCanvas);
+                var position = args.GetPosition(args.Source as IInputElement);
 
                 // Validate position.
-                if (position.X > mainCanvas.ActualWidth)
-                    position.X = mainCanvas.ActualWidth;
+                if (position.X > mainCanvasWidth)
+                    position.X = mainCanvasWidth;
                 else if (position.X < 0)
                     position.X = 0;
 
-                if (position.Y > mainCanvas.ActualHeight)
-                    position.Y = mainCanvas.ActualHeight;
+                if (position.Y > mainCanvasHeight)
+                    position.Y = mainCanvasHeight;
                 else if (position.Y < 0)
                     position.Y = 0;
 
@@ -152,7 +176,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
                     return;
 
                 var args = e as DragEventArgs;
-                var position = args.GetPosition(mainCanvas);
+                var position = args.GetPosition(args.Source as IInputElement);
                 draggedGameObject = model.AddGameObject(
                     PixelsToDistance(position.X), PixelsToOffset(position.Y));
                 OnPropertyChanged("DraggingGameObject");
@@ -165,14 +189,14 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             get => new RelayCommand((e) =>
             {
                 var args = e as DragEventArgs;
-                var position = args.GetPosition(mainCanvas);
+                var position = args.GetPosition(args.Source as IInputElement);
 
                 bool inside_canvas = true;
-                if (position.X > mainCanvas.ActualWidth)
+                if (position.X > mainCanvasWidth)
                     inside_canvas = false;
                 else if (position.X < 0)
                     inside_canvas = false;
-                else if (position.Y > mainCanvas.ActualHeight)
+                else if (position.Y > mainCanvasHeight)
                     inside_canvas = false;
                 else if (position.Y < 0)
                     inside_canvas = false;
@@ -210,7 +234,8 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             get => new RelayCommand((e) =>
             {
                 var args = e as MouseButtonEventArgs;
-                var position = args.GetPosition(mainCanvas);
+                var root = FindParentByName(args.Source as FrameworkElement, "Root");
+                var position = args.GetPosition(root);
 
                 var closest = ClosestGameObject(
                     PixelsToDistance(position.X), PixelsToOffset(position.Y));
@@ -220,14 +245,6 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         }
 
         #endregion
-
-        public static GameObjectLocationEditorVM instance;
-        public GameObjectLocationEditorVM()
-        {
-            if (instance != null)
-                throw new Exception("Trying to create another instance of singleton GameObjectLocationEditorVM");
-            instance = this;
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
