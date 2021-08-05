@@ -8,6 +8,8 @@
              xmlns:go_location_editor="clr-namespace:Editor.TrackEditor.GameObjectLocationEditor"
              xmlns:cc="clr-namespace:Editor.CustomControls"
              xmlns:local="clr-namespace:Editor.TrackEditor"
+             xmlns:common="clr-namespace:Editor.Common"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -15,6 +17,13 @@
     </UserControl.DataContext>
 
     <Grid>
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="KeyDown">
+                <common:EventToCommand  Command="{Binding ApplyChanges}"
+                                        PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        
         <cc:TimelineView>
             <ContentControl Content="{Binding CurvatureEditorView}">
                 <ContentControl.Resources>

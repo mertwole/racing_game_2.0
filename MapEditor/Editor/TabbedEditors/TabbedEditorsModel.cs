@@ -54,14 +54,6 @@ namespace Editor.TabbedEditors
         ObservableCollection<EditorTab> tabs = new ObservableCollection<EditorTab>();
         public ObservableCollection<EditorTab> Tabs { get => tabs; }
 
-        public TabbedEditorsModel()
-        {
-            var track_editor_view = new TrackEditorView();
-            var model = new TrackEditorModel();
-            (track_editor_view.DataContext as TrackEditorVM).Model = model;
-            tabs.Add(new EditorTab(track_editor_view, model, "track editor", false));
-        }
-
         public void CloseTab(EditorTab tab)
         {
             if(tab.IsDirty)
@@ -105,6 +97,12 @@ namespace Editor.TabbedEditors
                     var bb_editor_model = new BillboardEditorModel(file);
                     (bb_editor_view.DataContext as BillboardEditorVM).Model = bb_editor_model;
                     tabs.Add(new EditorTab(bb_editor_view, bb_editor_model, "test bb name: " + file.Name, true));
+                    break;
+                case Track _:
+                    var track_editor_view = new TrackEditorView();
+                    var track_editor_model = new TrackEditorModel(file);
+                    (track_editor_view.DataContext as TrackEditorVM).Model = track_editor_model;
+                    tabs.Add(new EditorTab(track_editor_view, track_editor_model, "test track name: " + file.Name, true));
                     break;
             }
         }

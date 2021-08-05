@@ -5,13 +5,18 @@ namespace Editor.TrackEditor.HeelEditor
 {
     public class HeelEditorModel
     {
-        ObservableCollection<HeelKeypoint> keypoints = new ObservableCollection<HeelKeypoint>();
-        public ObservableCollection<HeelKeypoint> Keypoints { get => keypoints; }
+        public ObservableCollection<HeelKeypoint> Keypoints { get => trackEditor.Track.Keypoints; }
+
+        TrackEditorModel trackEditor;
+        public HeelEditorModel(TrackEditorModel track_editor)
+        {
+            trackEditor = track_editor;
+        }
 
         public void Init(double width)
         {
-            keypoints.Add(new HeelKeypoint(0, 10));
-            keypoints.Add(new HeelKeypoint(width, 10));
+            Keypoints.Add(new HeelKeypoint(0, 10));
+            Keypoints.Add(new HeelKeypoint(width, 10));
         }
 
         int DetermineClosestKeypoint(double x, double y)
@@ -19,10 +24,10 @@ namespace Editor.TrackEditor.HeelEditor
             double min_dist = double.PositiveInfinity;
             int closest = -1;
 
-            for (int i = 0; i < keypoints.Count; i++)
+            for (int i = 0; i < Keypoints.Count; i++)
             {
-                var dist = (keypoints[i].X - x) * (keypoints[i].X - x)
-                    + (keypoints[i].Y - y) * (keypoints[i].Y - y);
+                var dist = (Keypoints[i].X - x) * (Keypoints[i].X - x)
+                    + (Keypoints[i].Y - y) * (Keypoints[i].Y - y);
 
                 if (dist < min_dist)
                 {
@@ -42,11 +47,11 @@ namespace Editor.TrackEditor.HeelEditor
                 return a + (b - a) * t;
             }
             // TODO : Optimize - cache i
-            for (int i = 0; i < keypoints.Count - 1; i++)
-                if (keypoints[i + 1].X >= position && position >= keypoints[i].X)
+            for (int i = 0; i < Keypoints.Count - 1; i++)
+                if (Keypoints[i + 1].X >= position && position >= Keypoints[i].X)
                 {
-                    var t = (position - keypoints[i].X) / (keypoints[i + 1].X - keypoints[i].X);
-                    return smoothstep(keypoints[i].Y, keypoints[i + 1].Y, t);
+                    var t = (position - Keypoints[i].X) / (Keypoints[i + 1].X - Keypoints[i].X);
+                    return smoothstep(Keypoints[i].Y, Keypoints[i + 1].Y, t);
                 }
 
             return 0.0;
@@ -54,11 +59,13 @@ namespace Editor.TrackEditor.HeelEditor
 
         public void AddNewKeypoint(double x, double y)
         {
+            trackEditor.Dirtied();
+
             // Keep keypoints sorted.
-            for(int insert_id = 1; insert_id < keypoints.Count; insert_id++)
-                if(keypoints[insert_id - 1].X <= x && keypoints[insert_id].X >= x)
+            for(int insert_id = 1; insert_id < Keypoints.Count; insert_id++)
+                if(Keypoints[insert_id - 1].X <= x && Keypoints[insert_id].X >= x)
                 {
-                    keypoints.Insert(insert_id, new HeelKeypoint(x, y));
+                    Keypoints.Insert(insert_id, new HeelKeypoint(x, y));
                     return;
                 } 
         }
@@ -71,26 +78,28 @@ namespace Editor.TrackEditor.HeelEditor
 
         public void MoveKeypoint(double x, double y)
         {
-            if (editingKeypointId == 0 || editingKeypointId == keypoints.Count - 1)
+            trackEditor.Dirtied();
+
+            if (editingKeypointId == 0 || editingKeypointId == Keypoints.Count - 1)
             {
-                keypoints[0].Y = y;
-                keypoints[keypoints.Count - 1].Y = y;
+                Keypoints[0].Y = y;
+                Keypoints[Keypoints.Count - 1].Y = y;
 
                 // Elsewhere ObservableCollection not calls CollectionChanged.
-                var kp = keypoints[keypoints.Count - 1];
-                keypoints.RemoveAt(keypoints.Count - 1);
-                keypoints.Add(kp);
+                var kp = Keypoints[Keypoints.Count - 1];
+                Keypoints.RemoveAt(Keypoints.Count - 1);
+                Keypoints.Add(kp);
 
                 return;
             }
 
-            keypoints.RemoveAt(editingKeypointId);
+            Keypoints.RemoveAt(editingKeypointId);
 
             // Keep keypoints sorted.
-            for (int insert_id = 1; insert_id < keypoints.Count; insert_id++)
-                if (keypoints[insert_id - 1].X <= x && keypoints[insert_id].X >= x)
+            for (int insert_id = 1; insert_id < Keypoints.Count; insert_id++)
+                if (Keypoints[insert_id - 1].X <= x && Keypoints[insert_id].X >= x)
                 {
-                    keypoints.Insert(insert_id, new HeelKeypoint(x, y));
+                    Keypoints.Insert(insert_id, new HeelKeypoint(x, y));
                     editingKeypointId = insert_id;
                     return;
                 }
@@ -103,10 +112,12 @@ namespace Editor.TrackEditor.HeelEditor
 
         public void RemoveKeypoint(double x, double y)
         {
+            trackEditor.Dirtied();
+
             var remove_id = DetermineClosestKeypoint(x, y);
-            if (remove_id == 0 || remove_id == keypoints.Count - 1)
+            if (remove_id == 0 || remove_id == Keypoints.Count - 1)
                 return;
-            keypoints.RemoveAt(remove_id);
+            Keypoints.RemoveAt(remove_id);
         }
     }
 }

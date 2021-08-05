@@ -65,6 +65,7 @@ namespace Editor.FileManager
             {
                 case FileIcon.Billboard: { return new BitmapImage(new Uri("pack://application:,,,/Editor;component/Images/billboard_icon.png")); }
                 case FileIcon.GameObject: { return new BitmapImage(new Uri("pack://application:,,,/Editor;component/Images/gameobject_icon.png")); }
+                case FileIcon.Track: { return new BitmapImage(new Uri("pack://application:,,,/Editor;component/Images/track_icon.png")); }
                 case FileIcon.Other: { return new BitmapImage(new Uri("pack://application:,,,/Editor;component/Images/other_icon.png")); }
 
                 default: { throw new Exception("Unexpected FileIcon variant"); }

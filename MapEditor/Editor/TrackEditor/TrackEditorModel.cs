@@ -1,4 +1,4 @@
-﻿using Editor.FileManager;
+﻿using Editor.GameEntities;
 using Editor.TrackEditor.CurvatureEditor;
 using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.HeelEditor;
@@ -8,6 +8,9 @@ namespace Editor.TrackEditor
 {
     public class TrackEditorModel : IEditorTabModel
     {
+        Track track;
+        public Track Track { get => track; }
+
         CurvatureEditorView curvatureEditorView;
         GameObjectLocationEditorView gameObjectLocationEditorView;
         HeelEditorView heelEditorView;
@@ -16,33 +19,52 @@ namespace Editor.TrackEditor
         public GameObjectLocationEditorView GameObjectLocationEditorView { get => gameObjectLocationEditorView; }
         public HeelEditorView HeelEditorView { get => heelEditorView; }
 
-        public TrackEditorModel()
+        public TrackEditorModel(FileManager.File file)
         {
+            if (!(file.Content is Track))
+                throw new System.Exception("Unexpected file type. Expected file containing Track.");
+
+            loadedFrom = file;
+            track = new Track(file.Content as Track);
+
             curvatureEditorView = new CurvatureEditorView();
-            var c_vm = (curvatureEditorView.DataContext) as CurvatureEditorVM;
+            var c_vm = curvatureEditorView.DataContext as CurvatureEditorVM;
             c_vm.Model = new CurvatureEditorModel();
 
             gameObjectLocationEditorView = new GameObjectLocationEditorView();
-            var go_vm = (gameObjectLocationEditorView.DataContext) as GameObjectLocationEditorVM;
+            var go_vm = gameObjectLocationEditorView.DataContext as GameObjectLocationEditorVM;
             go_vm.Model = new GameObjectLocationEditorModel();
 
             heelEditorView = new HeelEditorView();
-            var h_vm = (heelEditorView.DataContext) as HeelEditorVM;
-            h_vm.Model = new HeelEditorModel();
+            var h_vm = heelEditorView.DataContext as HeelEditorVM;
+            h_vm.Model = new HeelEditorModel(this);
         }
 
-        public bool IsDirty => false;
+        FileManager.File loadedFrom;
+
+        bool isDirty = false;
+        public bool IsDirty => isDirty;
+
+        public void Dirtied()
+        {
+            isDirty = true;
+            OnPropertyChanged("IsDirty");
+        }
 
         public void ApplyChanges()
         {
-            
-        }
+            if (loadedFrom == null) return;
 
-        public void LoadFromFile(File file)
-        {
-            
+            loadedFrom.Content = new Track(track);
+
+            isDirty = false;
+            OnPropertyChanged("IsDirty");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
     }
 }

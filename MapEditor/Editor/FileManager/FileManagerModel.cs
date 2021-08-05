@@ -40,6 +40,8 @@ namespace Editor.FileManager
             root.AddContent(new Folder("test", root));
 
             root.AddContent(new File("test go", root, new GameObject()));
+
+            root.AddContent(new File("track", root, new Track()));
         }
 
         public void DeleteContent(IContent content)
@@ -170,6 +172,7 @@ namespace Editor.FileManager
     {
         Billboard,
         GameObject,
+        Track,
         Other
     }
 
