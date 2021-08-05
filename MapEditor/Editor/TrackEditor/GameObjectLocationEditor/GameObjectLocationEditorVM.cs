@@ -34,10 +34,10 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
 
     public class GameObjectLocationEditorVM : INotifyPropertyChanged
     {
-        GameObjectLocationEditorModel model = ModelLocator.GetModel<GameObjectLocationEditorModel>();
-        public GameObjectLocationEditorModel Model { set => model = value; }
+        GameObjectLocationEditorModel model;
+        public GameObjectLocationEditorModel Model { set { model = value; OnPropertyChanged("GameObjects"); } }
 
-        public ObservableCollection<GameObject> GameObjects { get => model.GameObjects; }
+        public ObservableCollection<GameObject> GameObjects { get => model == null ? null : model.GameObjects; }
 
         double mainCanvasWidth = 0;
         double mainCanvasHeight = 0;

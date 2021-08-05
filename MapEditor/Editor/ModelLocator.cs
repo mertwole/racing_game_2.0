@@ -1,12 +1,6 @@
-﻿using Editor.BillboardEditor;
-using Editor.FileManager;
-using Editor.GameEntities;
-using Editor.GameObjectEditor;
+﻿using Editor.FileManager;
 using Editor.TabbedEditors;
 using Editor.TrackEditor;
-using Editor.TrackEditor.GameObjectLocationEditor;
-using Editor.TrackEditor.CurvatureEditor;
-using Editor.TrackEditor.HeelEditor;
 using System;
 using System.Collections.Generic;
 
@@ -21,10 +15,7 @@ namespace Editor
 
         static ModelLocator()
         {
-            models.Add(typeof(GameObjectLocationEditorModel), new GameObjectLocationEditorModel());
-            models.Add(typeof(CurvatureEditorModel), new CurvatureEditorModel());
-            models.Add(typeof(HeelEditorModel), new HeelEditorModel());
-            models.Add(typeof(TrackEditorModel), new TrackEditorModel());
+            //models.Add(typeof(TrackEditorModel), new TrackEditorModel());
 
             models.Add(typeof(FileManagerModel), new FileManagerModel());
 

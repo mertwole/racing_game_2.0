@@ -10,10 +10,11 @@ namespace Editor.TrackEditor.CurvatureEditor
 {
     public class CurvatureEditorVM : INotifyPropertyChanged
     {
-        CurvatureEditorModel model = ModelLocator.GetModel<CurvatureEditorModel>();
+        CurvatureEditorModel model;// = ModelLocator.GetModel<CurvatureEditorModel>();
+        public CurvatureEditorModel Model { set { model = value; Init(); OnPropertyChanged("Curvatures"); } }
 
         public bool IsCurvatureNotEditing { get => !model.IsCurvatureEditing; }
-        public ObservableCollection<Curvature> Curvatures { get => model.Curvatures; }
+        public ObservableCollection<Curvature> Curvatures { get => model == null ? null : model.Curvatures; }
 
         enum State
         {
@@ -22,11 +23,6 @@ namespace Editor.TrackEditor.CurvatureEditor
             CreatingCurvature
         }
         State state = State.None;
-
-        public CurvatureEditorVM()
-        {
-            Init();
-        }
 
         void Init()
         {

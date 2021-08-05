@@ -56,7 +56,10 @@ namespace Editor.TabbedEditors
 
         public TabbedEditorsModel()
         {
-            tabs.Add(new EditorTab(new TrackEditorView(), new TrackEditorModel(), "track editor", false));
+            var track_editor_view = new TrackEditorView();
+            var model = new TrackEditorModel();
+            (track_editor_view.DataContext as TrackEditorVM).Model = model;
+            tabs.Add(new EditorTab(track_editor_view, model, "track editor", false));
         }
 
         public void CloseTab(EditorTab tab)

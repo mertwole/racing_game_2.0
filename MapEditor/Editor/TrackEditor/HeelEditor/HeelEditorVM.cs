@@ -32,29 +32,49 @@ namespace Editor.TrackEditor.HeelEditor
 
     class HeelEditorVM : INotifyPropertyChanged
     {
-        HeelEditorModel model = ModelLocator.GetModel<HeelEditorModel>();
-        //public HeelEditorModel Model { set => model = value; Init(); }
+        HeelEditorModel model;
+        public HeelEditorModel Model { 
+            set 
+            { 
+                model = value;
+                Init();
+                OnPropertyChanged("Keypoints"); 
+            } 
+        }
 
-        public ObservableCollection<HeelKeypoint> Keypoints { get => model.Keypoints; }
+        public ObservableCollection<HeelKeypoint> Keypoints { get => model == null ? null : model.Keypoints; }
 
         bool editingKeypoint = false;
 
         double mainCanvasWidth = 0;
         double mainCanvasHeight = 0;
 
-        public HeelEditorVM()
-        {
-            model.Keypoints.CollectionChanged += (s, e) => UpdateGraph();
-        }
-
         void Init()
         {
             model.Keypoints.CollectionChanged += (s, e) => UpdateGraph();
+
+            if (mainCanvasWidth != 0 && graphPoints.Count == 0)
+                InitGraph();
         }
 
         // Graph rendering
         List<LineSegment> graphPoints = new List<LineSegment>();
         public List<LineSegment> GraphPoints { get => graphPoints; }
+
+        void InitGraph()
+        {
+            model.Init(mainCanvasWidth);
+
+            for (int i = 0; i < mainCanvasWidth; i++)
+                graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
+
+            graphPoints[0].IsStroked = false;
+
+            graphPoints.Add(new LineSegment(new Point(mainCanvasWidth, mainCanvasHeight), false));
+            graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
+
+            UpdateGraph();
+        }
 
         void UpdateGraph()
         {
@@ -76,17 +96,8 @@ namespace Editor.TrackEditor.HeelEditor
                 mainCanvasWidth = main_canvas.ActualWidth;
                 mainCanvasHeight = main_canvas.ActualHeight;
 
-                model.Init(mainCanvasWidth);
-
-                for (int i = 0; i < mainCanvasWidth; i++)
-                    graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
-
-                graphPoints[0].IsStroked = false;
-
-                graphPoints.Add(new LineSegment(new Point(mainCanvasWidth, mainCanvasHeight), false));
-                graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
-
-                UpdateGraph();
+                if(model != null && graphPoints.Count == 0)
+                    InitGraph();
             });
         }
 
