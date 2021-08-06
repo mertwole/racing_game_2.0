@@ -12,7 +12,7 @@ namespace Editor.TabbedEditors
 {
     class TabbedEditorsVM : INotifyPropertyChanged
     {
-        TabbedEditorsModel model = ModelLocator.GetModel<TabbedEditorsModel>();
+        TabbedEditorsModel model = MainModel.TabbedEditorsModel;
 
         public ObservableCollection<EditorTab> Tabs { get => model.Tabs; }
 

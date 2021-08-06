@@ -121,7 +121,7 @@ namespace Editor.FileManager
 
         public void OpenFileEditor(File file)
         {
-            var tabbed_editors_model = ModelLocator.GetModel<TabbedEditors.TabbedEditorsModel>();
+            var tabbed_editors_model = MainModel.TabbedEditorsModel;
             tabbed_editors_model.OpenFileEditor(file);
         }
     }
