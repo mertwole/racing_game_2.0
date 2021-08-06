@@ -7,7 +7,7 @@
              xmlns:cc="clr-namespace:Editor.CustomControls"
              xmlns:common="clr-namespace:Editor.Common"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <local:GameObjectEditorVM/>
@@ -16,6 +16,7 @@
     <UserControl.Resources>
         <common:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
         <local:ObjectOutlineVisiblityConverter x:Key="ObjectOutlineVisiblityConverter"/>
+        <local:AverageImageColorConverter x:Key="AverageImageColorConverter"/>
 
         <ControlTemplate x:Key="PerspectiveLabel" TargetType="ContentControl">
             <Border CornerRadius="0, 6, 0, 0" Background="#474747" Width="72" Height="24"
@@ -47,8 +48,7 @@
         </Style>
 
         <Grid x:Key="BillboardView" x:Shared="False">
-            <Image  Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
-                    Stretch="Fill" Focusable="True">
+            <Image Stretch="Fill" Focusable="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDown">
                         <common:EventToCommand 
@@ -174,7 +174,13 @@
                             cc:InfiniteGridView.WorldWidth="{Binding Width}"
                             cc:InfiniteGridView.WorldHeight="0.1"
                             cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Z}"/>
+                            cc:InfiniteGridView.WorldPositionY="{Binding Z}">
+                <ContentControl.Resources>
+                    <Style TargetType="Image">
+                        <Setter Property="Source" Value="{Binding Preview, Converter={StaticResource AverageImageColorConverter}}"/>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
         </DataTemplate>
 
         <DataTemplate x:Key="TopViewColliderTemplate">
@@ -196,7 +202,13 @@
                             cc:InfiniteGridView.WorldWidth="0.1"
                             cc:InfiniteGridView.WorldHeight="{Binding Height}"
                             cc:InfiniteGridView.WorldPositionX="{Binding Z}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}">
+                <ContentControl.Resources>
+                    <Style TargetType="Image">
+                        <Setter Property="Source" Value="{Binding Preview, Converter={StaticResource AverageImageColorConverter}}"/>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
         </DataTemplate>
 
         <DataTemplate x:Key="RightViewColliderTemplate">
@@ -204,8 +216,7 @@
                             cc:InfiniteGridView.WorldWidth="{Binding SizeZ}"
                             cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
                             cc:InfiniteGridView.WorldPositionX="{Binding Z}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Y}">
-            </ContentControl>
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>
         </DataTemplate>
 
         <local:EntityDataTemplateSelector   x:Key="RightViewEntityDataTemplateSelector"
@@ -219,7 +230,13 @@
                             cc:InfiniteGridView.WorldWidth="{Binding Width}"
                             cc:InfiniteGridView.WorldHeight="{Binding Height}"
                             cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>  
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}">
+                <ContentControl.Resources>
+                    <Style TargetType="Image">
+                        <Setter Property="Source" Value="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"/>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
         </DataTemplate>
 
         <DataTemplate x:Key="BackViewColliderTemplate">
@@ -227,8 +244,7 @@
                             cc:InfiniteGridView.WorldWidth="{Binding SizeX}"
                             cc:InfiniteGridView.WorldHeight="{Binding SizeY}"
                             cc:InfiniteGridView.WorldPositionX="{Binding X}"
-                            cc:InfiniteGridView.WorldPositionY="{Binding Y}">
-            </ContentControl>
+                            cc:InfiniteGridView.WorldPositionY="{Binding Y}"/>
         </DataTemplate>
 
         <local:EntityDataTemplateSelector   x:Key="BackViewEntityDataTemplateSelector"

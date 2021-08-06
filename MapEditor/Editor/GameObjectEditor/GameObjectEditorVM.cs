@@ -13,9 +13,31 @@ using System.Windows.Data;
 using System.Globalization;
 using System.Collections.Generic;
 using Editor.FileManager;
+using System.Drawing.Drawing2D;
 
 namespace Editor.GameObjectEditor
 {
+    public class AverageImageColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(1, 1);
+            using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(value as System.Drawing.Bitmap, new System.Drawing.Rectangle(0, 0, 1, 1));
+            }
+            var px = bmp.GetPixel(0, 0);
+            px = System.Drawing.Color.FromArgb(255, px.R, px.G, px.B);
+            bmp.SetPixel(0, 0, px);
+
+            return BitmapToImageSourceConverter.Convert(bmp);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotImplementedException();
+    }
+
     public class EntityDataTemplateSelector : DataTemplateSelector
     {
         DataTemplate billboardDataTemplate;
