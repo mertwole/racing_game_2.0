@@ -1,0 +1,311 @@
+﻿using Editor.FileManager;
+using Editor.GameEntities;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace Editor
+{
+    //===================================================================================
+    // .rmap file is a binary file that contains:
+    //  Number of billboards[int]
+    //  List of all billboards[Billboard]
+    //  Number of gameobjects[int]
+    //  List of all gameobjects[GameObject]
+    //  Number of tracks[int]
+    //  List of all tracks[Track]
+    // 
+    // Billboard:
+    //  Number of LODs[int]
+    //  List of LOD image sizes in bytes[int]
+    //  List of LODs (PNG-encoded images)
+    //
+    // Collider:
+    //  Position(relative to parent GameObject) [float3]
+    //  Size [float3]
+    //
+    // GameObject:
+    //  Number of Colliders[int]
+    //  List of colliders[Collider = 24 bytes]
+    //  Number of Billboards[int]
+    //  List of all Billboards(each billboard is represented by it's index in list)
+    //  + their positions relative to GameObject
+    //  + ther widths [int + float3 + float]
+    //
+    // Track:
+    //  Number of HeelKeypoints[int]
+    //  List of HeelKeypoints[float2]
+    //  Number of Curvatures[int]
+    //  List of Curvatures(start[float], length[float], value[float])
+    //  Number of GameObjects[int]
+    //  List of GameObjects(each game object is represented by it's index in list)
+    //  + their positions(XZ) in the track coordinate system[int + float2]
+    //===================================================================================
+    // .rproj file is a binary file that contains:
+    //  Number of files[int]
+    //  List of all files[File]
+    //
+    // File(folders are represented as files with FileType = 0 and no data):
+    //  Header:
+    //    Header length in bytes[int]
+    //    Data length in bytes[int]
+    //    Parent directory id in this list[int] (if file is in root then -1)
+    //    File type[byte]  (*)
+    //    File name[ASCII, to the end of header]
+    //  Data[nothing/Billboard/GameObject/Track]
+    //
+    // (*)
+    //   0 - Folder
+    //   1 - Billboard
+    //   2 - GameObject
+    //   3 - Track
+    //===================================================================================
+
+    public class Serializers
+    {
+        List<Billboard> billboards;
+        List<GameObject> gameObjects;
+        List<Track> tracks;
+
+        byte[] SerializeBillboard(Billboard billboard)
+        {
+            int[] meta = new int[1 + billboard.LODs.Count];
+            meta[0] = billboard.LODs.Count;
+            List<byte> all_data = new List<byte>();
+            // Reserve space for meta.
+            for (int i = 0; i < meta.Length * 4; i++)
+                all_data.Add(0);
+
+            for (int i = 0; i < billboard.LODs.Count; i++)
+            {
+                MemoryStream ms = new MemoryStream();
+                billboard.LODs[0].Image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                var lod_data = ms.ToArray();
+
+                meta[i + 1] = lod_data.Length;
+                all_data.AddRange(lod_data);
+            }
+
+            var all_data_arr = all_data.ToArray();
+            Buffer.BlockCopy(meta, 0, all_data_arr, 0, meta.Length * 4);
+            return all_data_arr;
+        }
+
+        byte[] SerializeCollider(Collider collider)
+        {
+            float[] float_data = new float[] {
+                (float)collider.Position.X,
+                (float)collider.Position.Y,
+                (float)collider.Position.Z,
+                (float)collider.Size.X,
+                (float)collider.Size.Y,
+                (float)collider.Size.Z,
+            };
+
+            byte[] data = new byte[24];
+            Buffer.BlockCopy(float_data, 0, data, 0, 24);
+            return data;
+        }
+
+        byte[] SerializeGameObject(GameObject game_object)
+        {
+            var colliders_data_len = 4 + game_object.Colliders.Count * 24;
+            var billboards_data_len = 4 + game_object.Billboards.Count * 20;
+            byte[] data = new byte[colliders_data_len + billboards_data_len];
+
+            // Collider data.
+            Buffer.BlockCopy(new int[] { game_object.Colliders.Count }, 0, data, 0, 4);
+            for (int i = 0; i < game_object.Colliders.Count; i++)
+            {
+                var collider_data = SerializeCollider(game_object.Colliders[i]);
+                Buffer.BlockCopy(collider_data, 0, data, 4 + i * 24, 24);
+            }
+            // Billboard data.
+            Buffer.BlockCopy(new int[] { game_object.Billboards.Count }, 0, data, colliders_data_len, 4);
+            for (int i = 0; i < game_object.Billboards.Count; i++)
+            {
+                var billboard = game_object.Billboards[i];
+                var id = billboards.IndexOf(billboard);
+                Buffer.BlockCopy(new int[] { id }, 0, data, colliders_data_len + 20 * i, 4);
+                float[] pos = new float[] {
+                    (float)billboard.Position.X,
+                    (float)billboard.Position.Y,
+                    (float)billboard.Position.Z
+                };
+                Buffer.BlockCopy(pos, 0, data, colliders_data_len + 20 * i + 4, 12);
+                Buffer.BlockCopy(new float[] { (float)billboard.Width }, 0, data, colliders_data_len + 20 * i + 16, 4);
+            }
+
+            return data;
+        }
+
+        byte[] SerializeTrack(Track track)
+        {
+            int heel_keypoints_data_len = 4 + 8 * track.Keypoints.Count;
+            int curvatures_data_len = 4 + 12 * track.Curvatures.Count;
+            int game_objects_data_len = 4 + 16 * track.GameObjects.Count;
+
+            byte[] data = new byte[heel_keypoints_data_len + curvatures_data_len + game_objects_data_len];
+            int curr_offset = 0;
+
+            Buffer.BlockCopy(new int[] { track.Keypoints.Count }, 0, data, curr_offset, 4);
+            curr_offset += 4;
+            for (int i = 0; i < track.Keypoints.Count; i++)
+            {
+                var arr = new float[]
+                {
+                    (float)track.Keypoints[i].X,
+                    (float)track.Keypoints[i].Y
+                };
+                Buffer.BlockCopy(arr, 0, data, curr_offset, 8);
+                curr_offset += 8;
+            }
+
+            Buffer.BlockCopy(new int[] { track.Curvatures.Count }, 0, data, curr_offset, 4);
+            curr_offset += 4;
+            for (int i = 0; i < track.Curvatures.Count; i++)
+            {
+                var arr = new float[]
+                {
+                    (float)track.Curvatures[i].Start,
+                    (float)track.Curvatures[i].Length,
+                    (float)track.Curvatures[i].Value
+                };
+                Buffer.BlockCopy(arr, 0, data, curr_offset, 12);
+                curr_offset += 12;
+            }
+
+            Buffer.BlockCopy(new int[] { track.GameObjects.Count }, 0, data, curr_offset, 4);
+            curr_offset += 4;
+            for (int i = 0; i < track.GameObjects.Count; i++)
+            {
+                Buffer.BlockCopy(new int[] { gameObjects.IndexOf(track.GameObjects[i]) }, 0, data, curr_offset, 4);
+                curr_offset += 4;
+
+                var pos = new float[]
+                {
+                    (float)track.GameObjects[i].Offset,
+                    (float)track.GameObjects[i].RoadDistance
+                };
+                Buffer.BlockCopy(pos, 0, data, curr_offset, 8);
+                curr_offset += 8;
+            }
+
+            return data;
+        }
+
+        // Files must be serialized after their parents.
+        byte[] SerializeFile(IContent content, Dictionary<IContent, int> file_id)
+        {
+            int parent = -1;
+            if (file_id.ContainsKey(content.Parent))
+                parent = file_id[content.Parent];
+
+            byte file_type = 0;
+            if (content is FileManager.File file)
+            {
+                switch (file.Content)
+                {
+                    case Billboard _: file_type = 1; break;
+                    case GameObject _: file_type = 2; break;
+                    case Track _: file_type = 3; break;
+                }
+            }
+
+            byte[] file_name = Encoding.ASCII.GetBytes(content.Name);
+
+            byte[] file_data = new byte[0];
+            if (file_type != 0)
+            {
+                switch ((content as FileManager.File).Content)
+                {
+                    case Billboard billboard: file_data = SerializeBillboard(billboard); break;
+                    case GameObject game_object: file_data = SerializeGameObject(game_object); break;
+                    case Track track: file_data = SerializeTrack(track); break;
+                }
+            }
+
+            byte[] header_data = new byte[13 + file_name.Length];
+            // Header length.
+            Buffer.BlockCopy(new int[] { header_data.Length }, 0, header_data, 0, 4);
+            // Data length.
+            Buffer.BlockCopy(new int[] { file_data.Length }, 0, header_data, 4, 4);
+            // Parent.
+            Buffer.BlockCopy(new int[] { parent }, 0, header_data, 8, 4);
+            // File type.
+            header_data[12] = file_type;
+            // File name.
+            Buffer.BlockCopy(file_name, 0, header_data, 13, file_name.Length);
+
+            byte[] data = new byte[header_data.Length + file_data.Length];
+            Buffer.BlockCopy(header_data, 0, data, 0, header_data.Length);
+            Buffer.BlockCopy(file_data, 0, data, header_data.Length, file_data.Length);
+
+            return data;
+        }
+
+        void FillEntityCollections(IContent hierarchy_root)
+        {
+            if(hierarchy_root is FileManager.File file)
+            {
+                switch(file.Content)
+                {
+                    case Billboard billboard: billboards.Add(billboard); break;
+                    case GameObject game_object: gameObjects.Add(game_object); break;
+                    case Track track: tracks.Add(track); break;
+                }
+            }
+            else
+            {
+                foreach (var root in (hierarchy_root as FileManager.Folder).Contents)
+                    FillEntityCollections(root);
+            }    
+        }
+
+        public MemoryStream SerializeRmap(List<IContent> file_hierarchy)
+        {
+            foreach(var file in file_hierarchy)
+                FillEntityCollections(file);
+
+            var ms = new MemoryStream();
+
+            byte[] billboard_count = new byte[4];
+            Buffer.BlockCopy(new int[] { billboards.Count }, 0, billboard_count, 0, 4);
+            ms.Write(billboard_count, 0, 4);
+
+            foreach(var billboard in billboards)
+            {
+                var data = SerializeBillboard(billboard);
+                ms.Write(data, 0, data.Length);
+            }
+
+            byte[] game_object_count = new byte[4];
+            Buffer.BlockCopy(new int[] { gameObjects.Count }, 0, game_object_count, 0, 4);
+            ms.Write(game_object_count, 0, 4);
+
+            foreach (var game_object in gameObjects)
+            {
+                var data = SerializeGameObject(game_object);
+                ms.Write(data, 0, data.Length);
+            }
+
+            byte[] track_count = new byte[4];
+            Buffer.BlockCopy(new int[] { tracks.Count }, 0, track_count, 0, 4);
+            ms.Write(track_count, 0, 4);
+
+            foreach (var track in tracks)
+            {
+                var data = SerializeTrack(track);
+                ms.Write(data, 0, data.Length);
+            }
+
+            return ms;
+        }
+
+        public void SerializeRproj()
+        {
+
+        }
+    }
+}

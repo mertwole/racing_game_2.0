@@ -97,6 +97,7 @@
     <Compile Include="GameObjectEditor\GameObjectEditorVM.cs" />
     <Compile Include="IEditorTabModel.cs" />
     <Compile Include="MainModel.cs" />
+    <Compile Include="Serializers.cs" />
     <Compile Include="TabbedEditors\ApplyChangesDialog.xaml.cs">
       <DependentUpon>ApplyChangesDialog.xaml</DependentUpon>
     </Compile>
