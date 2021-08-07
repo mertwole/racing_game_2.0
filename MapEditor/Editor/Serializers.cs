@@ -43,17 +43,21 @@ namespace Editor
     //  + their positions(XZ) in the track coordinate system[int + float2]
     //===================================================================================
     // .rproj file is a binary file that contains:
+    //  Number of billboards[int]            |
+    //  List of all billboards[Billboard]    |
+    //  Number of gameobjects[int]           |
+    //  List of all gameobjects[GameObject]  |
+    //  Number of tracks[int]                |
+    //  List of all tracks[Track]            | <= like in .rmap file
     //  Number of files[int]
     //  List of all files[File]
     //
-    // File(folders are represented as files with FileType = 0 and no data):
-    //  Header:
-    //    Header length in bytes[int]
-    //    Data length in bytes[int]
+    // File(folders are represented as files with FileType = 0 and entity id = -1):
     //    Parent directory id in this list[int] (if file is in root then -1)
     //    File type[byte]  (*)
-    //    File name[ASCII, to the end of header]
-    //  Data[nothing/Billboard/GameObject/Track]
+    //    Entity id(if file is folder -1)[int]
+    //    File name length in bytes[int]
+    //    File name[ASCII, to the end of data]
     //
     // (*)
     //   0 - Folder
@@ -67,6 +71,7 @@ namespace Editor
         List<Billboard> billboards;
         List<GameObject> gameObjects;
         List<Track> tracks;
+        List<IContent> files;
 
         byte[] SerializeBillboard(Billboard billboard)
         {
@@ -196,51 +201,47 @@ namespace Editor
         }
 
         // Files must be serialized after their parents.
-        byte[] SerializeFile(IContent content, Dictionary<IContent, int> file_id)
+        byte[] SerializeFile(IContent content)
         {
             int parent = -1;
-            if (file_id.ContainsKey(content.Parent))
-                parent = file_id[content.Parent];
+            if (files.Contains(content.Parent))
+                parent = files.IndexOf(content.Parent);
 
             byte file_type = 0;
+            int entity_id = -1;
             if (content is FileManager.File file)
             {
                 switch (file.Content)
                 {
-                    case Billboard _: file_type = 1; break;
-                    case GameObject _: file_type = 2; break;
-                    case Track _: file_type = 3; break;
+                    case Billboard billboard: 
+                        file_type = 1;
+                        entity_id = billboards.IndexOf(billboard);
+                        break;
+                    case GameObject game_object:
+                        file_type = 2;
+                        entity_id = gameObjects.IndexOf(game_object);
+                        break;
+                    case Track track: 
+                        file_type = 3;
+                        entity_id = tracks.IndexOf(track);
+                        break;
                 }
             }
 
             byte[] file_name = Encoding.ASCII.GetBytes(content.Name);
 
-            byte[] file_data = new byte[0];
-            if (file_type != 0)
-            {
-                switch ((content as FileManager.File).Content)
-                {
-                    case Billboard billboard: file_data = SerializeBillboard(billboard); break;
-                    case GameObject game_object: file_data = SerializeGameObject(game_object); break;
-                    case Track track: file_data = SerializeTrack(track); break;
-                }
-            }
+            byte[] data = new byte[13 + file_name.Length];
 
-            byte[] header_data = new byte[13 + file_name.Length];
-            // Header length.
-            Buffer.BlockCopy(new int[] { header_data.Length }, 0, header_data, 0, 4);
-            // Data length.
-            Buffer.BlockCopy(new int[] { file_data.Length }, 0, header_data, 4, 4);
             // Parent.
-            Buffer.BlockCopy(new int[] { parent }, 0, header_data, 8, 4);
+            Buffer.BlockCopy(new int[] { parent }, 0, data, 0, 4);
             // File type.
-            header_data[12] = file_type;
+            data[4] = file_type;
+            // Entity ID.
+            Buffer.BlockCopy(new int[] { entity_id }, 0, data, 5, 4);
+            // File name length.
+            Buffer.BlockCopy(new int[] { file_name.Length }, 0, data, 9, 4);
             // File name.
-            Buffer.BlockCopy(file_name, 0, header_data, 13, file_name.Length);
-
-            byte[] data = new byte[header_data.Length + file_data.Length];
-            Buffer.BlockCopy(header_data, 0, data, 0, header_data.Length);
-            Buffer.BlockCopy(file_data, 0, data, header_data.Length, file_data.Length);
+            Buffer.BlockCopy(file_name, 0, data, 13, file_name.Length);
 
             return data;
         }
@@ -265,6 +266,10 @@ namespace Editor
 
         public MemoryStream SerializeRmap(List<IContent> file_hierarchy)
         {
+            billboards.Clear();
+            gameObjects.Clear();
+            tracks.Clear();
+
             foreach(var file in file_hierarchy)
                 FillEntityCollections(file);
 
@@ -303,9 +308,37 @@ namespace Editor
             return ms;
         }
 
-        public void SerializeRproj()
+        void FillFilesCollection(IContent hierarchy_root)
         {
+            if (hierarchy_root is FileManager.Folder folder)
+            {
+                foreach (var root in folder.Contents)
+                    FillFilesCollection(root);
+            }
+            else
+                files.Add(hierarchy_root as FileManager.File);
+        }
 
+        public MemoryStream SerializeRproj(List<IContent> file_hierarchy)
+        {
+            files.Clear();
+
+            foreach (var file in file_hierarchy)
+                FillFilesCollection(file);
+
+            MemoryStream ms = SerializeRmap(file_hierarchy);
+
+            byte[] file_count = new byte[4];
+            Buffer.BlockCopy(new int[] { files.Count }, 0, file_count, 0, 4);
+            ms.Write(file_count, 0, 4);
+
+            foreach(var file in files)
+            {
+                var file_data = SerializeFile(file);
+                ms.Write(file_data, 0, file_data.Length);
+            }
+
+            return ms;
         }
     }
 }
