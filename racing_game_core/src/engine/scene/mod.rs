@@ -1,6 +1,8 @@
 use crate::engine::common::Vec3;
 use crate::engine::renderer::Renderer;
 
+use std::path::Path;
+
 mod physics_scene;
 mod graphics_scene;
 pub mod game_object;
@@ -65,5 +67,10 @@ impl Scene {
         self.road.render(&renderer);
         self.background.render(&self.road, &self.camera, &renderer);
         self.graphics_scene.render(&renderer, &self.road, &self.camera);
+    }
+
+    pub fn from_file(path : &Path)
+    {
+        
     }
 }

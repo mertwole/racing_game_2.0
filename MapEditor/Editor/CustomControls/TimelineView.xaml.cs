@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
@@ -23,6 +24,20 @@ namespace Editor.CustomControls
 
         double horzScrollSensitivity = 0.3;
         double vertScrollSensitivity = 0.3;
+
+        double pointerPosNorm = 0.1;
+        public double PointerPosNorm
+        {
+            get => pointerPosNorm;
+            set
+            {
+                pointerPosNorm = value;
+                UpdatePointerPos();
+            }
+        }
+
+        void UpdatePointerPos() =>
+            Canvas.SetLeft(Pointer, pointerPosNorm * TimelineCanvas.Width - Pointer.Width * 0.5);
 
         public static readonly DependencyPropertyKey ChildrenProperty =
         DependencyProperty.RegisterReadOnly(
@@ -68,6 +83,8 @@ namespace Editor.CustomControls
                 TimelineCanvas.Children.Add(line);
                 TimelineCanvas.Children.Add(text);
             }
+
+            UpdatePointerPos();
         }
 
         private void HandlePreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -78,6 +95,30 @@ namespace Editor.CustomControls
                 ScrollRegion.ScrollToHorizontalOffset(ScrollRegion.HorizontalOffset + e.Delta * horzScrollSensitivity);
             else
                 ScrollRegion.ScrollToVerticalOffset(ScrollRegion.VerticalOffset - e.Delta * vertScrollSensitivity);
+        }
+
+        bool movePointer = false;
+
+        private void PointerMove(object sender, MouseEventArgs e)
+        {
+            if (!movePointer) return;
+
+            var pos = e.GetPosition(TimelineCanvas).X / TimelineCanvas.Width;
+            if (pos < 0) pos = 0;
+            if (pos > 1) pos = 1;
+            PointerPosNorm = pos;
+        }
+
+        private void PointerEndMove(object sender, MouseButtonEventArgs e)
+        {
+            movePointer = false;
+            Mouse.Capture(null);
+        }
+
+        private void PointerStartMove(object sender, MouseButtonEventArgs e)
+        {
+            movePointer = true;
+            Mouse.Capture(PointerInputElement);
         }
     }
 }

@@ -11,8 +11,24 @@
                       PreviewMouseWheel="HandlePreviewMouseWheel"
                       x:Name="ScrollRegion">
             <Canvas x:Name="TimelineCanvas" Margin="20, 10, 20, 0">
-                <StackPanel x:Name="ChildrenContainer" Margin="0, 50, 0, 0">
-                </StackPanel>
+                <StackPanel x:Name="ChildrenContainer" Margin="0, 50, 0, 0"/>
+
+                <Grid Height="2000" Width="10" Canvas.Top="0" Name="Pointer" Panel.ZIndex="10">
+                    <Grid Width="2" Background="Orange" HorizontalAlignment="Center"
+                          IsHitTestVisible="False"/>
+
+                    <Grid Width="10" Height="10" VerticalAlignment="Top" 
+                          Background="Transparent" 
+                          MouseDown="PointerStartMove" MouseMove="PointerMove" MouseUp="PointerEndMove"
+                          Name="PointerInputElement"/>
+
+                    <Rectangle Fill="Orange" Width="10" Height="10" VerticalAlignment="Top"
+                               IsHitTestVisible="False">
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="pack://application:,,,/Editor;component/Images/timeline_pointer.png"/>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Grid>
             </Canvas>
         </ScrollViewer>
     </Grid>
