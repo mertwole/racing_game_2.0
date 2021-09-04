@@ -9,6 +9,7 @@ namespace Editor
 {
     //===================================================================================
     // .rmap file is a binary file that contains:
+    //  Endianness(0x00 is Little-endian, 0xFF is Big-endian)[byte]
     //  Number of billboards[int]
     //  List of all billboards[Billboard]
     //  Number of gameobjects[int]
@@ -43,12 +44,13 @@ namespace Editor
     //  + their positions(XZ) in the track coordinate system[int + float2]
     //===================================================================================
     // .rproj file is a binary file that contains:
-    //  Number of billboards[int]            |
-    //  List of all billboards[Billboard]    |
-    //  Number of gameobjects[int]           |
-    //  List of all gameobjects[GameObject]  |
-    //  Number of tracks[int]                |
-    //  List of all tracks[Track]            | <= like in .rmap file
+    //  Endianness(0x00 is Little-endian, 0xFF is Big-endian)[byte] |
+    //  Number of billboards[int]                                   |
+    //  List of all billboards[Billboard]                           |
+    //  Number of gameobjects[int]                                  |
+    //  List of all gameobjects[GameObject]                         |
+    //  Number of tracks[int]                                       |
+    //  List of all tracks[Track]                                   | <= like in .rmap file
     //  Number of files[int]
     //  List of all files[File]
     //
@@ -274,6 +276,9 @@ namespace Editor
                 FillEntityCollections(file);
 
             var ms = new MemoryStream();
+
+            byte endianness = (byte)(BitConverter.IsLittleEndian ? 0x00 : 0xFF);
+            ms.Write(new byte[] { endianness }, 0, 1);
 
             byte[] billboard_count = new byte[4];
             Buffer.BlockCopy(new int[] { billboards.Count }, 0, billboard_count, 0, 4);

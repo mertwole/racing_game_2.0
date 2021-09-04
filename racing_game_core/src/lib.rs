@@ -1,6 +1,8 @@
 extern crate image;
 extern crate libc;
 //extern crate glfw;
+#[macro_use]
+extern crate arrayref;
 
 mod storage;
 mod engine;

@@ -3,6 +3,10 @@ use crate::engine::renderer::Renderer;
 
 use std::path::Path;
 
+#[macro_use]
+use arrayref::*;
+use image::*;
+
 mod physics_scene;
 mod graphics_scene;
 pub mod game_object;
@@ -69,8 +73,107 @@ impl Scene {
         self.graphics_scene.render(&renderer, &self.road, &self.camera);
     }
 
-    pub fn from_file(path : &Path)
-    {
-        
+    fn read_i32(file_contents : &[u8], read_pos : &mut usize, is_little_endian : bool) -> i32 {
+        let i32_convert_func = 
+        if is_little_endian { i32::from_le_bytes } 
+        else { i32::from_be_bytes };
+
+        let out = i32_convert_func([
+            file_contents[*read_pos + 0],
+            file_contents[*read_pos + 1],
+            file_contents[*read_pos + 2],
+            file_contents[*read_pos + 3]
+        ]);
+
+        *read_pos += 4;
+
+        out
+    }
+
+    fn read_f32(file_contents : &[u8], read_pos : &mut usize, is_little_endian : bool) -> f32 {
+        let f32_convert_func = 
+        if is_little_endian { f32::from_le_bytes } 
+        else { f32::from_be_bytes };
+
+        let out = f32_convert_func([
+            file_contents[*read_pos + 0],
+            file_contents[*read_pos + 1],
+            file_contents[*read_pos + 2],
+            file_contents[*read_pos + 3]
+        ]);
+
+        *read_pos += 4;
+
+        out
+    }
+
+    fn read_vec3(file_contents : &[u8], read_pos : &mut usize, is_little_endian : bool) -> Vec3 {
+        let mut vec = Vec3::zero();
+        vec.x = Self::read_f32(file_contents, read_pos, is_little_endian);
+        vec.y = Self::read_f32(file_contents, read_pos, is_little_endian);
+        vec.z = Self::read_f32(file_contents, read_pos, is_little_endian);
+        vec
+    }
+
+    fn read_slice(file_contents : &[u8], read_pos : &mut usize, len : usize) -> Vec<u8> {
+        let mut data = Vec::new();
+        data.clone_from_slice(&file_contents[*read_pos..*read_pos + len]);
+        *read_pos += len;
+        data
+    }
+
+    pub fn load_from_file(&mut self, file_contents : &[u8]) {
+        let mut read_pos = 0;
+
+        let is_little_endian = file_contents[read_pos] == 0x00;
+        read_pos += 1;
+
+        // Read billboards.
+        let num_billboards = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
+        let mut billboard_factories = Vec::with_capacity(num_billboards as usize);
+        for i in 0..num_billboards {
+            let num_images = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
+            let mut images = Vec::with_capacity(num_images as usize);
+            let mut image_sizes = Vec::with_capacity(num_images as usize);
+
+            for _ in 0..num_images { image_sizes.push(Self::read_i32(file_contents, &mut read_pos, is_little_endian)); }
+
+            for j in 0..num_images {
+                let img_size = image_sizes[j as usize] as usize;
+                let data = Self::read_slice(file_contents, &mut read_pos, img_size);
+                let img = image::load_from_memory_with_format(data.as_ref(), ImageFormat::Png)
+                .expect("failed to read PNG image from .rmap");
+                images.push(img.to_rgba8()); 
+            }
+
+            billboard_factories.push(BillboardFactory::from_lod_images(images));
+        }
+        // Read game objects.
+        let num_game_objects = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
+        let mut game_objects = Vec::with_capacity(num_game_objects as usize);
+        for i in 0..num_game_objects {
+            let num_colliders = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
+            let mut colliders = Vec::with_capacity(num_colliders as usize);
+            for _ in 0..num_colliders {
+                let pos = Self::read_vec3(file_contents, &mut read_pos, is_little_endian);
+                let size = Self::read_vec3(file_contents, &mut read_pos, is_little_endian);
+                // TODO : read/assign ID.
+                let collider = Collider::new(pos, size, 0);
+                colliders.push(collider);
+            }
+
+            let num_bb = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
+            let mut billboards = Vec::with_capacity(num_bb as usize);
+            for _ in 0..num_bb {
+                let billboard_id = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
+                let pos = Self::read_vec3(file_contents, &mut read_pos, is_little_endian);
+                let size = Self::read_f32(file_contents, &mut read_pos, is_little_endian);
+                let billboard = billboard_factories[billboard_id as usize].construct(pos, size);
+                billboards.push(billboard);
+            }
+
+            let game_object = GameObject::new(colliders, billboards);
+            game_objects.push(game_object);
+        }
     }
 }

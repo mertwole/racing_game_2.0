@@ -6,7 +6,7 @@ pub struct Collider {
     pub size : Vec3,
     min : Vec3,
     max : Vec3,
-
+    // Used to point the calling code to collided colliders.
     pub id : isize
 }
 

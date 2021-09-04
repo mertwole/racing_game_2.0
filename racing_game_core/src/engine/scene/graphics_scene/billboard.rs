@@ -58,6 +58,15 @@ impl BillboardFactory {
         lods
     }
 
+    pub fn from_lod_images(images : Vec<RgbaImage>) -> BillboardFactory {
+        let mut lods = Vec::with_capacity(images.len());
+        for img in images { 
+            let width = img.width();
+            lods.push(Lod { image : img, width : width }); 
+        }
+        BillboardFactory { lods : Rc::from(lods) }
+    }
+
     pub fn new(spritesheet : &RgbaImage, meta_file_content : &[u8]) -> BillboardFactory {
         let lods = Self::load_lods_from_file(spritesheet, meta_file_content);
         BillboardFactory { lods : Rc::from(lods) }

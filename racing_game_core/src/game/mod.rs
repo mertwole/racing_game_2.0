@@ -56,23 +56,25 @@ impl Game {
 
         let mut scene = Scene::new(road, background, camera);
 
+        //scene.load_from_file(Storage::load_file("test_map.rmap"));
+
         let billboard_factory = BillboardFactory::new(
             &Storage::load_image_rgba("test_spritesheet.png"), 
             Storage::load_file("test_spritesheet.meta")
         );
 
-        let go = GameObject::new(vec![], vec![
-            billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
-            billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
-        ]);
-        let id = scene.add_gameobject(go);
-        scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
-            
         let player_go = GameObject::new(vec![], vec![
             billboard_factory.construct(Vec3::new(0.0, 0.0, 2.5), 0.5),
         ]);
         let player_go_id = scene.add_gameobject(player_go);
 
+        // let go = GameObject::new(vec![], vec![
+        //     billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
+        //     billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
+        // ]);
+        // let id = scene.add_gameobject(go);
+        // scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
+        
         let mut input = Input::new();
         input.bind_key_action(input::KEY_LEFT, InputAction::SteerLeft);
         input.bind_key_action(input::KEY_RIGHT, InputAction::SteerRight);
