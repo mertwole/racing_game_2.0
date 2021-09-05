@@ -36,7 +36,7 @@ namespace Editor
     //
     // Track:
     //  Number of HeelKeypoints[int]
-    //  List of HeelKeypoints[float2]
+    //  List of HeelKeypoints(ZY)[float2]
     //  Number of Curvatures[int]
     //  List of Curvatures(start[float], length[float], value[float])
     //  Number of GameObjects[int]

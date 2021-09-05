@@ -1,5 +1,6 @@
 use crate::engine::common::Vec3;
 
+#[derive(Clone)]
 pub struct Collider {
     // Position(of center) : x is offset, y is height, z is road distance.
     pub position : Vec3,

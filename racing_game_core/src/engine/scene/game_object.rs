@@ -7,6 +7,7 @@ use crate::engine::scene::physics_scene::{collider::Collider, PhysicsScene, Coll
 // GameObjectMeta contains only ids for colliders contained in PhysicsScene 
 // and billboards contained in GraphicsScene.
 
+#[derive(Clone)]
 pub struct GameObject {
     colliders : Vec<Collider>,
     billboards : Vec<Billboard>,

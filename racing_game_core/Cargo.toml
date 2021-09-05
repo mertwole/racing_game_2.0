@@ -12,4 +12,3 @@ crate-type = ["dylib"]
 include_dir = "*"
 image = "*"
 libc = "*"
-arrayref = "*"

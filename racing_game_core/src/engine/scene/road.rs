@@ -4,17 +4,20 @@ use crate::engine::renderer::Renderer;
 use crate::engine::common::*;
 use crate::engine::scene::camera::*;
 
+#[derive(Clone)]
 pub struct Keypoint {
     pub road_distance : f32,
     pub height : f32
 }
 
+#[derive(Clone)]
 pub struct Curvature {
     pub start : f32,
     pub end : f32,
     pub strength : f32
 }
 
+#[derive(Clone)]
 pub struct RoadData {
     pub length : f32,
     pub keypoints : Vec<Keypoint>,

@@ -26,6 +26,10 @@ impl Vec2{
         Vec2 { x, y }
     }
 
+    pub fn zero() -> Vec2 {
+        Vec2 { x : 0.0, y : 0.0 }
+    }
+
     pub fn clone(&self) -> Vec2 {
         Vec2 { x : self.x, y : self.y }
     }
