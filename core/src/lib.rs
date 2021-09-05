@@ -1,10 +1,10 @@
 extern crate image;
 extern crate libc;
-//extern crate glfw;
 
 mod storage;
-mod engine;
 pub mod game;
+
+extern crate engine;
 
 use game::*;
 

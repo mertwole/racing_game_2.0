@@ -1,8 +1,8 @@
 use crate::image::{RgbImage, Rgb};
 
-use crate::engine::renderer::Renderer;
-use crate::engine::common::*;
-use crate::engine::scene::camera::*;
+use crate::renderer::Renderer;
+use crate::common::*;
+use crate::scene::camera::*;
 
 #[derive(Clone)]
 pub struct Keypoint {
@@ -264,11 +264,11 @@ impl Road {
         offset
     }
 
-    pub(in crate::engine::scene) fn get_line_count(&self) -> usize { 
+    pub(in crate::scene) fn get_line_count(&self) -> usize { 
         self.render_data.lines.len() 
     }
 
-    pub(in crate::engine::scene) fn get_distance_proj(&self, y : usize) -> Option<f32> { 
+    pub(in crate::scene) fn get_distance_proj(&self, y : usize) -> Option<f32> { 
         if y < self.render_data.lines.len() {
             Some(self.render_data.lines[y].distance_proj)
         } else {
@@ -284,7 +284,7 @@ impl Road {
         self.data.length
     }
 
-    pub(in crate::engine::scene) fn compute_render_data(&mut self, camera : &Camera, renderer : &Renderer) {
+    pub(in crate::scene) fn compute_render_data(&mut self, camera : &Camera, renderer : &Renderer) {
         let lines_density = 1.0;
         let mut horz_lines_accum = camera.position.z % (2.0 * lines_density);
         let mut prev_distance_proj = 0.0;
@@ -332,7 +332,7 @@ impl Road {
         }
     }
 
-    pub(in crate::engine::scene) fn render(&self, renderer : &Renderer) {
+    pub(in crate::scene) fn render(&self, renderer : &Renderer) {
         for y in 0..self.render_data.lines.len() {
             let line_render_data = &self.render_data.lines[y];
 

@@ -9,5 +9,4 @@ glfw = "*"
 gl = "*"
 image = "*"
 rand = "*"
-include_dir = "*"
-racing_game_core = { path = "../racing_game_core" }
+core = { path = "../core" }

@@ -1,9 +1,5 @@
-use crate::engine::common::Vec3;
-use crate::engine::renderer::Renderer;
-
-use std::path::Path;
-
-use image::*;
+use crate::common::Vec3;
+use crate::renderer::Renderer;
 
 mod physics_scene;
 mod graphics_scene;

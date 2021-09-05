@@ -1,10 +1,10 @@
 use image::*;
 
-use crate::engine::renderer::Renderer;
-use crate::engine::common::{IVec2, IAABB};
+use crate::renderer::Renderer;
+use crate::common::{IVec2, IAABB};
 
 use super::road::Road;
-use crate::engine::scene::camera::Camera;
+use crate::scene::camera::Camera;
 
 pub struct Background {
     image : RgbImage,

@@ -1,4 +1,4 @@
-use crate::engine::common::Vec3;
+use crate::common::Vec3;
 
 #[derive(Clone)]
 pub struct Collider {
@@ -12,7 +12,7 @@ pub struct Collider {
 }
 
 impl Collider {
-    pub(in crate::engine::scene) fn compute_min_max(&mut self) {
+    pub(in crate::scene) fn compute_min_max(&mut self) {
         self.min = Vec3::new(
             self.position.x - self.size.x * 0.5, 
             self.position.y - self.size.y * 0.5, 

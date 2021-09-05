@@ -1,6 +1,6 @@
-use crate::engine::common::Vec3;
-use crate::engine::scene::graphics_scene::{billboard::Billboard, GraphicsScene, BillboardId};
-use crate::engine::scene::physics_scene::{collider::Collider, PhysicsScene, ColliderId};
+use crate::common::Vec3;
+use crate::scene::graphics_scene::{billboard::Billboard, GraphicsScene, BillboardId};
+use crate::scene::physics_scene::{collider::Collider, PhysicsScene, ColliderId};
 
 // GameObject contains colliders and billboards itself.
 // 

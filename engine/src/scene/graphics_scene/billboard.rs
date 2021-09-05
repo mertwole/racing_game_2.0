@@ -4,11 +4,11 @@ use std::mem;
 
 use image::*;
 
-use crate::engine::renderer::Renderer;
-use crate::engine::common::{IVec2, IAABB, Vec3};
+use crate::renderer::Renderer;
+use crate::common::{IVec2, IAABB, Vec3};
 
-use crate::engine::scene::road::Road;
-use crate::engine::scene::camera::Camera;
+use crate::scene::road::Road;
+use crate::scene::camera::Camera;
 
 struct SpriteDescr {
     pos_x : u32,
@@ -99,7 +99,7 @@ impl Billboard{
 
     fn render_cutted(
         &self, road : &Road, renderer : &Renderer, camera : &Camera, 
-        lod : &Lod, mut draw_y : isize, min_visible_height : f32, dist_to_camera : f32
+        lod : &Lod, draw_y : isize, min_visible_height : f32, dist_to_camera : f32
     ) {
         let min_visible_image_y = min_visible_height - road.get_height(self.position.z) - self.position.y;
 

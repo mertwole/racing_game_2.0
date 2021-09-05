@@ -1,4 +1,6 @@
 pub mod scene;
 pub mod common;
 pub mod rmap_deserializer;
-mod renderer;
+pub mod renderer;
+
+extern crate image;

@@ -1,4 +1,4 @@
-use crate::engine::common::Vec3;
+use crate::common::Vec3;
 
 pub struct Camera{
     pub position : Vec3,

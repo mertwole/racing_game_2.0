@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
-use crate::engine::renderer::*;
-use crate::engine::scene::camera::Camera;
+use crate::renderer::*;
+use crate::scene::camera::Camera;
 
 pub mod billboard;
 

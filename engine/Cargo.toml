@@ -1,14 +1,9 @@
 [package]
-name = "racing_game_core"
+name = "engine"
 version = "0.1.0"
 authors = ["mertwole <mertwole@gmail.com>"]
 edition = "2018"
 
-[lib]
-name = "core"
-crate-type = ["dylib"]
-
 [dependencies]
 include_dir = "*"
 image = "*"
-libc = "*"

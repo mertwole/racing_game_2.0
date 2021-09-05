@@ -61,6 +61,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd51eab21ab4fd6a3bf889e2d0958c0a6e3a61ad04260325e919e652a2a62826"
 
 [[package]]
+name = "core"
+version = "0.1.0"
+dependencies = [
+ "engine",
+ "image",
+ "include_dir",
+ "libc",
+]
+
+[[package]]
 name = "crc32fast"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -130,6 +140,14 @@ name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
+
+[[package]]
+name = "engine"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "include_dir",
+]
 
 [[package]]
 name = "gif"
@@ -334,15 +352,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa563d17ecb180e500da1cfd2b028310ac758de548efdd203e18f283af693f37"
 dependencies = [
  "proc-macro2",
-]
-
-[[package]]
-name = "racing_game_core"
-version = "0.1.0"
-dependencies = [
- "image",
- "include_dir",
- "libc",
 ]
 
 [[package]]

@@ -1,13 +1,11 @@
 use crate::image::*;
 
-use crate::engine::common::{Vec2, Vec3};
-use crate::engine::scene::*;
-use crate::engine::scene::background::*;
-use crate::engine::scene::game_object::*;
-use crate::engine::scene::camera::*;
-use crate::engine::scene::road::*;
-
-use crate::storage::Storage;
+use crate::common::{Vec2, Vec3};
+use crate::scene::*;
+use crate::scene::background::*;
+use crate::scene::game_object::*;
+use crate::scene::camera::*;
+use crate::scene::road::*;
 
 struct Track {
     road_data : RoadData,
@@ -88,7 +86,7 @@ impl RmapDeserializer {
         // Read billboards.
         let num_billboards = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
         let mut billboard_factories = Vec::with_capacity(num_billboards as usize);
-        for i in 0..num_billboards {
+        for _ in 0..num_billboards {
             let num_images = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
             let mut images = Vec::with_capacity(num_images as usize);
             let mut image_sizes = Vec::with_capacity(num_images as usize);
@@ -108,7 +106,7 @@ impl RmapDeserializer {
         // Read game objects.
         let num_game_objects = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
         let mut game_objects = Vec::with_capacity(num_game_objects as usize);
-        for i in 0..num_game_objects {
+        for _ in 0..num_game_objects {
             let num_colliders = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
             let mut colliders = Vec::with_capacity(num_colliders as usize);
             for _ in 0..num_colliders {
@@ -176,13 +174,14 @@ impl RmapDeserializer {
         RmapDeserializer { tracks, game_objects }
     }
 
-    pub fn generate_scene(&self, track_id : usize) -> Scene {
+    pub fn generate_scene(&self, track_id : usize, road_tex : RgbImage, bg_tex : RgbImage) -> Scene {
         let track = &self.tracks[track_id];
 
-        let road_tex = Storage::load_image_rgb("road_tex.png");
+        //let road_tex = Storage::load_image_rgb("road_tex.png");
         let road = Road::new(road_tex, track.road_data.clone());
 
-        let background = Background::new(Storage::load_image_rgb("background.png"), 10);
+        //let bg_tex = Storage::load_image_rgb("background.png");
+        let background = Background::new(bg_tex, 10);
 
         let camera = Camera { 
             position : Vec3::new(0.0, 1.0, 0.0),

@@ -68,12 +68,12 @@ impl Game {
         ]);
         let player_go_id = scene.add_gameobject(player_go);
 
-        // let go = GameObject::new(vec![], vec![
-        //     billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
-        //     billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
-        // ]);
-        // let id = scene.add_gameobject(go);
-        // scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
+        let go = GameObject::new(vec![], vec![
+            billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
+            billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
+        ]);
+        let id = scene.add_gameobject(go);
+        scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
         
         let mut input = Input::new();
         input.bind_key_action(input::KEY_LEFT, InputAction::SteerLeft);
