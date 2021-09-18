@@ -196,13 +196,13 @@ impl RmapDeserializer {
 
         let mut scene = Scene::new(road, background, camera);
 
-        // for i in 0..track.game_object_ids.len() {
-        //     let id = track.game_object_ids[i];
-        //     let pos = track.game_object_positions[i];
+        for i in 0..track.game_object_ids.len() {
+            let id = track.game_object_ids[i];
+            let pos = track.game_object_positions[i];
 
-        //     let scene_id = scene.add_gameobject(self.game_objects[id].clone());
-        //     scene.set_gameobject_position(scene_id, pos);
-        // }
+            let scene_id = scene.add_gameobject(self.game_objects[id].clone());
+            scene.set_gameobject_position(scene_id, pos);
+        }
 
         scene
     }

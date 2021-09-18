@@ -96,7 +96,7 @@ impl Game {
         self.scene.camera.position.z += delta_time * 10.0;
         self.scene.camera.angle = self.scene.road.get_camera_angle(&self.scene.camera);
         self.scene.set_gameobject_position(self.player_go_id, self.scene.camera.position);
-        if self.scene.camera.position.z > 120.0 { self.scene.camera.position.z -= 120.0; }
+        if self.scene.camera.position.z > 200.0 { self.scene.camera.position.z -= 200.0; }
     }
 
     pub fn redraw(&mut self, pixels : *mut u32) {

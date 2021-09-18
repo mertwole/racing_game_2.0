@@ -75,6 +75,69 @@ namespace Editor
         List<Track> tracks = new List<Track>();
         List<IContent> files = new List<IContent>();
 
+        bool CompareBillboards(Billboard x, Billboard y)
+        {
+            if (x.LODs.Count != y.LODs.Count)
+                return false;
+
+            for (int i = 0; i < x.LODs.Count; i++)
+                if (x.LODs[i].GetHashCode() != y.LODs[i].GetHashCode())
+                    return false;
+
+            return true;
+        }
+
+        bool CompareGameObjects(GameObject x, GameObject y)
+        {
+            if (x.Billboards.Count != y.Billboards.Count)
+                return false;
+
+            if (x.Colliders.Count != y.Colliders.Count)
+                return false;
+
+            for (int i = 0; i < x.Billboards.Count; i++)
+                if (!CompareBillboards(x.Billboards[i], y.Billboards[i]))
+                    return false;
+
+            for (int i = 0; i < x.Colliders.Count; i++)
+            {
+                if (x.Colliders[i].Size.GetHashCode() != y.Colliders[i].Size.GetHashCode())
+                    return false;
+
+                if (x.Colliders[i].Position.GetHashCode() != y.Colliders[i].Position.GetHashCode())
+                    return false;
+            }
+
+            return true;
+        }
+
+        int getGameObjectId(GameObject game_object)
+        {
+            for (int i = 0; i < gameObjects.Count; i++)
+                if (CompareGameObjects(game_object, gameObjects[i]))
+                    return i;
+
+            return -1;
+        }
+
+        int getBillboardId(Billboard billboard)
+        {
+            for (int i = 0; i < billboards.Count; i++)
+                if (CompareBillboards(billboard, billboards[i]))
+                    return i;
+                    
+            return -1;
+        }
+
+        int getTrackId(Track track)
+        {
+            for (int i = 0; i < tracks.Count; i++)
+                if (tracks[i].GetHashCode() == track.GetHashCode())
+                    return i;
+
+            return -1;
+        }
+
         byte[] SerializeBillboard(Billboard billboard)
         {
             int[] meta = new int[1 + billboard.LODs.Count];
@@ -133,7 +196,9 @@ namespace Editor
             for (int i = 0; i < game_object.Billboards.Count; i++)
             {
                 var billboard = game_object.Billboards[i];
-                var id = billboards.IndexOf(billboard);
+
+                int id = getBillboardId(billboard);
+
                 int write_offset = 4 + colliders_data_len + 20 * i;
                 Buffer.BlockCopy(new int[] { id }, 0, data, write_offset, 4);
                 float[] pos = new float[] {
@@ -188,7 +253,9 @@ namespace Editor
             curr_offset += 4;
             for (int i = 0; i < track.GameObjects.Count; i++)
             {
-                Buffer.BlockCopy(new int[] { gameObjects.IndexOf(track.GameObjects[i]) }, 0, data, curr_offset, 4);
+                int id = getGameObjectId(track.GameObjects[i]);
+
+                Buffer.BlockCopy(new int[] { id }, 0, data, curr_offset, 4);
                 curr_offset += 4;
 
                 var pos = new float[]
@@ -218,15 +285,15 @@ namespace Editor
                 {
                     case Billboard billboard: 
                         file_type = 1;
-                        entity_id = billboards.IndexOf(billboard);
+                        entity_id = getBillboardId(billboard);;
                         break;
                     case GameObject game_object:
                         file_type = 2;
-                        entity_id = gameObjects.IndexOf(game_object);
+                        entity_id = getGameObjectId(game_object);
                         break;
                     case Track track: 
                         file_type = 3;
-                        entity_id = tracks.IndexOf(track);
+                        entity_id = getTrackId(track);
                         break;
                 }
             }
