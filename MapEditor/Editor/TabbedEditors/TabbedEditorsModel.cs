@@ -63,7 +63,7 @@ namespace Editor.TabbedEditors
                 switch(modal.choise)
                 {
                     case ApplyChangesDialog.Choise.Keep:
-                        tab.Save();
+                        SaveTab(tab);
                         tabs.Remove(tab);
                         break;
                     case ApplyChangesDialog.Choise.Discard:
@@ -79,7 +79,19 @@ namespace Editor.TabbedEditors
 
         public void SaveTab(EditorTab tab)
         {
+            if(!MainModel.CanSaveProject)
+            {
+                MainModel.TryEnableSaveProject();
+                if(!MainModel.CanSaveProject)
+                {
+                    var modal = new ProjectSaveFailed();
+                    modal.ShowDialog();
+                    return;
+                }
+            }
+
             tab.Save();
+            MainModel.SaveProject();
         }
 
         public void OpenFileEditor(FileManager.File file)

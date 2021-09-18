@@ -4,6 +4,7 @@ use crate::engine::scene::background::*;
 use crate::engine::scene::game_object::*;
 use crate::engine::scene::camera::*;
 use crate::engine::common::Vec3;
+use crate::engine::rmap_deserializer::RmapDeserializer;
 
 use crate::storage::Storage;
 
@@ -54,26 +55,27 @@ impl Game {
             far_plane : 100.0 
         };
 
-        let mut scene = Scene::new(road, background, camera);
-
-        //scene.load_from_file(Storage::load_file("test_map.rmap"));
+        // let mut scene = Scene::new(road, background, camera);
 
         let billboard_factory = BillboardFactory::new(
             &Storage::load_image_rgba("test_spritesheet.png"), 
             Storage::load_file("test_spritesheet.meta")
         );
 
+        let deserializer = RmapDeserializer::load_from_file(Storage::load_file("test_map.rmap"));
+        let mut scene = deserializer.generate_scene(0, Storage::load_image_rgb("road_tex.png"), Storage::load_image_rgb("background.png"));
+
         let player_go = GameObject::new(vec![], vec![
             billboard_factory.construct(Vec3::new(0.0, 0.0, 2.5), 0.5),
         ]);
         let player_go_id = scene.add_gameobject(player_go);
 
-        let go = GameObject::new(vec![], vec![
-            billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
-            billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
-        ]);
-        let id = scene.add_gameobject(go);
-        scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
+        // let go = GameObject::new(vec![], vec![
+        //     billboard_factory.construct(Vec3::new(1.0, 0.0, 0.0), 1.0),
+        //     billboard_factory.construct(Vec3::new(-1.0, 0.0, 0.0), 1.0)
+        // ]);
+        // let id = scene.add_gameobject(go);
+        // scene.set_gameobject_position(id, Vec3::new(0.0, 0.0, 20.0));
         
         let mut input = Input::new();
         input.bind_key_action(input::KEY_LEFT, InputAction::SteerLeft);

@@ -21,11 +21,6 @@
     <ScrollViewer Name="Root">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="KeyDown">
-                <common:EventToCommand  Command="{Binding ElementName=Root, Path=DataContext.ApplyChanges}"
-                                        PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
-
-            <i:EventTrigger EventName="KeyDown">
                 <common:EventToCommand  Command="{Binding ElementName=Root, Path=DataContext.DeleteSelected}" 
                                         PassEventArgsToCommand="True"/>
             </i:EventTrigger>

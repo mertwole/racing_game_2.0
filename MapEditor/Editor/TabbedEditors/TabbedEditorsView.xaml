@@ -12,7 +12,14 @@
         <local:TabbedEditorsVM/>
     </UserControl.DataContext>
 
-    <Grid Name="MainGrid">
+    <Grid Name="MainGrid" Background="Transparent">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="KeyDown">
+                <common:EventToCommand  Command="{Binding ApplyChanges}"
+                                        PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        
         <TabControl Background="{DynamicResource MaterialDesignPaper}"
                     BorderThickness="0, 2, 0, 0" Margin="-2, 8, -2, -2"
                     BorderBrush="Orange" ItemsSource="{Binding Tabs}"

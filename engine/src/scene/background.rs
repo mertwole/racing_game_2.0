@@ -41,8 +41,8 @@ impl Background {
         if draw_region.min.y < 0 { draw_region.min.y = 0; }
 
         let read_x = (
-            self.x_offset - renderer.width() / 2 + self.image.width() / 2
-        ).rem_euclid(self.image.width());
+            (self.x_offset as i32) - (renderer.width() as i32) / 2 + (self.image.width() as i32) / 2
+        ).rem_euclid(self.image.width() as i32) as u32;
 
         draw_region.min.x = read_x as isize;
         draw_region.max.x = (read_x + renderer.width()) as isize;

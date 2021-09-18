@@ -57,6 +57,16 @@ namespace Editor.TabbedEditors
             });
         }
 
+        public ICommand ApplyChanges
+        {
+            get => new RelayCommand((e) =>
+            {
+                if ((e as KeyEventArgs).Key == Key.S && Keyboard.IsKeyDown(Key.LeftCtrl))
+                    if (activeTab != null)
+                        model.SaveTab(activeTab);
+            });
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string property)
         {

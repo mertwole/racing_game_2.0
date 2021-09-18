@@ -70,10 +70,10 @@ namespace Editor
 
     public class Serializers
     {
-        List<Billboard> billboards;
-        List<GameObject> gameObjects;
-        List<Track> tracks;
-        List<IContent> files;
+        List<Billboard> billboards = new List<Billboard>();
+        List<GameObject> gameObjects = new List<GameObject>();
+        List<Track> tracks = new List<Track>();
+        List<IContent> files = new List<IContent>();
 
         byte[] SerializeBillboard(Billboard billboard)
         {
@@ -134,14 +134,15 @@ namespace Editor
             {
                 var billboard = game_object.Billboards[i];
                 var id = billboards.IndexOf(billboard);
-                Buffer.BlockCopy(new int[] { id }, 0, data, colliders_data_len + 20 * i, 4);
+                int write_offset = 4 + colliders_data_len + 20 * i;
+                Buffer.BlockCopy(new int[] { id }, 0, data, write_offset, 4);
                 float[] pos = new float[] {
                     (float)billboard.Position.X,
                     (float)billboard.Position.Y,
                     (float)billboard.Position.Z
                 };
-                Buffer.BlockCopy(pos, 0, data, colliders_data_len + 20 * i + 4, 12);
-                Buffer.BlockCopy(new float[] { (float)billboard.Width }, 0, data, colliders_data_len + 20 * i + 16, 4);
+                Buffer.BlockCopy(pos, 0, data, write_offset + 4, 12);
+                Buffer.BlockCopy(new float[] { (float)billboard.Width }, 0, data, write_offset + 16, 4);
             }
 
             return data;
@@ -162,8 +163,8 @@ namespace Editor
             {
                 var arr = new float[]
                 {
-                    (float)track.Keypoints[i].X,
-                    (float)track.Keypoints[i].Y
+                    (float)track.Keypoints[i].X / 10.0f,
+                    (float)track.Keypoints[i].Y / 10.0f
                 };
                 Buffer.BlockCopy(arr, 0, data, curr_offset, 8);
                 curr_offset += 8;

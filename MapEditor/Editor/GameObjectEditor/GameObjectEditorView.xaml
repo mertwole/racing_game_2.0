@@ -267,11 +267,6 @@
         </Grid.RowDefinitions>
 
         <i:Interaction.Triggers>
-            <i:EventTrigger EventName="KeyDown">
-                <common:EventToCommand  Command="{Binding ApplyChanges}"
-                                        PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
-
             <i:EventTrigger EventName="MouseDown">
                 <common:EventToCommand Command="{Binding UnselectObject}"
                                        PassEventArgsToCommand="True"/>

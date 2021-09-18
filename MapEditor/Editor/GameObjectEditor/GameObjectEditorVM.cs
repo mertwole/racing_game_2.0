@@ -206,17 +206,6 @@ namespace Editor.GameObjectEditor
 
         #endregion
 
-        public ICommand ApplyChanges
-        {
-            get => new RelayCommand((e) =>
-            {
-                var args = e as KeyboardEventArgs;
-
-                if ((e as KeyEventArgs).Key == Key.S && args.KeyboardDevice.IsKeyDown(Key.LeftCtrl))
-                    model.ApplyChanges();
-            });
-        }
-
         T FindParentOfType<T>(DependencyObject element) where T : class
         {
             var parent = VisualTreeHelper.GetParent(element);

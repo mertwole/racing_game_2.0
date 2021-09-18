@@ -71,7 +71,8 @@ impl RmapDeserializer {
     }
 
     fn read_slice(file_contents : &[u8], read_pos : &mut usize, len : usize) -> Vec<u8> {
-        let mut data = Vec::new();
+        let mut data = Vec::with_capacity(len);
+        for _ in 0..len { data.push(0); }
         data.clone_from_slice(&file_contents[*read_pos..*read_pos + len]);
         *read_pos += len;
         data
@@ -103,6 +104,7 @@ impl RmapDeserializer {
 
             billboard_factories.push(BillboardFactory::from_lod_images(images));
         }
+
         // Read game objects.
         let num_game_objects = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
         let mut game_objects = Vec::with_capacity(num_game_objects as usize);
@@ -194,13 +196,13 @@ impl RmapDeserializer {
 
         let mut scene = Scene::new(road, background, camera);
 
-        for i in 0..track.game_object_ids.len() {
-            let id = track.game_object_ids[i];
-            let pos = track.game_object_positions[i];
+        // for i in 0..track.game_object_ids.len() {
+        //     let id = track.game_object_ids[i];
+        //     let pos = track.game_object_positions[i];
 
-            let scene_id = scene.add_gameobject(self.game_objects[id].clone());
-            scene.set_gameobject_position(scene_id, pos);
-        }
+        //     let scene_id = scene.add_gameobject(self.game_objects[id].clone());
+        //     scene.set_gameobject_position(scene_id, pos);
+        // }
 
         scene
     }

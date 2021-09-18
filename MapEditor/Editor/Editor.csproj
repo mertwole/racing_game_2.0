@@ -101,6 +101,9 @@
     <Compile Include="TabbedEditors\ApplyChangesDialog.xaml.cs">
       <DependentUpon>ApplyChangesDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TabbedEditors\ProjectSaveFailed.xaml.cs">
+      <DependentUpon>ProjectSaveFailed.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TabbedEditors\TabbedEditorsModel.cs" />
     <Compile Include="TabbedEditors\TabbedEditorsView.xaml.cs">
       <DependentUpon>TabbedEditorsView.xaml</DependentUpon>
@@ -150,6 +153,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TabbedEditors\ApplyChangesDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TabbedEditors\ProjectSaveFailed.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

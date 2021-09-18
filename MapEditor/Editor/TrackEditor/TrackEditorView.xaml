@@ -17,13 +17,6 @@
     </UserControl.DataContext>
 
     <Grid>
-        <i:Interaction.Triggers>
-            <i:EventTrigger EventName="KeyDown">
-                <common:EventToCommand  Command="{Binding ApplyChanges}"
-                                        PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
-        </i:Interaction.Triggers>
-        
         <cc:TimelineView>
             <ContentControl Content="{Binding CurvatureEditorView}">
                 <ContentControl.Resources>
