@@ -54,6 +54,14 @@ namespace Editor.TabbedEditors
         ObservableCollection<EditorTab> tabs = new ObservableCollection<EditorTab>();
         public ObservableCollection<EditorTab> Tabs { get => tabs; }
 
+        public bool CloseAllTabs()
+        {
+            for(int i = tabs.Count - 1; i >= 0; i--)
+                CloseTab(tabs[i]);
+
+            return tabs.Count == 0;
+        }
+
         public void CloseTab(EditorTab tab)
         {
             if(tab.IsDirty)

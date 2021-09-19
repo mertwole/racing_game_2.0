@@ -1,4 +1,5 @@
 ﻿using Editor.GameEntities;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
@@ -42,6 +43,13 @@ namespace Editor.FileManager
             root.AddContent(new File("test go", root, new GameObject()));
 
             root.AddContent(new File("track", root, new Track()));
+        }
+
+        public void ReplaceHierarchy(List<IContent> hierarchy)
+        {
+            root.Contents.Clear();
+            foreach (var content in hierarchy)
+                root.AddContent(content);
         }
 
         public void DeleteContent(IContent content)

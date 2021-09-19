@@ -37,31 +37,7 @@ namespace Editor.GameEntities
 
         public GameObject()
         {
-            Bitmap bmp = new Bitmap(200, 100);
-            var g = Graphics.FromImage(bmp);
-            g.Clear(Color.FromArgb(255, 100, 200, 50));
 
-            var bb = new Billboard();
-            bb.AddLOD(new LOD(bmp));
-            bb.Width = 4;
-            bb.X = 0;
-            bb.Z = -1;
-
-            bmp = new Bitmap(200, 100);
-            g = Graphics.FromImage(bmp);
-            g.Clear(Color.FromArgb(255, 100, 50, 200));
-
-            var bb2 = new Billboard();
-            bb2.AddLOD(new LOD(bmp));
-            bb2.Width = 1;
-            bb2.X = 2;
-            bb2.Z = 0;
-
-            billboards.Add(bb);
-            billboards.Add(bb2);
-
-            var collider = new Collider(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-            colliders.Add(collider);
         }
 
         public GameObject(GameObject prototype)

@@ -2,7 +2,9 @@
 using Editor.GameEntities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Editor
@@ -75,14 +77,27 @@ namespace Editor
         List<Track> tracks = new List<Track>();
         List<IContent> files = new List<IContent>();
 
+        #region Get__Id
+
+        byte[] ShaHash(Bitmap image)
+        {
+            var bytes = (byte[])new ImageConverter().ConvertTo(image, typeof(byte[]));
+            return new SHA256Managed().ComputeHash(bytes);
+        }
+
         bool CompareBillboards(Billboard x, Billboard y)
         {
             if (x.LODs.Count != y.LODs.Count)
                 return false;
 
             for (int i = 0; i < x.LODs.Count; i++)
-                if (x.LODs[i].GetHashCode() != y.LODs[i].GetHashCode())
-                    return false;
+            {
+                var x_hash = ShaHash(x.LODs[i].Image);
+                var y_hash = ShaHash(y.LODs[i].Image);
+                for (int j = 0; j < x_hash.Length; j++)
+                    if (x_hash[j] != y_hash[j])
+                        return false;
+            }
 
             return true;
         }
@@ -137,6 +152,10 @@ namespace Editor
 
             return -1;
         }
+
+        #endregion
+
+        #region Game entities serializers
 
         byte[] SerializeBillboard(Billboard billboard)
         {
@@ -222,6 +241,7 @@ namespace Editor
             byte[] data = new byte[heel_keypoints_data_len + curvatures_data_len + game_objects_data_len];
             int curr_offset = 0;
 
+            // TODO : store keypoints and curvatures as normalized values.
             Buffer.BlockCopy(new int[] { track.Keypoints.Count }, 0, data, curr_offset, 4);
             curr_offset += 4;
             for (int i = 0; i < track.Keypoints.Count; i++)
@@ -241,8 +261,8 @@ namespace Editor
             {
                 var arr = new float[]
                 {
-                    (float)track.Curvatures[i].Start,
-                    (float)track.Curvatures[i].Length,
+                    (float)track.Curvatures[i].Start / 10.0f,
+                    (float)track.Curvatures[i].Length / 10.0f,
                     (float)track.Curvatures[i].Value
                 };
                 Buffer.BlockCopy(arr, 0, data, curr_offset, 12);
@@ -260,8 +280,8 @@ namespace Editor
 
                 var pos = new float[]
                 {
-                    (float)track.GameObjects[i].Offset,
-                    (float)track.GameObjects[i].RoadDistance
+                    (float)track.GameObjects[i].Offset / 10.0f,
+                    (float)track.GameObjects[i].RoadDistance / 10.0f
                 };
                 Buffer.BlockCopy(pos, 0, data, curr_offset, 8);
                 curr_offset += 8;
@@ -315,6 +335,8 @@ namespace Editor
 
             return data;
         }
+
+        #endregion
 
         void FillEntityCollections(IContent hierarchy_root)
         {
@@ -385,11 +407,12 @@ namespace Editor
         {
             if (hierarchy_root is FileManager.Folder folder)
             {
+                files.Add(hierarchy_root);
                 foreach (var root in folder.Contents)
                     FillFilesCollection(root);
             }
             else
-                files.Add(hierarchy_root as FileManager.File);
+                files.Add(hierarchy_root);
         }
 
         public MemoryStream SerializeRproj(List<IContent> file_hierarchy)
@@ -405,13 +428,185 @@ namespace Editor
             Buffer.BlockCopy(new int[] { files.Count }, 0, file_count, 0, 4);
             ms.Write(file_count, 0, 4);
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var file_data = SerializeFile(file);
                 ms.Write(file_data, 0, file_data.Length);
             }
 
             return ms;
+        }
+
+        #region Read__ from memory stream
+
+        int ReadInt(MemoryStream ms, bool is_little_endian)
+        {
+            byte[] output = new byte[4];
+            ms.Read(output, 0, 4);
+            if (BitConverter.IsLittleEndian ^ is_little_endian)
+                Array.Reverse(output);
+            return BitConverter.ToInt32(output, 0);
+        }
+
+        float ReadFloat(MemoryStream ms, bool is_little_endian)
+        {
+            byte[] output = new byte[4];
+            ms.Read(output, 0, 4);
+            if (BitConverter.IsLittleEndian ^ is_little_endian)
+                Array.Reverse(output);
+            return BitConverter.ToSingle(output, 0);
+        }
+
+        Vector3 ReadVector3(MemoryStream ms, bool is_little_endian)
+        {
+            float x = ReadFloat(ms, is_little_endian);
+            float y = ReadFloat(ms, is_little_endian);
+            float z = ReadFloat(ms, is_little_endian);
+
+            return new Vector3(x, y, z);
+        }
+
+        #endregion
+
+        public List<IContent> DeserializeRproj(MemoryStream ms)
+        { 
+            billboards.Clear();
+            gameObjects.Clear();
+            tracks.Clear();
+            files.Clear();
+
+            bool is_little_endian = (byte)ms.ReadByte() == 0x00;
+
+            // Billboards.
+            int num_billboards = ReadInt(ms, is_little_endian);
+            for(int i = 0; i < num_billboards; i++)
+            {
+                var billboard = new Billboard();
+                int num_lods = ReadInt(ms, is_little_endian);
+
+                List<int> image_sizes = new List<int>(num_lods);
+                for(int j = 0; j < num_lods; j++)
+                    image_sizes.Add(ReadInt(ms, is_little_endian));
+
+                for(int j = 0; j < num_lods; j++)
+                {
+                    var img_stream = new MemoryStream();
+                    for (int k = 0; k < image_sizes[j]; k++)
+                        img_stream.WriteByte((byte)ms.ReadByte());
+                    var img = Image.FromStream(img_stream);
+                    var lod = new LOD((Bitmap)img);
+                    billboard.AddLOD(lod);
+                }
+
+                billboards.Add(billboard);
+            }
+            // GameObjects
+            int num_go = ReadInt(ms, is_little_endian);
+            for(int i = 0; i < num_go; i++)
+            {
+                var go = new GameObject();
+                // Colliders.
+                int num_colliders = ReadInt(ms, is_little_endian);
+                for(int j = 0; j < num_colliders; j++)
+                {
+                    var pos = ReadVector3(ms, is_little_endian);
+                    var size = ReadVector3(ms, is_little_endian);
+                    var collider = new Collider(pos, size);
+                    go.Colliders.Add(collider);
+                }
+                // Billboards.
+                int num_bb = ReadInt(ms, is_little_endian);
+                for(int j = 0; j < num_bb; j++)
+                {
+                    int bb_id = ReadInt(ms, is_little_endian);
+                    var bb = new Billboard(billboards[bb_id]);
+                    bb.Position = ReadVector3(ms, is_little_endian);
+                    bb.Width = ReadFloat(ms, is_little_endian);
+                    go.Billboards.Add(bb);
+                }
+
+                gameObjects.Add(go);
+            }
+            // TODO : store keypoints and curvatures as normalized values.
+            // Tracks.
+            int num_tracks = ReadInt(ms, is_little_endian);
+            for(int i = 0; i < num_tracks; i++)
+            {
+                var track = new Track();
+                // Heel keypoints
+                int num_keypoints = ReadInt(ms, is_little_endian);
+                for (int j = 0; j < num_keypoints; j++)
+                {
+                    float z = ReadFloat(ms, is_little_endian);
+                    float y = ReadFloat(ms, is_little_endian);
+                    track.Keypoints.Add(new HeelKeypoint(z * 10.0, y * 10.0));
+                }
+                // Curvatures
+                int num_curvatures = ReadInt(ms, is_little_endian);
+                for (int j = 0; j < num_curvatures; j++)
+                {
+                    // X : start, y : length, z : value.
+                    Vector3 curv_data = ReadVector3(ms, is_little_endian);
+                    Curvature curvature = new Curvature(curv_data.X * 10.0, curv_data.Y * 10.0, curv_data.Z);
+                    track.Curvatures.Add(curvature);
+                }
+                // GameObjects
+                int num_gameobjects = ReadInt(ms, is_little_endian);
+                for(int j = 0; j < num_gameobjects; j++)
+                {
+                    int go_id = ReadInt(ms, is_little_endian);
+                    float pos_x = ReadFloat(ms, is_little_endian);
+                    float pos_z = ReadFloat(ms, is_little_endian);
+                    var go = new GameObject(gameObjects[go_id]);
+                    go.Offset = pos_x;
+                    go.RoadDistance = pos_z;
+                    track.GameObjects.Add(go);
+                }
+
+                tracks.Add(track);
+            }
+            // Files.
+            // As files are serialized after their parents there is always exist parent in the list of already deserialized files.
+            int num_files = ReadInt(ms, is_little_endian);
+            List<IContent> hierarchy = new List<IContent>();
+            for (int i = 0; i < num_files; i++)
+            {
+                int parent = ReadInt(ms, is_little_endian);
+                byte file_type = (byte)ms.ReadByte();
+                int entity_id = ReadInt(ms, is_little_endian);
+                int name_length = ReadInt(ms, is_little_endian);
+                byte[] name_data = new byte[name_length];
+                ms.Read(name_data, 0, name_length);
+                string name = ASCIIEncoding.ASCII.GetString(name_data);
+
+                IContent parent_content = null;
+                if(parent != -1)
+                    parent_content = files[parent];
+
+                IContent current_content = null;
+                switch(file_type)
+                {
+                    case 0:
+                        current_content = new Folder(name, parent_content);
+                        break;
+                    case 1:
+                        current_content = new FileManager.File(name, parent_content, billboards[entity_id]);
+                        break;
+                    case 2:
+                        current_content = new FileManager.File(name, parent_content, gameObjects[entity_id]);
+                        break;
+                    case 3:
+                        current_content = new FileManager.File(name, parent_content, tracks[entity_id]);
+                        break;
+                }
+
+                if(parent == -1)
+                    hierarchy.Add(current_content);
+                else
+                    (parent_content as Folder).AddContent(current_content);
+            }
+            
+            return hierarchy;
         }
     }
 }
