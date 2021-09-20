@@ -7,16 +7,31 @@ namespace Editor.TrackEditor.HeelEditor
     {
         public ObservableCollection<HeelKeypoint> Keypoints { get => trackEditor.Track.Keypoints; }
 
+        double editorHeight = 1.0;
+        public double EditorHeight 
+        { 
+            get => editorHeight; 
+            set
+            {
+                var old_value = editorHeight;
+                editorHeight = value;
+                EditorHeightChanged(old_value, value);
+                
+            } 
+        }
+
+        public double TrackLength { get => trackEditor.TrackLength; }
+
         TrackEditorModel trackEditor;
         public HeelEditorModel(TrackEditorModel track_editor)
         {
             trackEditor = track_editor;
         }
 
-        public void Init(double width)
+        public void Init()
         {
-            Keypoints.Add(new HeelKeypoint(0, 10));
-            Keypoints.Add(new HeelKeypoint(width, 10));
+            Keypoints.Add(new HeelKeypoint(0, editorHeight * 0.5));
+            Keypoints.Add(new HeelKeypoint(TrackLength, editorHeight * 0.5));
         }
 
         int DetermineClosestKeypoint(double x, double y)
@@ -118,6 +133,22 @@ namespace Editor.TrackEditor.HeelEditor
             if (remove_id == 0 || remove_id == Keypoints.Count - 1)
                 return;
             Keypoints.RemoveAt(remove_id);
+        }
+
+        void EditorHeightChanged(double old_value, double new_value)
+        {
+            double ratio = old_value / new_value;
+            for(int i = 0; i < Keypoints.Count; i++)
+            {
+                Keypoints[i].Y *= ratio;
+                if (Keypoints[i].Y > new_value)
+                    Keypoints[i].Y = new_value;
+            }
+
+            // Elsewhere ObservableCollection not calls CollectionChanged.
+            var kp = Keypoints[Keypoints.Count - 1];
+            Keypoints.RemoveAt(Keypoints.Count - 1);
+            Keypoints.Add(kp);
         }
     }
 }

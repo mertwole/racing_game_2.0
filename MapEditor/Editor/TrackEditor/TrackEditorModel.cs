@@ -19,6 +19,9 @@ namespace Editor.TrackEditor
         public GameObjectLocationEditorView GameObjectLocationEditorView { get => gameObjectLocationEditorView; }
         public HeelEditorView HeelEditorView { get => heelEditorView; }
 
+        double trackLength = 120;
+        public double TrackLength { get => trackLength; set => trackLength = value; }
+
         public TrackEditorModel(FileManager.File file)
         {
             if (!(file.Content is Track))

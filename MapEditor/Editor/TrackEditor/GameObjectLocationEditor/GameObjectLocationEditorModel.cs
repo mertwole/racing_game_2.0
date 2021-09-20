@@ -14,9 +14,17 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         }
 
         double trackWidth = 4;
-        public double TrackWidth { get => trackWidth; }
-        double trackLength = 120;
-        public double TrackLength { get => trackLength; }
+        public double TrackWidth 
+        { 
+            get => trackWidth; 
+            set
+            {
+                TrackWidthChanged(value);
+                trackWidth = value;
+            }
+        }
+
+        public double TrackLength { get => trackEditor.TrackLength; }
 
         GameObject toMove = null;
 
@@ -48,6 +56,19 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             GameObjects.Remove(gameObject);
 
             trackEditor.Dirtied();
+        }
+
+        void TrackWidthChanged(double new_value)
+        {
+            double ratio = trackWidth / new_value;
+            for (int i = 0; i < GameObjects.Count; i++)
+            {
+                GameObjects[i].Offset *= ratio;
+                if (GameObjects[i].Offset > new_value * 0.5)
+                    GameObjects[i].Offset = new_value * 0.5;
+                else if (GameObjects[i].Offset < -new_value * 0.5)
+                    GameObjects[i].Offset = -new_value * 0.5;
+            }
         }
     }
 }

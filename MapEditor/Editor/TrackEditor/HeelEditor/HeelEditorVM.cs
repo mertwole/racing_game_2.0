@@ -30,6 +30,26 @@ namespace Editor.TrackEditor.HeelEditor
         }
     }
 
+    // Values[0] is x and values[1] is HeelEditorVM instance.
+    public class XToPixelsConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) =>
+            (values[1] as HeelEditorVM).XToPixels((double)values[0]);
+
+        public object[] ConvertBack(object values, Type[] targetType, object parameter, CultureInfo culture)
+            => null;
+    }
+
+    // Values[0] is y and values[1] is HeelEditorVM instance.
+    public class YToPixelsConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) =>
+            (values[1] as HeelEditorVM).YToPixels((double)values[0]);
+
+        public object[] ConvertBack(object values, Type[] targetType, object parameter, CultureInfo culture)
+            => null;
+    }
+
     class HeelEditorVM : INotifyPropertyChanged
     {
         HeelEditorModel model;
@@ -38,16 +58,34 @@ namespace Editor.TrackEditor.HeelEditor
             { 
                 model = value;
                 Init();
-                OnPropertyChanged("Keypoints"); 
+                OnPropertyChanged("Keypoints");
+                OnPropertyChanged("EditorScale");
             } 
         }
 
         public ObservableCollection<HeelKeypoint> Keypoints { get => model == null ? null : model.Keypoints; }
 
+        public double EditorHeight { get => model == null ? 1 : model.EditorHeight; set => model.EditorHeight = value; }
+
         bool editingKeypoint = false;
 
         double mainCanvasWidth = 0;
         double mainCanvasHeight = 0;
+
+        public double XToPixels(double x) =>
+            x / model.TrackLength * mainCanvasWidth;
+
+        public double YToPixels(double y) =>
+            y / model.EditorHeight * mainCanvasHeight;
+
+        double PixelsToX(double pixels) =>
+            pixels / mainCanvasWidth * model.TrackLength;
+
+        double PixelsToY(double pixels) =>
+            pixels / mainCanvasHeight * model.EditorHeight;
+
+        Point PixelsToPosition(Point pixels) =>
+            new Point(PixelsToX(pixels.X), PixelsToY(mainCanvasHeight - pixels.Y));
 
         void Init()
         {
@@ -63,7 +101,7 @@ namespace Editor.TrackEditor.HeelEditor
 
         void InitGraph()
         {
-            model.Init(mainCanvasWidth);
+            model.Init();
 
             for (int i = 0; i < mainCanvasWidth; i++)
                 graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
@@ -81,7 +119,8 @@ namespace Editor.TrackEditor.HeelEditor
             for (int i = 0; i < graphPoints.Count - 2; i++)
             {
                 var seg = graphPoints[i];
-                seg.Point = new Point(seg.Point.X, mainCanvasHeight - model.GetHeightByPosition(seg.Point.X));
+                var y = mainCanvasHeight - YToPixels(model.GetHeightByPosition(PixelsToX(seg.Point.X)));
+                seg.Point = new Point(seg.Point.X, y);
             }
 
             OnPropertyChanged("GraphPoints");
@@ -110,7 +149,7 @@ namespace Editor.TrackEditor.HeelEditor
                 mainCanvasWidth = main_canvas.ActualWidth;
                 mainCanvasHeight = main_canvas.ActualHeight;
 
-                model.Init(mainCanvasWidth);
+                model.Init();
 
                 graphPoints.Clear();
 
@@ -142,9 +181,8 @@ namespace Editor.TrackEditor.HeelEditor
                 if (args.ClickCount == 2)
                 {
                     var root = FindParentByName(args.Source as FrameworkElement, "Root");
-                    var position = args.GetPosition(root);
-
-                    model.AddNewKeypoint(position.X, mainCanvasHeight - position.Y);
+                    var position = PixelsToPosition(args.GetPosition(root));
+                    model.AddNewKeypoint(position.X, position.Y);
                 }
             });
         }
@@ -155,12 +193,12 @@ namespace Editor.TrackEditor.HeelEditor
             {
                 var args = e as MouseButtonEventArgs;
                 var root = FindParentByName(args.Source as FrameworkElement, "Root");
-                var position = args.GetPosition(root);
+                var position = PixelsToPosition(args.GetPosition(root));
 
                 Mouse.Capture(root);
                 editingKeypoint = true;
 
-                model.StartMoveKeypoint(position.X, mainCanvasHeight - position.Y);
+                model.StartMoveKeypoint(position.X, position.Y);
             });
         }
 
@@ -183,7 +221,9 @@ namespace Editor.TrackEditor.HeelEditor
                 if (pos.X < 0) pos.X = 0;
                 else if (pos.X > mainCanvasWidth) pos.X = mainCanvasWidth;
 
-                model.MoveKeypoint(pos.X, mainCanvasHeight - pos.Y);
+                pos = PixelsToPosition(pos);
+
+                model.MoveKeypoint(pos.X, pos.Y);
             });
         }
 
@@ -204,9 +244,9 @@ namespace Editor.TrackEditor.HeelEditor
             {
                 var args = e as MouseButtonEventArgs;
                 var root = FindParentByName(args.Source as FrameworkElement, "Root");
-                var position = args.GetPosition(root);
+                var position = PixelsToPosition(args.GetPosition(root));
 
-                model.RemoveKeypoint(position.X, mainCanvasHeight - position.Y);
+                model.RemoveKeypoint(position.X, position.Y);
             });
         }
 

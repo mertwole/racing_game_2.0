@@ -136,5 +136,34 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <Grid Width="32" Height="16" Margin="4" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <TextBox    Style="{x:Null}"    
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Foreground="Orange"
+                        BorderThickness="0"
+                        Background="#303030"
+                        CaretBrush="Orange"
+                        CaretIndex="1000">
+                <i:Interaction.Behaviors>
+                    <common:TextBoxEnterKeyUpdateBehavior/>
+                </i:Interaction.Behaviors>
+
+                <TextBox.ContextMenu>
+                    <ContextMenu/>
+                </TextBox.ContextMenu>
+
+                <TextBox.Text>
+                    <Binding Path="TrackWidth" Mode="TwoWay" ConverterCulture="en-US">
+                        <Binding.ValidationRules>
+                            <common:PositiveDoubleInputValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        </Grid>
     </Grid>
 </UserControl>

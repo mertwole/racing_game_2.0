@@ -14,6 +14,9 @@
 
     <UserControl.Resources>
         <local:ListToPathSegmentCollectionConverter x:Key="ListToPathSegmentCollectionConverter"/>
+        <local:XToPixelsConverter x:Key="XToPixelsConverter"/>
+        <local:YToPixelsConverter x:Key="YToPixelsConverter"/>
+        <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
     
     <Grid Background="#474747" Name="Root">
@@ -103,8 +106,22 @@
 
             <ItemsControl.ItemContainerStyle>
                 <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                    <Setter Property="Canvas.Bottom" Value="{Binding Y}"/>
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource XToPixelsConverter}">
+                                <Binding Path="X"/>
+                                <Binding Source="{StaticResource Proxy}" Path="Data"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Canvas.Bottom">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource YToPixelsConverter}">
+                                <Binding Path="Y"/>
+                                <Binding Source="{StaticResource Proxy}" Path="Data"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ItemsControl.ItemContainerStyle>
 
@@ -127,5 +144,34 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <Grid Width="32" Height="16" Margin="4" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <TextBox    Style="{x:Null}"    
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Foreground="Orange"
+                        BorderThickness="0"
+                        Background="#303030"
+                        CaretBrush="Orange"
+                        CaretIndex="1000">
+                <i:Interaction.Behaviors>
+                    <common:TextBoxEnterKeyUpdateBehavior/>
+                </i:Interaction.Behaviors>
+
+                <TextBox.ContextMenu>
+                    <ContextMenu/>
+                </TextBox.ContextMenu>
+
+                <TextBox.Text>
+                    <Binding Path="EditorHeight" Mode="TwoWay" ConverterCulture="en-US">
+                        <Binding.ValidationRules>
+                            <common:DoubleInputValidationRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+        </Grid>
     </Grid>
 </UserControl>

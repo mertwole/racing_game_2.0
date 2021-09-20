@@ -241,15 +241,14 @@ namespace Editor
             byte[] data = new byte[heel_keypoints_data_len + curvatures_data_len + game_objects_data_len];
             int curr_offset = 0;
 
-            // TODO : store keypoints and curvatures as normalized values.
             Buffer.BlockCopy(new int[] { track.Keypoints.Count }, 0, data, curr_offset, 4);
             curr_offset += 4;
             for (int i = 0; i < track.Keypoints.Count; i++)
             {
                 var arr = new float[]
                 {
-                    (float)track.Keypoints[i].X / 10.0f,
-                    (float)track.Keypoints[i].Y / 10.0f
+                    (float)track.Keypoints[i].X,
+                    (float)track.Keypoints[i].Y
                 };
                 Buffer.BlockCopy(arr, 0, data, curr_offset, 8);
                 curr_offset += 8;
@@ -261,8 +260,8 @@ namespace Editor
             {
                 var arr = new float[]
                 {
-                    (float)track.Curvatures[i].Start / 10.0f,
-                    (float)track.Curvatures[i].Length / 10.0f,
+                    (float)track.Curvatures[i].Start,
+                    (float)track.Curvatures[i].Length,
                     (float)track.Curvatures[i].Value
                 };
                 Buffer.BlockCopy(arr, 0, data, curr_offset, 12);
@@ -280,8 +279,8 @@ namespace Editor
 
                 var pos = new float[]
                 {
-                    (float)track.GameObjects[i].Offset / 10.0f,
-                    (float)track.GameObjects[i].RoadDistance / 10.0f
+                    (float)track.GameObjects[i].Offset,
+                    (float)track.GameObjects[i].RoadDistance
                 };
                 Buffer.BlockCopy(pos, 0, data, curr_offset, 8);
                 curr_offset += 8;
@@ -527,7 +526,6 @@ namespace Editor
 
                 gameObjects.Add(go);
             }
-            // TODO : store keypoints and curvatures as normalized values.
             // Tracks.
             int num_tracks = ReadInt(ms, is_little_endian);
             for(int i = 0; i < num_tracks; i++)
@@ -539,7 +537,7 @@ namespace Editor
                 {
                     float z = ReadFloat(ms, is_little_endian);
                     float y = ReadFloat(ms, is_little_endian);
-                    track.Keypoints.Add(new HeelKeypoint(z * 10.0, y * 10.0));
+                    track.Keypoints.Add(new HeelKeypoint(z, y));
                 }
                 // Curvatures
                 int num_curvatures = ReadInt(ms, is_little_endian);
@@ -547,7 +545,7 @@ namespace Editor
                 {
                     // X : start, y : length, z : value.
                     Vector3 curv_data = ReadVector3(ms, is_little_endian);
-                    Curvature curvature = new Curvature(curv_data.X * 10.0, curv_data.Y * 10.0, curv_data.Z);
+                    Curvature curvature = new Curvature(curv_data.X, curv_data.Y, curv_data.Z);
                     track.Curvatures.Add(curvature);
                 }
                 // GameObjects

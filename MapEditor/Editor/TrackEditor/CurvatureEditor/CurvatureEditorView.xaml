@@ -13,6 +13,7 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
+        <local:SizeToPixelsConverter x:Key="SizeToPixelsConverter"/>
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
 
@@ -38,21 +39,46 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas IsItemsHost="True" HorizontalAlignment="Stretch" 
-                            x:Name="MainCanvas"/>
+                            x:Name="MainCanvas">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Loaded">
+                                <common:EventToCommand Command="{Binding MainCanvasLoaded}"
+                                    PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+
+                            <i:EventTrigger EventName="SizeChanged">
+                                <common:EventToCommand Command="{Binding MainCanvasSizeChanged}"
+                                    PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Canvas>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 
             <ItemsControl.ItemContainerStyle>
                 <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding Start}"/>
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource SizeToPixelsConverter}">
+                                <Binding Path="Start"/>
+                                <Binding Source="{StaticResource Proxy}" Path="Data"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
                     <Setter Property="Canvas.Top" Value="0"/>
                 </Style>
             </ItemsControl.ItemContainerStyle>
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid Width="{Binding Length}" 
-                          Height="{Binding ElementName=MainCanvas, Path=ActualHeight}">
+                    <Grid Height="{Binding ElementName=MainCanvas, Path=ActualHeight}">
+                        <Grid.Width>
+                            <MultiBinding Converter="{StaticResource SizeToPixelsConverter}">
+                                <Binding Path="Length"/>
+                                <Binding Source="{StaticResource Proxy}" Path="Data"/>
+                            </MultiBinding>
+                        </Grid.Width>
+                        
                         <Grid.Resources>
                             <SolidColorBrush x:Key="BackgroundBrush" Color="Orange"/>
                             <SolidColorBrush x:Key="FontBrush" Color="#303030"/>
@@ -152,7 +178,7 @@
                                         <Binding Path="Value" Mode="TwoWay" 
                                                  ConverterCulture="en-US">
                                             <Binding.ValidationRules>
-                                                <common:DoubleInputValidationRule/>
+                                                <common:PositiveDoubleInputValidationRule/>
                                             </Binding.ValidationRules>
                                         </Binding>
                                     </TextBox.Text>

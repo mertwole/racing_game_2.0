@@ -37,9 +37,18 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
     public class GameObjectLocationEditorVM : INotifyPropertyChanged
     {
         GameObjectLocationEditorModel model;
-        public GameObjectLocationEditorModel Model { set { model = value; OnPropertyChanged("GameObjects"); } }
+        public GameObjectLocationEditorModel Model { 
+            set 
+            { 
+                model = value; 
+                OnPropertyChanged("GameObjects");
+                OnPropertyChanged("TrackWidth");
+            } 
+        }
 
         public ObservableCollection<GameObject> GameObjects { get => model == null ? null : model.GameObjects; }
+
+        public double TrackWidth { get => model == null ? 1.0 : model.TrackWidth; set => model.TrackWidth = value; }
 
         double mainCanvasWidth = 0;
         double mainCanvasHeight = 0;
