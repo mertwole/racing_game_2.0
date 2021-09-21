@@ -313,6 +313,15 @@
             <cc:InfiniteGridView    ClipToBounds="True" x:Name="TopView"
                                     ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.YDescendingSortedCollidersAndBillboards}"
                                     ItemsTemplateSelector="{StaticResource TopViewEntityDataTemplateSelector}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseMove">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.MoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="top"/>
@@ -323,6 +332,15 @@
             <cc:InfiniteGridView    ClipToBounds="True" x:Name="RightView"
                                     ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.XDescendingSortedCollidersAndBillboards}"
                                     ItemsTemplateSelector="{StaticResource RightViewEntityDataTemplateSelector}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseMove">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.MoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="right"/>
@@ -333,6 +351,15 @@
             <cc:InfiniteGridView    ClipToBounds="True" x:Name="BackView"
                                     ItemsSource="{Binding ElementName=MainGrid, Path=DataContext.ZDescendingSortedCollidersAndBillboards}"
                                     ItemsTemplateSelector="{StaticResource BackViewEntityDataTemplateSelector}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseMove">
+                        <common:EventToCommand 
+                            Command="{Binding 
+                            RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:GameObjectEditorView}}, 
+                            Path=DataContext.MoveObject}"
+                            PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </cc:InfiniteGridView>
 
             <ContentControl Template="{StaticResource PerspectiveLabel}" Content="back"/>

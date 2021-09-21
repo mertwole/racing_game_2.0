@@ -208,6 +208,8 @@ namespace Editor.GameObjectEditor
 
         T FindParentOfType<T>(DependencyObject element) where T : class
         {
+            if (element is T) return element as T;
+
             var parent = VisualTreeHelper.GetParent(element);
             if (parent == null) return null;
             if (parent is T par) return par;
@@ -275,19 +277,23 @@ namespace Editor.GameObjectEditor
                 if (args.LeftButton == MouseButtonState.Released) return;
 
                 var sender = args.Source as DependencyObject;
-                var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
-                var obj = inf_grid_view.FindItemByChildControl(sender);
+                movedObjectGridView = FindParentOfType<InfiniteGridView>(sender);
+                var obj = movedObjectGridView.FindItemByChildControl(sender);
 
-                startMoveScreenPos = args.GetPosition(inf_grid_view);
+                startMoveScreenPos = args.GetPosition(movedObjectGridView);
                 if (obj is Collider collider) startMoveWorldPos = collider.Position;
                 if (obj is Billboard billboard) startMoveWorldPos = billboard.Position;
 
                 model.StartMoveObject(obj);
                 Mouse.Capture(sender as IInputElement);
 
+                movedObject = sender;
                 movingObject = true;
             });
         }
+
+        DependencyObject movedObject;
+        InfiniteGridView movedObjectGridView;
 
         public ICommand MoveObject
         {
@@ -296,24 +302,19 @@ namespace Editor.GameObjectEditor
                 if (!movingObject) return;
 
                 var args = e as MouseEventArgs;
-
                 if (args.LeftButton != MouseButtonState.Pressed) return;
 
-                var sender = args.Source as DependencyObject;
-
-                var inf_grid_view = FindParentOfType<InfiniteGridView>(sender);
-                var obj = inf_grid_view.FindItemByChildControl(sender);
-
-                var new_pos_screen_space = args.GetPosition(inf_grid_view);
+                var obj = movedObjectGridView.FindItemByChildControl(movedObject);
+                var new_pos_screen_space = args.GetPosition(movedObjectGridView);
                 var delta_move = new_pos_screen_space - startMoveScreenPos;
                 delta_move.Y *= -1;
-                var delta_world = inf_grid_view.ScreenSpaceToWorldSize(new Point(delta_move.X, delta_move.Y));
+                var delta_world = movedObjectGridView.ScreenSpaceToWorldSize(new Point(delta_move.X, delta_move.Y));
 
                 Vector3 new_pos = new Vector3();
                 if (obj is Billboard bb) new_pos = bb.Position;
                 if (obj is Collider collider) new_pos = collider.Position;
 
-                switch (inf_grid_view.Name)
+                switch (movedObjectGridView.Name)
                 {
                     case "TopView":
                         new_pos.X = startMoveWorldPos.X + delta_world.X;
