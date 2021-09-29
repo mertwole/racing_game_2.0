@@ -176,23 +176,10 @@ impl RmapDeserializer {
         RmapDeserializer { tracks, game_objects }
     }
 
-    pub fn generate_scene(&self, track_id : usize, road_tex : RgbImage, bg_tex : RgbImage) -> Scene {
+    pub fn generate_scene(&self, track_id : usize, road_tex : RgbImage, bg_tex : RgbImage, camera : Camera) -> Scene {
         let track = &self.tracks[track_id];
-
-        //let road_tex = Storage::load_image_rgb("road_tex.png");
         let road = Road::new(road_tex, track.road_data.clone());
-
-        //let bg_tex = Storage::load_image_rgb("background.png");
         let background = Background::new(bg_tex, 10);
-
-        let camera = Camera { 
-            position : Vec3::new(0.0, 1.0, 0.0),
-            angle : 0.0,
-            viewport_width : 1.6, 
-            viewport_height : 0.9, 
-            near_plane : 1.0, 
-            far_plane : 100.0 
-        };
 
         let mut scene = Scene::new(road, background, camera);
 

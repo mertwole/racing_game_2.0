@@ -1,0 +1,14 @@
+[package]
+name = "editor_preview_renderer"
+version = "0.1.0"
+authors = ["mertwole <mertwole@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "preview_renderer"
+crate-type = ["dylib"]
+
+[dependencies]
+image = "*"
+engine = { path = "../engine" }
+include_dir = "*"

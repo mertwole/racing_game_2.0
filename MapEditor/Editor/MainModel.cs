@@ -39,6 +39,14 @@ namespace Editor
             fs.Close();
         }
 
+        public static void TESTTT()
+        {
+            var serialized = serializer.SerializeRmap(fileManagerModel.Hierarchy.ToList());
+            serialized.Seek(0, SeekOrigin.Begin);
+            var rmap_data = serialized.ToArray();
+            TrackPreview.TrackPreviewModel.TrackDataChanged(rmap_data);
+        }
+
         public static void LoadProject()
         {
             OpenFileDialog ofd = new OpenFileDialog();

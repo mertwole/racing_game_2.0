@@ -63,7 +63,7 @@ impl Game {
         );
 
         let deserializer = RmapDeserializer::load_from_file(Storage::load_file("test_map.rmap"));
-        let mut scene = deserializer.generate_scene(0, Storage::load_image_rgb("road_tex.png"), Storage::load_image_rgb("background.png"));
+        let mut scene = deserializer.generate_scene(0, Storage::load_image_rgb("road_tex.png"), Storage::load_image_rgb("background.png"), camera);
 
         let player_go = GameObject::new(vec![], vec![
             billboard_factory.construct(Vec3::new(0.0, 0.0, 2.5), 0.5),

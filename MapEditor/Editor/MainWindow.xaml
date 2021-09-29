@@ -30,5 +30,7 @@
         <Rectangle Fill="Orange" Grid.Column="1"/>
 
         <fm:FileManagerView Grid.Column="2"/>
+
+        <Button Content="testtt" Click="Button_Click"/>
     </Grid>
 </Window>
