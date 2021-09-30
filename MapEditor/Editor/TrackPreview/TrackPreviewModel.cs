@@ -1,13 +1,18 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace Editor.TrackPreview
 {
     public class TrackPreviewModel : INotifyPropertyChanged
     {
-        public Bitmap Preview;
+        Bitmap preview;
+        public Bitmap Preview { get => preview; }
+
+        int previewWidth = 1920 / 2;
+        int previewHeight = 1080 / 2;
 
         [DllImport("preview_renderer.dll")]
         static unsafe extern void render_preview(
@@ -16,39 +21,60 @@ namespace Editor.TrackPreview
             Int32 out_width, Int32 out_height, UInt32* out_pixels
         );
 
-        public static void TrackDataChanged(byte[] rmap_data)
+        public TrackPreviewModel()
         {
+            preview = new Bitmap(previewWidth, previewHeight);
+        }
+
+        public void TrackDataChanged(byte[] rmap_data)
+        {
+            var bmp_data = preview.LockBits(
+                    new Rectangle(0, 0, previewWidth, previewHeight),
+                    ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
+
             unsafe
             {
-                int width = 1920 / 2;
-                int height = 1080 / 2;
-                UInt32[] image_data = new UInt32[width * height];
                 fixed (Byte* rmap_data_pointer = &rmap_data[0])
-                    fixed (UInt32* image_data_pointer = &image_data[0])    
-                        render_preview(
-                            rmap_data_pointer, rmap_data.Length,
-                            0.0f,
-                            width, height, image_data_pointer
-                        );
-
-                Bitmap img = new Bitmap(width, height);
-                for(int x = 0; x < width; x++)
-                    for(int y = 0; y < height; y++)
-                    {
-                        int glob_id = x + y * width;
-
-                        fixed (UInt32* image_data_pointer = &image_data[0])
-                        {
-                            byte* image_data_pointer_byte = (byte*)image_data_pointer;
-                            byte r = image_data_pointer_byte[glob_id * 4 + 0];
-                            byte g = image_data_pointer_byte[glob_id * 4 + 1];
-                            byte b = image_data_pointer_byte[glob_id * 4 + 2];
-                            img.SetPixel(x, y, Color.FromArgb(255, r, g, b));
-                        }
-                    }
-
-                img.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                {
+                    render_preview(
+                        rmap_data_pointer, rmap_data.Length,
+                        0.0f,
+                        previewWidth, previewHeight, (UInt32*)bmp_data.Scan0.ToPointer()
+                    );
+                }
             }
+
+            preview.UnlockBits(bmp_data);
+
+            preview.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            preview = SwapRedAndBlueChannels(preview);
+
+            OnPropertyChanged("Preview");
+        }
+
+        Bitmap SwapRedAndBlueChannels(Bitmap bitmap)
+        {
+            var imageAttr = new ImageAttributes();
+            imageAttr.SetColorMatrix(new ColorMatrix(
+                new[]
+                    {
+                        new[] {0.0F, 0.0F, 1.0F, 0.0F, 0.0F},
+                        new[] {0.0F, 1.0F, 0.0F, 0.0F, 0.0F},
+                        new[] {1.0F, 0.0F, 0.0F, 0.0F, 0.0F},
+                        new[] {0.0F, 0.0F, 0.0F, 1.0F, 0.0F},
+                        new[] {0.0F, 0.0F, 0.0F, 0.0F, 1.0F}
+                    }
+                ));
+
+            var temp = new Bitmap(bitmap.Width, bitmap.Height);
+            GraphicsUnit pixel = GraphicsUnit.Pixel;
+
+            using (Graphics g = Graphics.FromImage(temp))
+                g.DrawImage(bitmap, Rectangle.Round(bitmap.GetBounds(ref pixel)), 
+                            0, 0, bitmap.Width, bitmap.Height,
+                            GraphicsUnit.Pixel, imageAttr);
+
+            return temp;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

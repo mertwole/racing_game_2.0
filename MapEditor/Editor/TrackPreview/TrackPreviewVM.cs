@@ -5,22 +5,20 @@ namespace Editor.TrackPreview
 {
     public class TrackPreviewVM : INotifyPropertyChanged
     {
-        TrackPreviewModel model;
-        public TrackPreviewModel Model 
-        {
-            set
-            {
-                model = value;
-                model.PropertyChanged += (s, e) => 
-                { 
-                    if(e.PropertyName == "Preview")
-                        OnPropertyChanged("Preview"); 
-                };
-                OnPropertyChanged("Preview");
-            }
-        }
+        TrackPreviewModel model = MainModel.TrackPreviewModel;
 
-        public Bitmap Preview => model == null ? null : model.Preview;
+        public Bitmap Preview => model.Preview;
+
+        public TrackPreviewVM()
+        {
+            model.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "Preview")
+                    OnPropertyChanged("Preview");
+            };
+
+            OnPropertyChanged("Preview");
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

@@ -1,5 +1,6 @@
 ﻿using Editor.FileManager;
 using Editor.TabbedEditors;
+using Editor.TrackPreview;
 using Microsoft.Win32;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,9 @@ namespace Editor
 
         static TabbedEditorsModel tabbedEditorsModel = new TabbedEditorsModel();
         public static TabbedEditorsModel TabbedEditorsModel { get => tabbedEditorsModel; }
+
+        static TrackPreviewModel trackPreviewModel = new TrackPreviewModel();
+        public static TrackPreviewModel TrackPreviewModel { get => trackPreviewModel; }
 
         public static bool CanSaveProject { get => projFilePath != null; }
         static string projFilePath = null;
@@ -44,7 +48,7 @@ namespace Editor
             var serialized = serializer.SerializeRmap(fileManagerModel.Hierarchy.ToList());
             serialized.Seek(0, SeekOrigin.Begin);
             var rmap_data = serialized.ToArray();
-            TrackPreview.TrackPreviewModel.TrackDataChanged(rmap_data);
+            trackPreviewModel.TrackDataChanged(rmap_data);
         }
 
         public static void LoadProject()
