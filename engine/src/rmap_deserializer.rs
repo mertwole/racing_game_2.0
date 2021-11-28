@@ -143,6 +143,12 @@ impl RmapDeserializer {
                 keypoints.push(Keypoint { road_distance : keypoint.x, height : keypoint.y });
             }
 
+            if num_keypoints < 2 {
+                keypoints.push(Keypoint { road_distance : 0.0, height : 0.0});
+                // TODO : load length.
+                keypoints.push(Keypoint { road_distance : 200.0, height : 0.0});
+            }
+
             let num_curvatures = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
             let mut curvatures = Vec::with_capacity(num_curvatures as usize);
             for _ in 0..num_curvatures {
@@ -179,6 +185,9 @@ impl RmapDeserializer {
     pub fn generate_scene(&self, track_id : usize, road_tex : RgbImage, bg_tex : RgbImage, camera : Camera) -> Scene {
         let track = &self.tracks[track_id];
         let road = Road::new(road_tex, track.road_data.clone());
+
+        println!("fuckkkkk: {}", track.road_data.keypoints.len());
+
         let background = Background::new(bg_tex, 10);
 
         let mut scene = Scene::new(road, background, camera);

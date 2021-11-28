@@ -25,19 +25,17 @@ namespace Editor.CustomControls
         double horzScrollSensitivity = 0.3;
         double vertScrollSensitivity = 0.3;
 
-        double pointerPosNorm = 0.1;
-        public double PointerPosNorm
+        public static readonly DependencyProperty PointerPositionNormalizedProperty = DependencyProperty.Register(
+        "PointerPositionNormalized", typeof(double),
+        typeof(TimelineView), new FrameworkPropertyMetadata());
+        public double PointerPositionNormalized
         {
-            get => pointerPosNorm;
-            set
-            {
-                pointerPosNorm = value;
-                UpdatePointerPos();
-            }
+            get { return (double)GetValue(PointerPositionNormalizedProperty); }
+            set { SetValue(PointerPositionNormalizedProperty, value); UpdatePointerPos(); }
         }
 
         void UpdatePointerPos() =>
-            Canvas.SetLeft(Pointer, pointerPosNorm * TimelineCanvas.Width - Pointer.Width * 0.5);
+            Canvas.SetLeft(Pointer, PointerPositionNormalized * TimelineCanvas.Width - Pointer.Width * 0.5);
 
         public static readonly DependencyPropertyKey ChildrenProperty =
         DependencyProperty.RegisterReadOnly(
@@ -106,7 +104,7 @@ namespace Editor.CustomControls
             var pos = e.GetPosition(TimelineCanvas).X / TimelineCanvas.Width;
             if (pos < 0) pos = 0;
             if (pos > 1) pos = 1;
-            PointerPosNorm = pos;
+            PointerPositionNormalized = pos;
         }
 
         private void PointerEndMove(object sender, MouseButtonEventArgs e)

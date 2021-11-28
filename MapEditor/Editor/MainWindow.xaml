@@ -4,8 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:fm="clr-namespace:Editor.FileManager"
-        xmlns:tp="clr-namespace:Editor.TrackPreview"
-        
+
         xmlns:tabbed_editors="clr-namespace:Editor.TabbedEditors"
         
         mc:Ignorable="d"
@@ -31,9 +30,5 @@
         <Rectangle Fill="Orange" Grid.Column="1"/>
 
         <fm:FileManagerView Grid.Column="2"/>
-
-        <Button Content="testtt" Click="Button_Click"/>
-
-        <tp:TrackPreviewView Width="192" Height="108" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
     </Grid>
 </Window>

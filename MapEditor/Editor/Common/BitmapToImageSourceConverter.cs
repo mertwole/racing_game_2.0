@@ -11,6 +11,9 @@ namespace Editor.Common
     {
         public static BitmapImage Convert(Bitmap bitmap)
         {
+            if (bitmap == null)
+                return null;
+
             using (MemoryStream memory = new MemoryStream())
             {
                 bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);

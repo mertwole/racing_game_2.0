@@ -355,6 +355,20 @@ namespace Editor
             }    
         }
 
+        public MemoryStream SerializeRmapSingleTrack(Track track)
+        {
+            billboards.Clear();
+            gameObjects.Clear();
+            tracks.Clear();
+
+            tracks.Add(track);
+            gameObjects.AddRange(track.GameObjects);
+            foreach(var go in gameObjects)
+                billboards.AddRange(go.Billboards);
+
+            return SerializeRmap();
+        }
+
         public MemoryStream SerializeRmap(List<IContent> file_hierarchy)
         {
             billboards.Clear();
@@ -364,6 +378,11 @@ namespace Editor
             foreach(var file in file_hierarchy)
                 FillEntityCollections(file);
 
+            return SerializeRmap();
+        }
+
+        MemoryStream SerializeRmap()
+        {
             var ms = new MemoryStream();
 
             byte endianness = (byte)(BitConverter.IsLittleEndian ? 0x00 : 0xFF);
@@ -373,7 +392,7 @@ namespace Editor
             Buffer.BlockCopy(new int[] { billboards.Count }, 0, billboard_count, 0, 4);
             ms.Write(billboard_count, 0, 4);
 
-            foreach(var billboard in billboards)
+            foreach (var billboard in billboards)
             {
                 var data = SerializeBillboard(billboard);
                 ms.Write(data, 0, data.Length);

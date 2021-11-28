@@ -2,7 +2,9 @@
 using Editor.TrackEditor.CurvatureEditor;
 using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.HeelEditor;
+using Editor.TrackEditor.TrackPreview;
 using System.ComponentModel;
+using System.IO;
 
 namespace Editor.TrackEditor
 {
@@ -14,12 +16,26 @@ namespace Editor.TrackEditor
         CurvatureEditorView curvatureEditorView;
         GameObjectLocationEditorView gameObjectLocationEditorView;
         HeelEditorView heelEditorView;
+        TrackPreviewView trackPreviewView;
+
+        TrackPreviewModel trackPreviewModel;
 
         public CurvatureEditorView CurvatureEditorView { get => curvatureEditorView; }
         public GameObjectLocationEditorView GameObjectLocationEditorView { get => gameObjectLocationEditorView; }
         public HeelEditorView HeelEditorView { get => heelEditorView; }
+        public TrackPreviewView TrackPreviewView { get => trackPreviewView; }
 
-        double trackLength = 120;
+        double pointerPositionNormalized = 0.0;
+        public double PointerPositionNormalized {
+            set
+            {
+                pointerPositionNormalized = value;
+                UpdatePreview();
+            }
+            get => pointerPositionNormalized; 
+        }
+
+        double trackLength = 200;
         public double TrackLength { get => trackLength; set => trackLength = value; }
 
         public TrackEditorModel(FileManager.File file)
@@ -41,6 +57,19 @@ namespace Editor.TrackEditor
             heelEditorView = new HeelEditorView();
             var h_vm = heelEditorView.DataContext as HeelEditorVM;
             h_vm.Model = new HeelEditorModel(this);
+
+            trackPreviewView = new TrackPreviewView();
+            var tp_vm = trackPreviewView.DataContext as TrackPreviewVM;
+            tp_vm.Model = trackPreviewModel = new TrackPreviewModel();
+        }
+
+        static Serializers serializer = new Serializers();
+        void UpdatePreview()
+        {
+            var serialized = serializer.SerializeRmapSingleTrack(track);
+            serialized.Seek(0, SeekOrigin.Begin);
+            var rmap_data = serialized.ToArray();
+            trackPreviewModel.Update(rmap_data, (float)pointerPositionNormalized * (float)trackLength);
         }
 
         FileManager.File loadedFrom;
@@ -52,6 +81,8 @@ namespace Editor.TrackEditor
         {
             isDirty = true;
             OnPropertyChanged("IsDirty");
+
+            UpdatePreview();
         }
 
         public void ApplyChanges()

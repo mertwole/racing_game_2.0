@@ -165,11 +165,11 @@
       <DependentUpon>TrackEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\TrackEditorVM.cs" />
-    <Compile Include="TrackPreview\TrackPreviewModel.cs" />
-    <Compile Include="TrackPreview\TrackPreviewView.xaml.cs">
+    <Compile Include="TrackEditor\TrackPreview\TrackPreviewModel.cs" />
+    <Compile Include="TrackEditor\TrackPreview\TrackPreviewView.xaml.cs">
       <DependentUpon>TrackPreviewView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TrackPreview\TrackPreviewVM.cs" />
+    <Compile Include="TrackEditor\TrackPreview\TrackPreviewVM.cs" />
     <Page Include="BillboardEditor\BillboardEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -230,7 +230,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TrackPreview\TrackPreviewView.xaml">
+    <Page Include="TrackEditor\TrackPreview\TrackPreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

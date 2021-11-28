@@ -6,6 +6,7 @@
              xmlns:curv_editor="clr-namespace:Editor.TrackEditor.CurvatureEditor"
              xmlns:heel_editor="clr-namespace:Editor.TrackEditor.HeelEditor"
              xmlns:go_location_editor="clr-namespace:Editor.TrackEditor.GameObjectLocationEditor"
+             xmlns:track_preview="clr-namespace:Editor.TrackEditor.TrackPreview"
              xmlns:cc="clr-namespace:Editor.CustomControls"
              xmlns:local="clr-namespace:Editor.TrackEditor"
              xmlns:common="clr-namespace:Editor.Common"
@@ -17,7 +18,7 @@
     </UserControl.DataContext>
 
     <Grid>
-        <cc:TimelineView>
+        <cc:TimelineView PointerPositionNormalized="{Binding PointerPositionNormalized, Mode=OneWayToSource}">
             <ContentControl Content="{Binding CurvatureEditorView}">
                 <ContentControl.Resources>
                     <Style TargetType="curv_editor:CurvatureEditorView">
@@ -49,5 +50,16 @@
                 </ContentControl.Resources>
             </ContentControl>
         </cc:TimelineView>
+
+        <ContentControl Content="{Binding TrackPreviewView}">
+            <ContentControl.Resources>
+                <Style TargetType="track_preview:TrackPreviewView">
+                    <Setter Property="Height" Value="108"/>
+                    <Setter Property="Width" Value="192"/>
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                    <Setter Property="VerticalAlignment" Value="Bottom"/>
+                </Style>
+            </ContentControl.Resources>
+        </ContentControl>
     </Grid>
 </UserControl>
