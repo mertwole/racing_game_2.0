@@ -24,7 +24,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             }
         }
 
-        public double TrackLength { get => trackEditor.TrackLength; }
+        public double TrackLength { get => trackEditor.Track.Length; }
 
         GameObject toMove = null;
 

@@ -37,6 +37,9 @@ namespace Editor
     //  + ther widths [int + float3 + float]
     //
     // Track:
+    //  Length[float]
+    //  Primary color[int3, rgb, 0..255]
+    //  Secondary color[int3, rgb, 0..255]
     //  Number of HeelKeypoints[int]
     //  List of HeelKeypoints(ZY)[float2]
     //  Number of Curvatures[int]
@@ -234,12 +237,23 @@ namespace Editor
 
         byte[] SerializeTrack(Track track)
         {
+            int meta_data_len = 4/*length*/ + 4 * 3 /*main color*/ + 4 * 3 /*secondary color*/;
             int heel_keypoints_data_len = 4 + 8 * track.Keypoints.Count;
             int curvatures_data_len = 4 + 12 * track.Curvatures.Count;
             int game_objects_data_len = 4 + 16 * track.GameObjects.Count;
 
-            byte[] data = new byte[heel_keypoints_data_len + curvatures_data_len + game_objects_data_len];
+            byte[] data = new byte[meta_data_len + heel_keypoints_data_len + curvatures_data_len + game_objects_data_len];
             int curr_offset = 0;
+
+            // Length.
+            Buffer.BlockCopy(new float[] { (float)track.Length }, 0, data, curr_offset, 4);
+            curr_offset += 4;
+            // Main color.
+            Buffer.BlockCopy(new int[] { track.MainColor.R, track.MainColor.G, track.MainColor.B }, 0, data, curr_offset, 12);
+            curr_offset += 12;
+            // Secondary color.
+            Buffer.BlockCopy(new int[] { track.SecondaryColor.R, track.SecondaryColor.G, track.SecondaryColor.B }, 0, data, curr_offset, 12);
+            curr_offset += 12;
 
             Buffer.BlockCopy(new int[] { track.Keypoints.Count }, 0, data, curr_offset, 4);
             curr_offset += 4;

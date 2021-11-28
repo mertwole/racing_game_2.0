@@ -20,7 +20,7 @@ namespace Editor.TrackEditor.HeelEditor
             } 
         }
 
-        public double TrackLength { get => trackEditor.TrackLength; }
+        public double TrackLength { get => trackEditor.Track.Length; }
 
         TrackEditorModel trackEditor;
         public HeelEditorModel(TrackEditorModel track_editor)

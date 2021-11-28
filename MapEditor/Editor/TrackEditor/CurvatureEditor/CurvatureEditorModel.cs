@@ -15,7 +15,7 @@ namespace Editor.TrackEditor.CurvatureEditor
             private set { isCurvatureEditing = value; OnPropertyChanged("IsCurvatureEditing"); } 
         }
 
-        public double TrackLength { get => trackEditor.TrackLength; }
+        public double TrackLength { get => trackEditor.Track.Length; }
 
         TrackEditorModel trackEditor;
         public CurvatureEditorModel(TrackEditorModel track_editor)

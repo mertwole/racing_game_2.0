@@ -36,9 +36,6 @@ namespace Editor.TrackEditor
             get => pointerPositionNormalized; 
         }
 
-        double trackLength = 200;
-        public double TrackLength { get => trackLength; set => trackLength = value; }
-
         Size previewSize = new Size(192, 108);
         public Size PreviewSize { get => previewSize; }
 
@@ -75,7 +72,7 @@ namespace Editor.TrackEditor
             var serialized = serializer.SerializeRmapSingleTrack(track);
             serialized.Seek(0, SeekOrigin.Begin);
             var rmap_data = serialized.ToArray();
-            trackPreviewModel.Update(rmap_data, (float)pointerPositionNormalized * (float)trackLength);
+            trackPreviewModel.Update(rmap_data, (float)pointerPositionNormalized * (float)track.Length);
         }
 
         FileManager.File loadedFrom;

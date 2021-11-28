@@ -136,6 +136,18 @@ impl RmapDeserializer {
         let num_tracks = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
         let mut tracks = Vec::with_capacity(num_tracks as usize);
         for _ in 0..num_tracks {
+            let length = Self::read_f32(file_contents, &mut read_pos, is_little_endian);
+            let main_color = Rgb([
+                Self::read_i32(file_contents, &mut read_pos, is_little_endian) as u8,
+                Self::read_i32(file_contents, &mut read_pos, is_little_endian) as u8,
+                Self::read_i32(file_contents, &mut read_pos, is_little_endian) as u8
+            ]);
+            let secondary_color = Rgb([
+                Self::read_i32(file_contents, &mut read_pos, is_little_endian) as u8,
+                Self::read_i32(file_contents, &mut read_pos, is_little_endian) as u8,
+                Self::read_i32(file_contents, &mut read_pos, is_little_endian) as u8
+            ]);
+
             let num_keypoints = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
             let mut keypoints = Vec::with_capacity(num_keypoints as usize);
             for _ in 0..num_keypoints {
@@ -145,8 +157,7 @@ impl RmapDeserializer {
 
             if num_keypoints < 2 {
                 keypoints.push(Keypoint { road_distance : 0.0, height : 0.0});
-                // TODO : load length.
-                keypoints.push(Keypoint { road_distance : 200.0, height : 0.0});
+                keypoints.push(Keypoint { road_distance : length, height : 0.0});
             }
 
             let num_curvatures = Self::read_i32(file_contents, &mut read_pos, is_little_endian);
@@ -168,8 +179,7 @@ impl RmapDeserializer {
                 go_positions.push(Vec3::new(pos.x, 0.0, pos.y));
             }
 
-            // TODO : load length.
-            let road_data = RoadData::new(keypoints, curvatures, 200.0);
+            let road_data = RoadData::new(keypoints, curvatures, length, main_color, secondary_color);
             let track = Track { 
                 game_object_ids : go_ids, 
                 game_object_positions : go_positions, 
@@ -185,8 +195,6 @@ impl RmapDeserializer {
     pub fn generate_scene(&self, track_id : usize, road_tex : RgbImage, bg_tex : RgbImage, camera : Camera) -> Scene {
         let track = &self.tracks[track_id];
         let road = Road::new(road_tex, track.road_data.clone());
-
-        println!("fuckkkkk: {}", track.road_data.keypoints.len());
 
         let background = Background::new(bg_tex, 10);
 

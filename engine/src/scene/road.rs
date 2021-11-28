@@ -20,13 +20,18 @@ pub struct Curvature {
 #[derive(Clone)]
 pub struct RoadData {
     pub length : f32,
+
+    pub main_color : Rgb<u8>,
+    pub secondary_color : Rgb<u8>,
+
     pub keypoints : Vec<Keypoint>,
     pub curvatures : Vec<Curvature>
 }
 
 impl RoadData {
-    pub fn new(keypoints : Vec<Keypoint>, curvatures : Vec<Curvature>, length : f32) -> RoadData {
-        RoadData { keypoints, curvatures, length }
+    pub fn new(keypoints : Vec<Keypoint>, curvatures : Vec<Curvature>, 
+               length : f32, main_color : Rgb<u8>, secondary_color : Rgb<u8>) -> RoadData {
+        RoadData { keypoints, curvatures, length, main_color, secondary_color }
     }
 
     fn smoothstep(a : f32, b : f32, mut t : f32) -> f32 {
@@ -355,9 +360,9 @@ impl Road {
             };
 
             let ground_color = if line_render_data.is_horz_line { 
-                Rgb([242, 206, 75]) 
+                self.data.main_color
             } else { 
-                Rgb([222, 142, 38])
+                self.data.secondary_color
             };
 
             if left_px > 0 {

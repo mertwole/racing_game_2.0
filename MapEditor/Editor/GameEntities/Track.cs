@@ -1,5 +1,6 @@
 ﻿using Editor.FileManager;
 using System.Collections.ObjectModel;
+using System.Drawing;
 
 namespace Editor.GameEntities
 {
@@ -14,6 +15,14 @@ namespace Editor.GameEntities
         ObservableCollection<GameObject> gameObjects = new ObservableCollection<GameObject>();
         public ObservableCollection<GameObject> GameObjects { get => gameObjects; }
 
+        double length = 100.0;
+        public double Length { get => length; set => length = value; }
+
+        Color mainColor = Color.FromArgb(255, 100, 100, 100);
+        public Color MainColor { get => mainColor; set => mainColor = value; }
+        Color secondaryColor = Color.FromArgb(255, 150, 150, 150);
+        public Color SecondaryColor { get => secondaryColor; set => secondaryColor = value; }
+             
         public Track()
         {
 
@@ -29,6 +38,10 @@ namespace Editor.GameEntities
 
             foreach (var game_object in prototype.gameObjects)
                 gameObjects.Add(game_object);
+
+            mainColor = prototype.mainColor;
+            secondaryColor = prototype.secondaryColor;
+            length = prototype.length;
         }
 
         public FileIcon GetIcon()
