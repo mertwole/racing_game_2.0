@@ -51,15 +51,15 @@
             </ContentControl>
         </cc:TimelineView>
 
-        <ContentControl Content="{Binding TrackPreviewView}">
-            <ContentControl.Resources>
-                <Style TargetType="track_preview:TrackPreviewView">
-                    <Setter Property="Height" Value="108"/>
-                    <Setter Property="Width" Value="192"/>
-                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                    <Setter Property="VerticalAlignment" Value="Bottom"/>
-                </Style>
-            </ContentControl.Resources>
-        </ContentControl>
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+            <ContentControl Content="{Binding TrackPreviewView}">
+                <ContentControl.Resources>
+                    <Style TargetType="track_preview:TrackPreviewView">
+                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                        <Setter Property="VerticalAlignment" Value="Bottom"/>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
+        </Grid>
     </Grid>
 </UserControl>

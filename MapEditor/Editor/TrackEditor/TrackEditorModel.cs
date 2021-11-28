@@ -4,6 +4,7 @@ using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.HeelEditor;
 using Editor.TrackEditor.TrackPreview;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 
 namespace Editor.TrackEditor
@@ -38,6 +39,9 @@ namespace Editor.TrackEditor
         double trackLength = 200;
         public double TrackLength { get => trackLength; set => trackLength = value; }
 
+        Size previewSize = new Size(192, 108);
+        public Size PreviewSize { get => previewSize; }
+
         public TrackEditorModel(FileManager.File file)
         {
             if (!(file.Content is Track))
@@ -60,7 +64,9 @@ namespace Editor.TrackEditor
 
             trackPreviewView = new TrackPreviewView();
             var tp_vm = trackPreviewView.DataContext as TrackPreviewVM;
-            tp_vm.Model = trackPreviewModel = new TrackPreviewModel();
+            tp_vm.Model = trackPreviewModel = new TrackPreviewModel(previewSize);
+
+            UpdatePreview();
         }
 
         static Serializers serializer = new Serializers();

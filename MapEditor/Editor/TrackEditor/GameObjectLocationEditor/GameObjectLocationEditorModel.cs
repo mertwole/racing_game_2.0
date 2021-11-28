@@ -19,8 +19,8 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             get => trackWidth; 
             set
             {
-                TrackWidthChanged(value);
                 trackWidth = value;
+                TrackWidthChanged(value);
             }
         }
 

@@ -11,9 +11,6 @@ namespace Editor.TrackEditor.TrackPreview
         Bitmap preview;
         public Bitmap Preview { get => preview; }
 
-        int previewWidth = 1920 / 4;
-        int previewHeight = 1080 / 4;
-
         [DllImport("preview_renderer.dll")]
         static unsafe extern void render_preview(
             Byte* data, Int32 data_len,
@@ -21,15 +18,18 @@ namespace Editor.TrackEditor.TrackPreview
             Int32 out_width, Int32 out_height, UInt32* out_pixels
         );
 
-        public TrackPreviewModel()
+        public TrackPreviewModel(Size preview_size)
         {
-            preview = new Bitmap(previewWidth, previewHeight);
+            preview = new Bitmap(preview_size.Width, preview_size.Height);
         }
 
         public void Update(byte[] rmap_data, float camera_distance)
         {
+            if (preview == null)
+                return;
+
             var bmp_data = preview.LockBits(
-                    new Rectangle(0, 0, previewWidth, previewHeight),
+                    new Rectangle(0, 0, preview.Width, preview.Height),
                     ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
 
             unsafe
@@ -38,7 +38,7 @@ namespace Editor.TrackEditor.TrackPreview
                 {
                     render_preview(
                         rmap_data_pointer, rmap_data.Length, camera_distance,
-                        previewWidth, previewHeight, (UInt32*)bmp_data.Scan0.ToPointer()
+                        preview.Width, preview.Height, (UInt32*)bmp_data.Scan0.ToPointer()
                     );
                 }
             }
