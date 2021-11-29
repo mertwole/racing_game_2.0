@@ -74,15 +74,14 @@ namespace Editor.TrackEditor.HeelEditor
 
         public void AddNewKeypoint(double x, double y)
         {
-            trackEditor.Dirtied();
-
             // Keep keypoints sorted.
             for(int insert_id = 1; insert_id < Keypoints.Count; insert_id++)
                 if(Keypoints[insert_id - 1].X <= x && Keypoints[insert_id].X >= x)
                 {
                     Keypoints.Insert(insert_id, new HeelKeypoint(x, y));
+                    trackEditor.Dirtied();
                     return;
-                } 
+                }
         }
 
         int editingKeypointId = -1;
@@ -93,8 +92,6 @@ namespace Editor.TrackEditor.HeelEditor
 
         public void MoveKeypoint(double x, double y)
         {
-            trackEditor.Dirtied();
-
             if (editingKeypointId == 0 || editingKeypointId == Keypoints.Count - 1)
             {
                 Keypoints[0].Y = y;
@@ -104,7 +101,7 @@ namespace Editor.TrackEditor.HeelEditor
                 var kp = Keypoints[Keypoints.Count - 1];
                 Keypoints.RemoveAt(Keypoints.Count - 1);
                 Keypoints.Add(kp);
-
+                trackEditor.Dirtied();
                 return;
             }
 
@@ -116,8 +113,11 @@ namespace Editor.TrackEditor.HeelEditor
                 {
                     Keypoints.Insert(insert_id, new HeelKeypoint(x, y));
                     editingKeypointId = insert_id;
+                    trackEditor.Dirtied();
                     return;
                 }
+
+            trackEditor.Dirtied();
         }
 
         public void EndMoveKeypoint()
@@ -127,12 +127,12 @@ namespace Editor.TrackEditor.HeelEditor
 
         public void RemoveKeypoint(double x, double y)
         {
-            trackEditor.Dirtied();
-
             var remove_id = DetermineClosestKeypoint(x, y);
             if (remove_id == 0 || remove_id == Keypoints.Count - 1)
                 return;
             Keypoints.RemoveAt(remove_id);
+
+            trackEditor.Dirtied();
         }
 
         void EditorHeightChanged(double old_value, double new_value)
@@ -149,6 +149,8 @@ namespace Editor.TrackEditor.HeelEditor
             var kp = Keypoints[Keypoints.Count - 1];
             Keypoints.RemoveAt(Keypoints.Count - 1);
             Keypoints.Add(kp);
+
+            trackEditor.Dirtied();
         }
     }
 }

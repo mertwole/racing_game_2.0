@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Windows.Media;
 using Editor.TrackEditor.CurvatureEditor;
 using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.HeelEditor;
@@ -17,6 +18,10 @@ namespace Editor.TrackEditor
                 OnPropertyChanged("GameObjectLocationEditorView");
                 OnPropertyChanged("HeelEditorView");
                 OnPropertyChanged("TrackPreviewView");
+
+                OnPropertyChanged("Length");
+                OnPropertyChanged("MainColor");
+                OnPropertyChanged("SecondaryColor");
             }
         }
 
@@ -26,6 +31,24 @@ namespace Editor.TrackEditor
         public TrackPreviewView TrackPreviewView { get => model == null ? null : model.TrackPreviewView; }
 
         public double PointerPositionNormalized { set { if(model != null) model.PointerPositionNormalized = value; } }
+
+        public Color MainColor 
+        { 
+            get => model == null ? Color.FromRgb(0, 0, 0) : model.MainColor;
+            set { if (model != null) model.MainColor = value; }
+        }
+
+        public Color SecondaryColor
+        {
+            get => model == null ? Color.FromRgb(0, 0, 0) : model.SecondaryColor;
+            set { if (model != null) model.SecondaryColor = value; }
+        }
+
+        public double Length
+        {
+            get => model == null ? 0.0 : model.Length;
+            set { if (model != null) model.Length = value; }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

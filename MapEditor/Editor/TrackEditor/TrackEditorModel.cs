@@ -6,6 +6,8 @@ using Editor.TrackEditor.TrackPreview;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Windows.Media;
+using Color = System.Windows.Media.Color;
 
 namespace Editor.TrackEditor
 {
@@ -38,6 +40,29 @@ namespace Editor.TrackEditor
 
         Size previewSize = new Size(192, 108);
         public Size PreviewSize { get => previewSize; }
+
+        public Color MainColor 
+        { 
+            get => track.MainColor;
+            set { track.MainColor = value; Dirtied(); }
+        }
+
+        public Color SecondaryColor 
+        { 
+            get => track.SecondaryColor;
+            set { track.SecondaryColor = value; Dirtied(); }
+        }
+
+        public double Length
+        {
+            get => track.Length;
+            set 
+            { 
+                track.Length = value; 
+                Dirtied();
+                OnPropertyChanged("Length");
+            }
+        }
 
         public TrackEditorModel(FileManager.File file)
         {

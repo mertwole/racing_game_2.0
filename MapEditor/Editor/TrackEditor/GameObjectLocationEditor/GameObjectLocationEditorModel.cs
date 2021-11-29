@@ -1,5 +1,6 @@
 ﻿using Editor.GameEntities;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Editor.TrackEditor.GameObjectLocationEditor
 {
@@ -11,6 +12,12 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         public GameObjectLocationEditorModel(TrackEditorModel track_editor)
         {
             trackEditor = track_editor;
+
+            trackEditor.PropertyChanged += (s, e) => 
+            {
+                if (e.PropertyName == "Length")
+                    TrackLengthChanged();
+            };
         }
 
         double trackWidth = 4;
@@ -20,7 +27,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             set
             {
                 trackWidth = value;
-                TrackWidthChanged(value);
+                TrackWidthChanged();
             }
         }
 
@@ -58,17 +65,34 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             trackEditor.Dirtied();
         }
 
-        void TrackWidthChanged(double new_value)
+        void TrackWidthChanged()
         {
-            double ratio = trackWidth / new_value;
             for (int i = 0; i < GameObjects.Count; i++)
             {
-                GameObjects[i].Offset *= ratio;
-                if (GameObjects[i].Offset > new_value * 0.5)
-                    GameObjects[i].Offset = new_value * 0.5;
-                else if (GameObjects[i].Offset < -new_value * 0.5)
-                    GameObjects[i].Offset = -new_value * 0.5;
+                // Touch offset param to update positions in view.
+                GameObjects[i].Offset += double.Epsilon;
+
+                if (GameObjects[i].Offset > trackWidth * 0.5)
+                    GameObjects[i].Offset = trackWidth * 0.5;
+                else if (GameObjects[i].Offset < -trackWidth * 0.5)
+                    GameObjects[i].Offset = -trackWidth * 0.5;
             }
+
+            trackEditor.Dirtied();
+        }
+
+        void TrackLengthChanged()
+        {
+            for (int i = 0; i < GameObjects.Count; i++)
+            {
+                // Touch distance param to update positions in view.
+                GameObjects[i].RoadDistance += double.Epsilon;
+
+                if (GameObjects[i].RoadDistance > TrackLength)
+                    GameObjects[i].RoadDistance = TrackLength;
+            }
+
+            trackEditor.Dirtied();
         }
     }
 }

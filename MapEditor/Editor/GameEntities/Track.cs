@@ -1,10 +1,11 @@
 ﻿using Editor.FileManager;
 using System.Collections.ObjectModel;
-using System.Drawing;
+using System.ComponentModel;
+using System.Windows.Media;
 
 namespace Editor.GameEntities
 {
-    public class Track : ISaveableEntity
+    public class Track : ISaveableEntity, INotifyPropertyChanged
     {
         ObservableCollection<HeelKeypoint> keypoints = new ObservableCollection<HeelKeypoint>();
         public ObservableCollection<HeelKeypoint> Keypoints { get => keypoints; }
@@ -16,11 +17,14 @@ namespace Editor.GameEntities
         public ObservableCollection<GameObject> GameObjects { get => gameObjects; }
 
         double length = 100.0;
-        public double Length { get => length; set => length = value; }
+        public double Length { 
+            get => length;
+            set { length = value; OnPropertyChanged("Length"); } 
+        }
 
         Color mainColor = Color.FromArgb(255, 100, 100, 100);
         public Color MainColor { get => mainColor; set => mainColor = value; }
-        Color secondaryColor = Color.FromArgb(255, 150, 150, 150);
+        Color secondaryColor = Color.FromArgb(255, 200, 200, 200);
         public Color SecondaryColor { get => secondaryColor; set => secondaryColor = value; }
              
         public Track()
@@ -47,6 +51,12 @@ namespace Editor.GameEntities
         public FileIcon GetIcon()
         {
             return FileIcon.Track;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -156,8 +156,6 @@ namespace Editor.TrackEditor.CurvatureEditor
 
         public void DeleteCurvatureAt(double position)
         {
-            trackEditor.Dirtied();
-
             for (int i = 0; i < Curvatures.Count; i++)
             {
                 var curvature = Curvatures[i];
@@ -167,6 +165,8 @@ namespace Editor.TrackEditor.CurvatureEditor
                     return;
                 }  
             }
+
+            trackEditor.Dirtied();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
