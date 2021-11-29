@@ -49,6 +49,68 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <x:Array x:Key="AddItemContextMenu" Type="MenuItem" x:Shared="False">
+            <MenuItem Focusable="False">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                        Path=Data.NewFolderContextMenu}" 
+                                                        PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <MenuItem.Header>
+                    <TextBlock Text="new folder" Margin="4" Foreground="White" 
+                                                FontSize="12"/>
+                </MenuItem.Header>
+            </MenuItem>
+
+            <MenuItem Focusable="False">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                        Path=Data.NewBillboardContextMenu}" 
+                                                        PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <MenuItem.Header>
+                    <TextBlock Text="new billboard" Margin="4" Foreground="White" 
+                                                FontSize="12"/>
+                </MenuItem.Header>
+            </MenuItem>
+
+            <MenuItem Focusable="False">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                        Path=Data.NewGameObjectContextMenu}" 
+                                                        PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <MenuItem.Header>
+                    <TextBlock Text="new game object" Margin="4" Foreground="White" 
+                                                FontSize="12"/>
+                </MenuItem.Header>
+            </MenuItem>
+
+            <MenuItem Focusable="False">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                        Path=Data.NewTrackContextMenu}" 
+                                                        PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <MenuItem.Header>
+                    <TextBlock Text="new track" Margin="4" Foreground="White" 
+                                                FontSize="12"/>
+                </MenuItem.Header>
+            </MenuItem>
+        </x:Array>
     </UserControl.Resources>
 
     <Grid Background="#303030">
@@ -57,6 +119,24 @@
                     Background="Transparent"
                     local:FileManagerVM.MainTreeView="{Binding ElementName=MainTreeView}" 
                     Margin="-1, -1, -1, -1" AllowDrop="True">
+            <TreeView.ContextMenu>
+                <ContextMenu Panel.ZIndex="1000" ItemsSource="{StaticResource AddItemContextMenu}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Opened">
+                            <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                        Path=Data.ContextMenuOpened}"
+                                                        PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                    <ContextMenu.Template>
+                        <ControlTemplate>
+                            <StackPanel Background="#474747" IsItemsHost="True"/>
+                        </ControlTemplate>
+                    </ContextMenu.Template>
+                </ContextMenu>
+            </TreeView.ContextMenu>
+            
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged">
                     <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
@@ -291,12 +371,12 @@
 
                         <!--context menu-->
                         <StackPanel.ContextMenu>
-                            <ContextMenu Panel.ZIndex="1000">
+                            <ContextMenu Panel.ZIndex="1000" ItemsSource="{StaticResource AddItemContextMenu}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Opened">
                                         <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                                            Path=Data.ContextMenuOpened}"
-                                                            PassEventArgsToCommand="True"/>
+                                                        Path=Data.ContextMenuOpened}"
+                                                        PassEventArgsToCommand="True"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
 
@@ -305,51 +385,6 @@
                                         <StackPanel Background="#474747" IsItemsHost="True"/>
                                     </ControlTemplate>
                                 </ContextMenu.Template>
-
-                                <MenuItem Focusable="False">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Click">
-                                            <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                                            Path=Data.NewFolderContextMenu}" 
-                                                            PassEventArgsToCommand="True"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-
-                                    <MenuItem.Header>
-                                        <TextBlock Text="new folder" Margin="4" Foreground="White" 
-                                                   FontSize="12"/>
-                                    </MenuItem.Header>
-                                </MenuItem>
-                                
-                                <MenuItem Focusable="False">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Click">
-                                            <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                                            Path=Data.NewBillboardContextMenu}" 
-                                                            PassEventArgsToCommand="True"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-
-                                    <MenuItem.Header>
-                                        <TextBlock Text="new billboard" Margin="4" Foreground="White" 
-                                                   FontSize="12"/>
-                                    </MenuItem.Header>
-                                </MenuItem>
-
-                                <MenuItem Focusable="False">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Click">
-                                            <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
-                                                            Path=Data.NewGameObjectContextMenu}" 
-                                                            PassEventArgsToCommand="True"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-
-                                    <MenuItem.Header>
-                                        <TextBlock Text="new game object" Margin="4" Foreground="White" 
-                                                   FontSize="12"/>
-                                    </MenuItem.Header>
-                                </MenuItem>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
 
@@ -454,6 +489,24 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
+                        <StackPanel.ContextMenu>
+                            <ContextMenu Panel.ZIndex="1000" ItemsSource="{StaticResource AddItemContextMenu}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Opened">
+                                        <common:EventToCommand Command="{Binding Source={StaticResource Proxy}, 
+                                                        Path=Data.ContextMenuOpened}"
+                                                        PassEventArgsToCommand="True"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+
+                                <ContextMenu.Template>
+                                    <ControlTemplate>
+                                        <StackPanel Background="#474747" IsItemsHost="True"/>
+                                    </ControlTemplate>
+                                </ContextMenu.Template>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        
                         <Grid IsHitTestVisible="False">
                             <!--drag highlight-->
                             <StackPanel Background="#474747"

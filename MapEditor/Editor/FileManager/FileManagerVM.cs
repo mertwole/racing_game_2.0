@@ -380,56 +380,26 @@ namespace Editor.FileManager
 
         #region Context menu
 
-        TreeViewItem GetTreeViewItemByContextMenuItem(MenuItem item)
-        {
-            var context_menu = item.Parent as ContextMenu;
-            var context_menu_tvi = context_menu.PlacementTarget as FrameworkElement;
-            while (true)
-            {
-                if (context_menu_tvi is TreeViewItem)
-                    break;
-                else
-                    context_menu_tvi = VisualTreeHelper
-                    .GetParent(context_menu_tvi) as FrameworkElement;
-            }
-
-            return context_menu_tvi as TreeViewItem;
-        }
+        IContent creationLocation;
 
         public ICommand NewFolderContextMenu
         {
-            get => new RelayCommand((e) =>
-            {
-                var args = e as RoutedEventArgs;
-                var context_menu_tvi = GetTreeViewItemByContextMenuItem(args.Source as MenuItem);
-
-                var location = context_menu_tvi.Header;
-                model.NewFolder(location as IContent);
-            });
+            get => new RelayCommand((e) => model.NewFolder(creationLocation));
         }
 
         public ICommand NewBillboardContextMenu
         {
-            get => new RelayCommand((e) =>
-            {
-                var args = e as RoutedEventArgs;
-                var context_menu_tvi = GetTreeViewItemByContextMenuItem(args.Source as MenuItem);
-
-                var location = context_menu_tvi.Header;
-                model.NewBillboard(location as IContent);
-            });
+            get => new RelayCommand((e) => model.NewBillboard(creationLocation));
         }
 
         public ICommand NewGameObjectContextMenu
         {
-            get => new RelayCommand((e) =>
-            {
-                var args = e as RoutedEventArgs;
-                var context_menu_tvi = GetTreeViewItemByContextMenuItem(args.Source as MenuItem);
+            get => new RelayCommand((e) => model.NewGameObject(creationLocation));
+        }
 
-                var location = context_menu_tvi.Header;
-                model.NewGameObject(location as IContent);
-            });
+        public ICommand NewTrackContextMenu
+        {
+            get => new RelayCommand((e) => model.NewTrack(creationLocation));
         }
 
         public ICommand ContextMenuOpened
@@ -442,7 +412,7 @@ namespace Editor.FileManager
                 var context_menu_tvi = context_menu.PlacementTarget as FrameworkElement;
                 while (true)
                 {
-                    if (context_menu_tvi is TreeViewItem)
+                    if (context_menu_tvi == null || context_menu_tvi is TreeViewItem)
                         break;
                     else
                         context_menu_tvi = VisualTreeHelper
@@ -450,9 +420,15 @@ namespace Editor.FileManager
                 }
 
                 UnselectAll();
-                var content = (context_menu_tvi as TreeViewItem).Header as IContent;
+
+                IContent content = null;
+                if (context_menu_tvi != null)
+                    content = (context_menu_tvi as TreeViewItem).Header as IContent;
+
                 selectedItems.Add(content);
                 UpdateSelection(content);
+
+                creationLocation = content;
             });
         }
 

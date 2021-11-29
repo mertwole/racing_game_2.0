@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
 
 namespace Editor.FileManager
 {
@@ -14,35 +13,7 @@ namespace Editor.FileManager
 
         public FileManagerModel()
         {
-            Bitmap bmp = new Bitmap(200, 100);
-            var g = Graphics.FromImage(bmp);
-            g.Clear(Color.FromArgb(255, 100, 200, 50));
-
-            var bb = new Billboard();
-            bb.AddLOD(new LOD(bmp));
-            bb.Width = 4;
-            bb.X = 0;
-            bb.Z = -1;
-
-            root.AddContent(new File("test_billboard_green", root, bb));
-
-            bmp = new Bitmap(300, 100);
-            g = Graphics.FromImage(bmp);
-            g.Clear(Color.FromArgb(255, 100, 50, 200));
-
-            bb = new Billboard();
-            bb.AddLOD(new LOD(bmp));
-            bb.Width = 4;
-            bb.X = 0;
-            bb.Z = -1;
-
-            root.AddContent(new File("test_billboard_blue", root, bb));
-
-            root.AddContent(new Folder("test", root));
-
-            root.AddContent(new File("test go", root, new GameObject()));
-
-            root.AddContent(new File("track", root, new Track()));
+            
         }
 
         public void ReplaceHierarchy(List<IContent> hierarchy)
@@ -116,6 +87,12 @@ namespace Editor.FileManager
         public void NewGameObject(IContent location)
         {
             var file = new File("game object", null, new GameObject());
+            MoveContent(file, location);
+        }
+
+        public void NewTrack(IContent location)
+        {
+            var file = new File("track", null, new Track());
             MoveContent(file, location);
         }
 
