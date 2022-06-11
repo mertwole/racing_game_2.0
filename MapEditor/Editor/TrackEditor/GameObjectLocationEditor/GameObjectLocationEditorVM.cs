@@ -72,6 +72,8 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
                 var main_canvas = args.Source as Canvas;
                 mainCanvasWidth = main_canvas.ActualWidth;
                 mainCanvasHeight = main_canvas.ActualHeight;
+                // As mainCanvas dimensions are updated later than TrackLength.
+                model.TrackLengthChanged();
             });
         }
 

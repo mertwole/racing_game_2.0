@@ -26,12 +26,29 @@ namespace Editor.TrackEditor.HeelEditor
         public HeelEditorModel(TrackEditorModel track_editor)
         {
             trackEditor = track_editor;
+            trackEditor.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "Length")
+                    TrackLengthChanged();
+            };
         }
 
         public void Init()
         {
             Keypoints.Add(new HeelKeypoint(0, editorHeight * 0.5));
             Keypoints.Add(new HeelKeypoint(TrackLength, editorHeight * 0.5));
+        }
+
+        void TrackLengthChanged()
+        {
+            for(int i = Keypoints.Count - 1; i >= 0; i--)
+            {
+                if(Keypoints[i].X >= TrackLength)
+                    Keypoints.RemoveAt(i);
+            }
+
+            var first_height = Keypoints[0].Y;
+            Keypoints.Add(new HeelKeypoint(TrackLength, first_height));
         }
 
         int DetermineClosestKeypoint(double x, double y)

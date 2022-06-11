@@ -11,8 +11,8 @@ namespace Editor.CustomControls
     [ContentProperty("Children")]
     public partial class TimelineView : UserControl
     {
-        double timelineLength = 50.0;
-        public double TimelineLength { get => timelineLength; set => timelineLength = value; }
+        //double timelineLength = 50.0;
+        //public double TimelineLength { get => timelineLength; set => timelineLength = value; }
 
         double editFieldHeight = 500.0;
         public double EditFieldHeight { get => editFieldHeight; set => editFieldHeight = value; }
@@ -24,18 +24,6 @@ namespace Editor.CustomControls
 
         double horzScrollSensitivity = 0.3;
         double vertScrollSensitivity = 0.3;
-
-        public static readonly DependencyProperty PointerPositionNormalizedProperty = DependencyProperty.Register(
-        "PointerPositionNormalized", typeof(double),
-        typeof(TimelineView), new FrameworkPropertyMetadata());
-        public double PointerPositionNormalized
-        {
-            get { return (double)GetValue(PointerPositionNormalizedProperty); }
-            set { SetValue(PointerPositionNormalizedProperty, value); UpdatePointerPos(); }
-        }
-
-        void UpdatePointerPos() =>
-            Canvas.SetLeft(Pointer, PointerPositionNormalized * TimelineCanvas.Width - Pointer.Width * 0.5);
 
         public static readonly DependencyPropertyKey ChildrenProperty =
         DependencyProperty.RegisterReadOnly(
@@ -50,17 +38,36 @@ namespace Editor.CustomControls
             private set { SetValue(ChildrenProperty, value); }
         }
 
-        public TimelineView()
+        public static DependencyProperty TimelineLengthProperty;
+        public double TimelineLength
         {
-            InitializeComponent();
-            Children = ChildrenContainer.Children;
+            get { return (double)GetValue(TimelineLengthProperty); }
+            set { SetValue(TimelineLengthProperty, value); }
+        }
 
-            TimelineCanvas.Width = timelineLength * scaleX;
-            TimelineCanvas.Height = editFieldHeight * scaleY;
+        public static readonly DependencyProperty PointerPositionNormalizedProperty = DependencyProperty.Register(
+        "PointerPositionNormalized", typeof(double),
+        typeof(TimelineView), new FrameworkPropertyMetadata());
+        public double PointerPositionNormalized
+        {
+            get { return (double)GetValue(PointerPositionNormalizedProperty); }
+            set { SetValue(PointerPositionNormalizedProperty, value); UpdatePointerPos(); }
+        }
 
-            ChildrenContainer.Width = timelineLength * scaleX;
+        void UpdatePointerPos() =>
+            Canvas.SetLeft(Pointer, PointerPositionNormalized * TimelineCanvas.Width - Pointer.Width * 0.5);
 
-            for (int i = 0; i <= timelineLength; i++)
+        void UpdateTimelineLength(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateTimelineLength();
+        }
+
+        void UpdateTimelineLength()
+        {
+            TimelineCanvas.Width = TimelineLength * scaleX;
+            ChildrenContainer.Width = TimelineLength * scaleX;
+
+            for (int i = 0; i <= TimelineLength; i++)
             {
                 var line = new Line();
                 line.X1 = i * scaleX;
@@ -83,6 +90,19 @@ namespace Editor.CustomControls
             }
 
             UpdatePointerPos();
+        }
+
+        public TimelineView()
+        {
+            TimelineLengthProperty = DependencyProperty.Register(
+                "TimelineLength", typeof(double),
+                typeof(TimelineView), new FrameworkPropertyMetadata(100.0, new PropertyChangedCallback(UpdateTimelineLength)));
+
+            InitializeComponent();
+            Children = ChildrenContainer.Children;
+            TimelineCanvas.Height = editFieldHeight * scaleY;
+
+            UpdateTimelineLength();
         }
 
         private void HandlePreviewMouseWheel(object sender, MouseWheelEventArgs e)

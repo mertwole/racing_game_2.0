@@ -22,6 +22,11 @@ namespace Editor.TrackEditor
                 OnPropertyChanged("Length");
                 OnPropertyChanged("MainColor");
                 OnPropertyChanged("SecondaryColor");
+
+                model.PropertyChanged += (s, e) => {
+                    if (e.PropertyName == "Length")
+                        OnPropertyChanged("Length");
+                };
             }
         }
 

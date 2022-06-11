@@ -24,6 +24,20 @@ namespace Editor.TrackEditor.CurvatureEditor
             trackEditor.Track.Curvatures.CollectionChanged += CurvaturesChanged;
             foreach (Curvature curv in trackEditor.Track.Curvatures)
                 curv.PropertyChanged += (s, _) => trackEditor.Dirtied();
+            trackEditor.Track.PropertyChanged += (s, e) => {
+                if (e.PropertyName == "Length")
+                    TrackLengthChanged();
+            };
+        }
+
+        void TrackLengthChanged()
+        {
+            for (int i = Curvatures.Count - 1; i >= 0; i--)
+                if (Curvatures[i].End > TrackLength)
+                {
+                    Curvatures.RemoveAt(i);
+                    continue;
+                }
         }
 
         private void CurvaturesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -130,6 +144,15 @@ namespace Editor.TrackEditor.CurvatureEditor
 
             curvature_ed.Start = Math.Min(position, curvatureStart);
             curvature_ed.Length = Math.Abs(position - curvatureStart);
+
+            if(curvature_ed.End > TrackLength)
+                curvature_ed.Length = TrackLength - curvature_ed.Start;
+
+            if (curvature_ed.Start < 0)
+            {
+                curvature_ed.Length += curvature_ed.Start;
+                curvature_ed.Start = 0;
+            }   
 
             // Elsewhere ObservableCollection not calls CollectionChanged.
             Curvatures.RemoveAt(curvatureEditingId);

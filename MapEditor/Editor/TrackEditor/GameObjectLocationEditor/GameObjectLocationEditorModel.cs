@@ -1,6 +1,5 @@
 ﻿using Editor.GameEntities;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace Editor.TrackEditor.GameObjectLocationEditor
 {
@@ -81,15 +80,16 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             trackEditor.Dirtied();
         }
 
-        void TrackLengthChanged()
+        public void TrackLengthChanged()
         {
-            for (int i = 0; i < GameObjects.Count; i++)
+            for (int i = GameObjects.Count - 1; i >= 0; i--)
             {
-                // Touch distance param to update positions in view.
-                GameObjects[i].RoadDistance += double.Epsilon;
-
                 if (GameObjects[i].RoadDistance > TrackLength)
-                    GameObjects[i].RoadDistance = TrackLength;
+                    GameObjects.RemoveAt(i);
+                else {
+                    // Touch distance param to update positions in view.
+                    GameObjects[i].RoadDistance += double.Epsilon;
+                }
             }
 
             trackEditor.Dirtied();

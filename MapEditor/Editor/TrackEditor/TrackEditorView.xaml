@@ -19,7 +19,8 @@
     </UserControl.DataContext>
 
     <Grid>
-        <cc:TimelineView PointerPositionNormalized="{Binding PointerPositionNormalized, Mode=OneWayToSource}">
+        <cc:TimelineView PointerPositionNormalized="{Binding PointerPositionNormalized, Mode=OneWayToSource}"
+                         TimelineLength="{Binding Length}">
             <ContentControl Content="{Binding CurvatureEditorView}">
                 <ContentControl.Resources>
                     <Style TargetType="curv_editor:CurvatureEditorView">

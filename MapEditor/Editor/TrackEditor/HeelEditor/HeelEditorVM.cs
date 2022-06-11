@@ -149,8 +149,6 @@ namespace Editor.TrackEditor.HeelEditor
                 mainCanvasWidth = main_canvas.ActualWidth;
                 mainCanvasHeight = main_canvas.ActualHeight;
 
-                model.Init();
-
                 graphPoints.Clear();
 
                 for (int i = 0; i < mainCanvasWidth; i++)

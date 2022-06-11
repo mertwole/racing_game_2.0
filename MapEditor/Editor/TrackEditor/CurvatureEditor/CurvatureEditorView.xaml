@@ -178,7 +178,7 @@
                                         <Binding Path="Value" Mode="TwoWay" 
                                                  ConverterCulture="en-US">
                                             <Binding.ValidationRules>
-                                                <common:PositiveDoubleInputValidationRule/>
+                                                <common:DoubleInputValidationRule/>
                                             </Binding.ValidationRules>
                                         </Binding>
                                     </TextBox.Text>
