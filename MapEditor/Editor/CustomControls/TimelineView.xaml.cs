@@ -14,8 +14,8 @@ namespace Editor.CustomControls
         //double timelineLength = 50.0;
         //public double TimelineLength { get => timelineLength; set => timelineLength = value; }
 
-        double editFieldHeight = 500.0;
-        public double EditFieldHeight { get => editFieldHeight; set => editFieldHeight = value; }
+        //double editFieldHeight = 500.0;
+        //public double EditFieldHeight { get => editFieldHeight; set => editFieldHeight = value; }
 
         double scaleX = 40.0;
         double scaleY = 2.0;
@@ -67,8 +67,10 @@ namespace Editor.CustomControls
 
         void UpdateTimelineLength()
         {
+            TimelineCanvas.Children.Clear();
+
             TimelineCanvas.Width = TimelineLength * scaleX;
-            ChildrenContainer.Width = TimelineLength * scaleX;
+            ChildrenContainer.Width = TimelineLength * scaleX;        
 
             for (int i = 0; i <= TimelineLength; i++)
             {
@@ -76,7 +78,7 @@ namespace Editor.CustomControls
                 line.X1 = i * scaleX;
                 line.X2 = i * scaleX;
                 line.Y1 = 0;
-                line.Y2 = editFieldHeight * scaleY;
+                line.Y2 = ScrollRegion.ActualHeight;// editFieldHeight * scaleY;
                 line.Stroke = new SolidColorBrush(Color.FromArgb(45, 0x7B, 0x7B, 0x7B));
                 line.StrokeThickness = 1.0;
                 line.IsHitTestVisible = false;
@@ -99,7 +101,8 @@ namespace Editor.CustomControls
         {
             InitializeComponent();
             Children = ChildrenContainer.Children;
-            TimelineCanvas.Height = editFieldHeight * scaleY;
+            //TimelineCanvas.Height = editFieldHeight * scaleY;
+            //editFieldHeight = TimelineCanvas.ActualHeight;
 
             UpdateTimelineLength();
         }
@@ -136,6 +139,16 @@ namespace Editor.CustomControls
         {
             movePointer = true;
             Mouse.Capture(PointerInputElement);
+        }
+
+        private void ScrollRegionSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateTimelineLength();
+        }
+
+        private void ScrollRegionLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateTimelineLength();
         }
     }
 }
