@@ -79,7 +79,7 @@ namespace Editor.FileManager
     {
         FileManagerModel model = MainModel.FileManagerModel;
 
-        public ObservableCollection<IContent> Hierarchy { get => model.Hierarchy; }
+        public BindingList<IContent> Hierarchy { get => model.Hierarchy; }
 
         // MainTreeView
         public static readonly DependencyProperty MainTreeViewProperty =

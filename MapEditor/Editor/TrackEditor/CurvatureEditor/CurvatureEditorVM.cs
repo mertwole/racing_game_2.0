@@ -28,15 +28,15 @@ namespace Editor.TrackEditor.CurvatureEditor
         public CurvatureEditorModel Model { 
             set 
             { 
-                model = value; 
-                Init(); 
+                model = value;
+                Init();
                 OnPropertyChanged("Curvatures");
                 OnPropertyChanged("TrackLength");
             } 
         }
 
         public bool IsCurvatureNotEditing { get => !model.IsCurvatureEditing; }
-        public ObservableCollection<Curvature> Curvatures { get => model == null ? null : model.Curvatures; }
+        public BindingList<Curvature> Curvatures { get => model?.Curvatures; }
 
         public double TrackLength { get => model == null ? 100.0 : model.TrackLength; }
 
@@ -49,6 +49,7 @@ namespace Editor.TrackEditor.CurvatureEditor
                 var args = e as RoutedEventArgs;
                 var main_canvas = args.Source as Canvas;
                 mainCanvasWidth = main_canvas.ActualWidth;
+                UpdateCurvatures();
             });
         }
 
@@ -59,6 +60,7 @@ namespace Editor.TrackEditor.CurvatureEditor
                 var args = e as RoutedEventArgs;
                 var main_canvas = args.Source as Canvas;
                 mainCanvasWidth = main_canvas.ActualWidth;
+                UpdateCurvatures();
             });
         }
 
@@ -81,6 +83,15 @@ namespace Editor.TrackEditor.CurvatureEditor
             model.PropertyChanged += (sender, name) => {
                 if (name.PropertyName == "IsCurvatureEditing") OnPropertyChanged("IsCurvatureNotEditing");
             };
+        }
+
+        void UpdateCurvatures()
+        {
+            foreach (var curv in Curvatures)
+            {
+                curv.Start += double.Epsilon;
+                curv.Length += double.Epsilon;
+            }
         }
 
         FrameworkElement FindParentByName(FrameworkElement element, string name)

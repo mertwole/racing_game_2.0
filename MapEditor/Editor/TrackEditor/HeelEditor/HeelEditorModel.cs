@@ -1,11 +1,12 @@
 ﻿using Editor.GameEntities;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Editor.TrackEditor.HeelEditor
 {
-    public class HeelEditorModel
+    public class HeelEditorModel : INotifyPropertyChanged
     {
-        public ObservableCollection<HeelKeypoint> Keypoints { get => trackEditor.Track.Keypoints; }
+        public BindingList<HeelKeypoint> Keypoints { get => trackEditor.Track.Keypoints; }
 
         double editorHeight = 1.0;
         public double EditorHeight 
@@ -35,6 +36,9 @@ namespace Editor.TrackEditor.HeelEditor
 
         public void Init()
         {
+            if (Keypoints.Count != 0)
+                return;
+
             Keypoints.Add(new HeelKeypoint(0, editorHeight * 0.5));
             Keypoints.Add(new HeelKeypoint(TrackLength, editorHeight * 0.5));
         }
@@ -168,6 +172,12 @@ namespace Editor.TrackEditor.HeelEditor
             Keypoints.Add(kp);
 
             trackEditor.Dirtied();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

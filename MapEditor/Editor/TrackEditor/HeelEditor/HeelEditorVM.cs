@@ -63,7 +63,8 @@ namespace Editor.TrackEditor.HeelEditor
             } 
         }
 
-        public ObservableCollection<HeelKeypoint> Keypoints { get => model == null ? null : model.Keypoints; }
+        public BindingList<HeelKeypoint> Keypoints { 
+            get => model == null ? null : model.Keypoints; }
 
         public double EditorHeight { get => model == null ? 1 : model.EditorHeight; set => model.EditorHeight = value; }
 
@@ -89,7 +90,7 @@ namespace Editor.TrackEditor.HeelEditor
 
         void Init()
         {
-            model.Keypoints.CollectionChanged += (s, e) => UpdateGraph();
+            model.Keypoints.ListChanged += (s, e) => UpdateGraph();
 
             if (mainCanvasWidth != 0 && graphPoints.Count == 0)
                 InitGraph();
@@ -111,6 +112,7 @@ namespace Editor.TrackEditor.HeelEditor
             graphPoints.Add(new LineSegment(new Point(mainCanvasWidth, mainCanvasHeight), false));
             graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
 
+            UpdateKeypoints();
             UpdateGraph();
         }
 
@@ -126,6 +128,15 @@ namespace Editor.TrackEditor.HeelEditor
             OnPropertyChanged("GraphPoints");
         }
 
+        void UpdateKeypoints()
+        {
+            foreach (var kp in Keypoints)
+            {
+                kp.X += double.Epsilon;
+                kp.Y += double.Epsilon;
+            }
+        }
+
         public ICommand MainCanvasLoaded
         {
             get => new RelayCommand((e) =>
@@ -137,6 +148,8 @@ namespace Editor.TrackEditor.HeelEditor
 
                 if(model != null && graphPoints.Count == 0)
                     InitGraph();
+
+                UpdateKeypoints();
             });
         }
 
@@ -160,6 +173,7 @@ namespace Editor.TrackEditor.HeelEditor
                 graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
 
                 UpdateGraph();
+                UpdateKeypoints();
             });
         }
 

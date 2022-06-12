@@ -38,7 +38,9 @@ namespace Editor.CustomControls
             private set { SetValue(ChildrenProperty, value); }
         }
 
-        public static DependencyProperty TimelineLengthProperty;
+        public static DependencyProperty TimelineLengthProperty = DependencyProperty.Register(
+                "TimelineLength", typeof(double),
+                typeof(TimelineView), new FrameworkPropertyMetadata(100.0, new PropertyChangedCallback(UpdateTimelineLength)));
         public double TimelineLength
         {
             get { return (double)GetValue(TimelineLengthProperty); }
@@ -57,9 +59,10 @@ namespace Editor.CustomControls
         void UpdatePointerPos() =>
             Canvas.SetLeft(Pointer, PointerPositionNormalized * TimelineCanvas.Width - Pointer.Width * 0.5);
 
-        void UpdateTimelineLength(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        static void UpdateTimelineLength(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            UpdateTimelineLength();
+            var instance = d as TimelineView;
+            instance.UpdateTimelineLength();
         }
 
         void UpdateTimelineLength()
@@ -94,10 +97,6 @@ namespace Editor.CustomControls
 
         public TimelineView()
         {
-            TimelineLengthProperty = DependencyProperty.Register(
-                "TimelineLength", typeof(double),
-                typeof(TimelineView), new FrameworkPropertyMetadata(100.0, new PropertyChangedCallback(UpdateTimelineLength)));
-
             InitializeComponent();
             Children = ChildrenContainer.Children;
             TimelineCanvas.Height = editFieldHeight * scaleY;

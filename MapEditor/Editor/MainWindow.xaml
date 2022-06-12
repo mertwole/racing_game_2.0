@@ -24,11 +24,22 @@
             <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        <tabbed_editors:TabbedEditorView Grid.Column="0"/>
 
-        <Rectangle Fill="Orange" Grid.Column="1"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <fm:FileManagerView Grid.Column="2"/>
+        <ToolBar Grid.ColumnSpan="3" VerticalAlignment="Top">
+            <Button Content="load project" 
+                    Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                    Padding="8, 0" Click="LoadProject"/>
+        </ToolBar>
+
+        <tabbed_editors:TabbedEditorView Grid.Column="0" Grid.Row="1"/>
+
+        <Rectangle Fill="Orange" Grid.Column="1" Grid.Row="1"/>
+
+        <fm:FileManagerView Grid.Column="2" Grid.Row="1"/>
     </Grid>
 </Window>

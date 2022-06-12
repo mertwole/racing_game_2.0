@@ -8,7 +8,7 @@ namespace Editor.TrackEditor.CurvatureEditor
 {
     public class CurvatureEditorModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Curvature> Curvatures { get => trackEditor.Track.Curvatures; }
+        public BindingList<Curvature> Curvatures { get => trackEditor.Track.Curvatures; }
         bool isCurvatureEditing = false;
         public bool IsCurvatureEditing { 
             get => isCurvatureEditing; 
@@ -21,7 +21,7 @@ namespace Editor.TrackEditor.CurvatureEditor
         public CurvatureEditorModel(TrackEditorModel track_editor)
         {
             trackEditor = track_editor;
-            trackEditor.Track.Curvatures.CollectionChanged += CurvaturesChanged;
+            trackEditor.Track.Curvatures.ListChanged += CurvaturesChanged;
             foreach (Curvature curv in trackEditor.Track.Curvatures)
                 curv.PropertyChanged += (s, _) => trackEditor.Dirtied();
             trackEditor.Track.PropertyChanged += (s, e) => {
@@ -40,11 +40,10 @@ namespace Editor.TrackEditor.CurvatureEditor
                 }
         }
 
-        private void CurvaturesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void CurvaturesChanged(object sender, ListChangedEventArgs e)
         {
-            if(e.NewItems != null)
-                foreach(Curvature added in e.NewItems)
-                    added.PropertyChanged += (s, _) => trackEditor.Dirtied();
+            if(e.ListChangedType == ListChangedType.ItemAdded)
+                Curvatures[e.NewIndex].PropertyChanged += (s, _) => trackEditor.Dirtied();
         }
 
         public void CreateCurvature(double position)

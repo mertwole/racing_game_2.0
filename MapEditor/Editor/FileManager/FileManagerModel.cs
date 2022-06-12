@@ -7,7 +7,7 @@ namespace Editor.FileManager
 {
     public class FileManagerModel
     {
-        public ObservableCollection<IContent> Hierarchy { get => root.Contents; }
+        public BindingList<IContent> Hierarchy { get => root.Contents; }
 
         Folder root = new Folder("root", null);
 
@@ -25,7 +25,7 @@ namespace Editor.FileManager
 
         public void DeleteContent(IContent content)
         {
-            bool DeleteContent(IContent cont, ObservableCollection<IContent> contents)
+            bool DeleteContent(IContent cont, BindingList<IContent> contents)
             {
                 for (int i = 0; i < contents.Count; i++)
                     if (contents[i] == cont)
@@ -124,8 +124,8 @@ namespace Editor.FileManager
 
         public IContent Parent { get; set; }
 
-        public ObservableCollection<IContent> Contents { get => contents; }
-        ObservableCollection<IContent> contents = new ObservableCollection<IContent>();
+        public BindingList<IContent> Contents { get => contents; }
+        BindingList<IContent> contents = new BindingList<IContent>();
 
         public Folder(string name, IContent parent)
         {

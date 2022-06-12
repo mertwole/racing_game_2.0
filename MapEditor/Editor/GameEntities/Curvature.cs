@@ -4,8 +4,24 @@ namespace Editor.GameEntities
 {
     public class Curvature : INotifyPropertyChanged
     {
-        public double Start { get; set; }
-        public double Length { get; set; }
+        double start;
+        public double Start { 
+            get => start; 
+            set { 
+                start = value; 
+                OnPropertyChanged("Start"); 
+                OnPropertyChanged("End"); 
+            } 
+        }
+        double length;
+        public double Length { 
+            get => length; 
+            set { 
+                length = value; 
+                OnPropertyChanged("Length"); 
+                OnPropertyChanged("End"); 
+            } 
+        }
         public double End { get => Start + Length; }
 
         double value;

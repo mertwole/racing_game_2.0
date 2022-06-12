@@ -110,19 +110,19 @@ namespace Editor.TabbedEditors
                     var go_eitor_view = new GameObjectEditorView();
                     var go_eitor_model = new GameObjectEditorModel(file);
                     (go_eitor_view.DataContext as GameObjectEditorVM).Model = go_eitor_model;
-                    tabs.Add(new EditorTab(go_eitor_view, go_eitor_model, "test go name: " + file.Name, true));
+                    tabs.Add(new EditorTab(go_eitor_view, go_eitor_model, "game object [" + file.Name + "]", true));
                     break;
                 case Billboard _:
                     var bb_editor_view = new BillboardEditorView();
                     var bb_editor_model = new BillboardEditorModel(file);
                     (bb_editor_view.DataContext as BillboardEditorVM).Model = bb_editor_model;
-                    tabs.Add(new EditorTab(bb_editor_view, bb_editor_model, "test bb name: " + file.Name, true));
+                    tabs.Add(new EditorTab(bb_editor_view, bb_editor_model, "billboard [" + file.Name + "]", true));
                     break;
                 case Track _:
                     var track_editor_view = new TrackEditorView();
                     var track_editor_model = new TrackEditorModel(file);
                     (track_editor_view.DataContext as TrackEditorVM).Model = track_editor_model;
-                    tabs.Add(new EditorTab(track_editor_view, track_editor_model, "test track name: " + file.Name, true));
+                    tabs.Add(new EditorTab(track_editor_view, track_editor_model, "track [" + file.Name + "]", true));
                     break;
             }
         }

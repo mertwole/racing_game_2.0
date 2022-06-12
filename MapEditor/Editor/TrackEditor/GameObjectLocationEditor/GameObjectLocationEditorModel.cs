@@ -1,11 +1,12 @@
 ﻿using Editor.GameEntities;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Editor.TrackEditor.GameObjectLocationEditor
 {
     public class GameObjectLocationEditorModel
     {
-        public ObservableCollection<GameObject> GameObjects { get => trackEditor.Track.GameObjects; }
+        public BindingList<GameObject> GameObjects { get => trackEditor.Track.GameObjects; }
 
         TrackEditorModel trackEditor;
         public GameObjectLocationEditorModel(TrackEditorModel track_editor)

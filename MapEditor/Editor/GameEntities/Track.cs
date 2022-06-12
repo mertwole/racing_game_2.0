@@ -7,14 +7,14 @@ namespace Editor.GameEntities
 {
     public class Track : ISaveableEntity, INotifyPropertyChanged
     {
-        ObservableCollection<HeelKeypoint> keypoints = new ObservableCollection<HeelKeypoint>();
-        public ObservableCollection<HeelKeypoint> Keypoints { get => keypoints; }
+        BindingList<HeelKeypoint> keypoints = new BindingList<HeelKeypoint>();
+        public BindingList<HeelKeypoint> Keypoints { get => keypoints; }
 
-        ObservableCollection<Curvature> curvatures = new ObservableCollection<Curvature>();
-        public ObservableCollection<Curvature> Curvatures { get => curvatures; }
+        BindingList<Curvature> curvatures = new BindingList<Curvature>();
+        public BindingList<Curvature> Curvatures { get => curvatures; }
 
-        ObservableCollection<GameObject> gameObjects = new ObservableCollection<GameObject>();
-        public ObservableCollection<GameObject> GameObjects { get => gameObjects; }
+        BindingList<GameObject> gameObjects = new BindingList<GameObject>();
+        public BindingList<GameObject> GameObjects { get => gameObjects; }
 
         double length = 100.0;
         public double Length { 

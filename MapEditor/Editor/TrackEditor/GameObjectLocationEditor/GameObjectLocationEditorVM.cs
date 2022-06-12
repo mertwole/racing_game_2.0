@@ -43,15 +43,26 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
                 model = value; 
                 OnPropertyChanged("GameObjects");
                 OnPropertyChanged("TrackWidth");
+
+                UpdatePositions();
             } 
         }
 
-        public ObservableCollection<GameObject> GameObjects { get => model == null ? null : model.GameObjects; }
+        public BindingList<GameObject> GameObjects { get => model == null ? null : model.GameObjects; }
 
         public double TrackWidth { get => model == null ? 1.0 : model.TrackWidth; set => model.TrackWidth = value; }
 
         double mainCanvasWidth = 0;
         double mainCanvasHeight = 0;
+
+        void UpdatePositions()
+        {
+            foreach (var go in GameObjects)
+            {
+                go.RoadDistance += double.Epsilon;
+                go.Offset += double.Epsilon;
+            }
+        }
 
         public ICommand MainCanvasLoaded
         {

@@ -240,7 +240,7 @@ namespace Editor
             int meta_data_len = 4/*length*/ + 4 * 3 /*main color*/ + 4 * 3 /*secondary color*/;
             int heel_keypoints_data_len = 4 + 8 * track.Keypoints.Count;
             int curvatures_data_len = 4 + 12 * track.Curvatures.Count;
-            int game_objects_data_len = 4 + 16 * track.GameObjects.Count;
+            int game_objects_data_len = 4 + 12 * track.GameObjects.Count;
 
             byte[] data = new byte[meta_data_len + heel_keypoints_data_len + curvatures_data_len + game_objects_data_len];
             int curr_offset = 0;
@@ -564,6 +564,19 @@ namespace Editor
             for(int i = 0; i < num_tracks; i++)
             {
                 var track = new Track();
+
+                track.Length = ReadFloat(ms, is_little_endian);
+                track.MainColor = System.Windows.Media.Color.FromRgb(
+                    (byte)ReadInt(ms, is_little_endian), 
+                    (byte)ReadInt(ms, is_little_endian), 
+                    (byte)ReadInt(ms, is_little_endian)
+                );
+                track.SecondaryColor = System.Windows.Media.Color.FromRgb(
+                    (byte)ReadInt(ms, is_little_endian),
+                    (byte)ReadInt(ms, is_little_endian),
+                    (byte)ReadInt(ms, is_little_endian)
+                );
+
                 // Heel keypoints
                 int num_keypoints = ReadInt(ms, is_little_endian);
                 for (int j = 0; j < num_keypoints; j++)
@@ -596,6 +609,7 @@ namespace Editor
 
                 tracks.Add(track);
             }
+
             // Files.
             // As files are serialized after their parents there is always exist parent in the list of already deserialized files.
             int num_files = ReadInt(ms, is_little_endian);

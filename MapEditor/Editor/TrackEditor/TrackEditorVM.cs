@@ -30,10 +30,10 @@ namespace Editor.TrackEditor
             }
         }
 
-        public CurvatureEditorView CurvatureEditorView { get => model == null ? null : model.CurvatureEditorView; }
-        public GameObjectLocationEditorView GameObjectLocationEditorView { get => model == null ? null : model.GameObjectLocationEditorView; }
-        public HeelEditorView HeelEditorView { get => model == null ? null : model.HeelEditorView; }
-        public TrackPreviewView TrackPreviewView { get => model == null ? null : model.TrackPreviewView; }
+        public CurvatureEditorView CurvatureEditorView { get => model?.CurvatureEditorView; }
+        public GameObjectLocationEditorView GameObjectLocationEditorView { get => model?.GameObjectLocationEditorView; }
+        public HeelEditorView HeelEditorView { get => model?.HeelEditorView; }
+        public TrackPreviewView TrackPreviewView { get => model?.TrackPreviewView; }
 
         public double PointerPositionNormalized { set { if(model != null) model.PointerPositionNormalized = value; } }
 
