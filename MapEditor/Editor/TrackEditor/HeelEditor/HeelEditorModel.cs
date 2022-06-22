@@ -17,19 +17,18 @@ namespace Editor.TrackEditor.HeelEditor
                 var old_value = editorHeight;
                 editorHeight = value;
                 EditorHeightChanged(old_value, value);
-                
             } 
         }
 
-        public double TrackLength { get => trackEditor.Track.Length; }
+        public double TrackLength { get => trackEditor.Track.Parameters.Length; }
 
         TrackEditorModel trackEditor;
         public HeelEditorModel(TrackEditorModel track_editor)
         {
             trackEditor = track_editor;
-            trackEditor.PropertyChanged += (s, e) =>
+            trackEditor.Track.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == "Length")
+                if (e.PropertyName == "Parameters")
                     TrackLengthChanged();
             };
         }

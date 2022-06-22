@@ -246,13 +246,15 @@ namespace Editor
             int curr_offset = 0;
 
             // Length.
-            Buffer.BlockCopy(new float[] { (float)track.Length }, 0, data, curr_offset, 4);
+            Buffer.BlockCopy(new float[] { (float)track.Parameters.Length }, 0, data, curr_offset, 4);
             curr_offset += 4;
             // Main color.
-            Buffer.BlockCopy(new int[] { track.MainColor.R, track.MainColor.G, track.MainColor.B }, 0, data, curr_offset, 12);
+            var main_color = track.Parameters.MainColor;
+            Buffer.BlockCopy(new int[] { main_color.R, main_color.G, main_color.B }, 0, data, curr_offset, 12);
             curr_offset += 12;
             // Secondary color.
-            Buffer.BlockCopy(new int[] { track.SecondaryColor.R, track.SecondaryColor.G, track.SecondaryColor.B }, 0, data, curr_offset, 12);
+            var secondary_color = track.Parameters.SecondaryColor;
+            Buffer.BlockCopy(new int[] { secondary_color.R, secondary_color.G, secondary_color.B }, 0, data, curr_offset, 12);
             curr_offset += 12;
 
             Buffer.BlockCopy(new int[] { track.Keypoints.Count }, 0, data, curr_offset, 4);
@@ -565,13 +567,13 @@ namespace Editor
             {
                 var track = new Track();
 
-                track.Length = ReadFloat(ms, is_little_endian);
-                track.MainColor = System.Windows.Media.Color.FromRgb(
+                track.Parameters.Length = ReadFloat(ms, is_little_endian);
+                track.Parameters.MainColor = System.Windows.Media.Color.FromRgb(
                     (byte)ReadInt(ms, is_little_endian), 
                     (byte)ReadInt(ms, is_little_endian), 
                     (byte)ReadInt(ms, is_little_endian)
                 );
-                track.SecondaryColor = System.Windows.Media.Color.FromRgb(
+                track.Parameters.SecondaryColor = System.Windows.Media.Color.FromRgb(
                     (byte)ReadInt(ms, is_little_endian),
                     (byte)ReadInt(ms, is_little_endian),
                     (byte)ReadInt(ms, is_little_endian)

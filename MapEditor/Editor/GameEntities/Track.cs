@@ -1,7 +1,5 @@
 ﻿using Editor.FileManager;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Media;
 
 namespace Editor.GameEntities
 {
@@ -16,20 +14,12 @@ namespace Editor.GameEntities
         BindingList<GameObject> gameObjects = new BindingList<GameObject>();
         public BindingList<GameObject> GameObjects { get => gameObjects; }
 
-        double length = 100.0;
-        public double Length { 
-            get => length;
-            set { length = value; OnPropertyChanged("Length"); } 
-        }
-
-        Color mainColor = Color.FromArgb(255, 100, 100, 100);
-        public Color MainColor { get => mainColor; set => mainColor = value; }
-        Color secondaryColor = Color.FromArgb(255, 200, 200, 200);
-        public Color SecondaryColor { get => secondaryColor; set => secondaryColor = value; }
+        TrackParameters parameters = new TrackParameters();
+        public TrackParameters Parameters { get => parameters; }
              
         public Track()
         {
-
+            Parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");
         }
 
         public Track(Track prototype)
@@ -43,9 +33,8 @@ namespace Editor.GameEntities
             foreach (var game_object in prototype.gameObjects)
                 gameObjects.Add(game_object);
 
-            mainColor = prototype.mainColor;
-            secondaryColor = prototype.secondaryColor;
-            length = prototype.length;
+            parameters = new TrackParameters(prototype.parameters);
+            parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");
         }
 
         public FileIcon GetIcon()

@@ -93,6 +93,7 @@
     <Compile Include="GameEntities\HeelKeypoint.cs" />
     <Compile Include="GameEntities\ISaveableEntity.cs" />
     <Compile Include="GameEntities\Track.cs" />
+    <Compile Include="GameEntities\TrackParameters.cs" />
     <Compile Include="GameEntities\Vector3.cs" />
     <Compile Include="GameObjectEditor\GameObjectEditorModel.cs" />
     <Compile Include="GameObjectEditor\GameObjectEditorView.xaml.cs">
@@ -139,6 +140,11 @@
       <DependentUpon>GameObjectLocationEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\GameObjectLocationEditor\GameObjectLocationEditorVM.cs" />
+    <Compile Include="TrackEditor\ParametersEditor\ParametersEditorModel.cs" />
+    <Compile Include="TrackEditor\ParametersEditor\ParametersEditorView.xaml.cs">
+      <DependentUpon>ParametersEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TrackEditor\ParametersEditor\ParametersEditorVM.cs" />
     <Compile Include="TrackEditor\TrackEditorModel.cs" />
     <Compile Include="TrackEditor\TrackEditorView.xaml.cs">
       <DependentUpon>TrackEditorView.xaml</DependentUpon>
@@ -202,6 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TrackEditor\GameObjectLocationEditor\GameObjectLocationEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TrackEditor\ParametersEditor\ParametersEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,6 +7,7 @@
              xmlns:heel_editor="clr-namespace:Editor.TrackEditor.HeelEditor"
              xmlns:go_location_editor="clr-namespace:Editor.TrackEditor.GameObjectLocationEditor"
              xmlns:track_preview="clr-namespace:Editor.TrackEditor.TrackPreview"
+             xmlns:params_editor="clr-namespace:Editor.TrackEditor.ParametersEditor"
              xmlns:cc="clr-namespace:Editor.CustomControls"
              xmlns:local="clr-namespace:Editor.TrackEditor"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -53,53 +54,16 @@
             </ContentControl>
         </cc:TimelineView>
 
-        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
-            <Rectangle RadiusX="10" RadiusY="10" Fill="#474747"/>
-
-            <StackPanel VerticalAlignment="Stretch" Margin="10">
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel>
-                        <TextBlock Text="main color" Foreground="Orange"/>
-                        <md:ColorPicker Width="100" Height="100" Margin="10"
-                                        Color="{Binding MainColor, Mode=TwoWay}"/>
-                    </StackPanel>
-
-                    <StackPanel>
-                        <TextBlock Text="secondary color" Foreground="Orange"/>
-                        <md:ColorPicker Width="100" Height="100" Margin="10"
-                                        Color="{Binding SecondaryColor, Mode=TwoWay}"/>
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="length" Foreground="Orange"/>
-
-                    <TextBox    VerticalAlignment="Center"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Foreground="#303030"
-                                BorderThickness="0"
-                                CaretBrush="#303030"
-                                CaretIndex="1000">
-                        <i:Interaction.Behaviors>
-                            <common:TextBoxEnterKeyUpdateBehavior/>
-                        </i:Interaction.Behaviors>
-
-                        <TextBox.ContextMenu>
-                            <ContextMenu/>
-                        </TextBox.ContextMenu>
-
-                        <TextBox.Text>
-                            <Binding Path="Length" Mode="TwoWay" 
-                                                 ConverterCulture="en-US">
-                                <Binding.ValidationRules>
-                                    <common:PositiveDoubleInputValidationRule/>
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                </StackPanel>
-            </StackPanel>
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left"
+              Margin="10">
+            <ContentControl Content="{Binding ParametersEditorView}">
+                <ContentControl.Resources>
+                    <Style TargetType="params_editor:ParametersEditorView">
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="VerticalAlignment" Value="Bottom"/>
+                    </Style>
+                </ContentControl.Resources>
+            </ContentControl>
         </Grid>
         
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">

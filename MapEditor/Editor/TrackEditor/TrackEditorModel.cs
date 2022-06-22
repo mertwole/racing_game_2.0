@@ -2,6 +2,7 @@
 using Editor.TrackEditor.CurvatureEditor;
 using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.HeelEditor;
+using Editor.TrackEditor.ParametersEditor;
 using Editor.TrackEditor.TrackPreview;
 using System.ComponentModel;
 using System.Drawing;
@@ -20,6 +21,7 @@ namespace Editor.TrackEditor
         GameObjectLocationEditorView gameObjectLocationEditorView;
         HeelEditorView heelEditorView;
         TrackPreviewView trackPreviewView;
+        ParametersEditorView parametersEditorView;
 
         TrackPreviewModel trackPreviewModel;
 
@@ -27,6 +29,7 @@ namespace Editor.TrackEditor
         public GameObjectLocationEditorView GameObjectLocationEditorView { get => gameObjectLocationEditorView; }
         public HeelEditorView HeelEditorView { get => heelEditorView; }
         public TrackPreviewView TrackPreviewView { get => trackPreviewView; }
+        public ParametersEditorView ParametersEditorView { get => parametersEditorView; }
 
         double pointerPositionNormalized = 0.0;
         public double PointerPositionNormalized {
@@ -41,29 +44,6 @@ namespace Editor.TrackEditor
         Size previewSize = new Size(192, 108);
         public Size PreviewSize { get => previewSize; }
 
-        public Color MainColor 
-        { 
-            get => track.MainColor;
-            set { track.MainColor = value; Dirtied(); }
-        }
-
-        public Color SecondaryColor 
-        { 
-            get => track.SecondaryColor;
-            set { track.SecondaryColor = value; Dirtied(); }
-        }
-
-        public double Length
-        {
-            get => track.Length;
-            set 
-            { 
-                track.Length = value; 
-                Dirtied();
-                OnPropertyChanged("Length");
-            }
-        }
-
         public TrackEditorModel(FileManager.File file)
         {
             if (!(file.Content is Track))
@@ -71,6 +51,12 @@ namespace Editor.TrackEditor
 
             loadedFrom = file;
             track = new Track(file.Content as Track);
+
+            track.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "Parameters")
+                    Dirtied();
+            };
 
             curvatureEditorView = new CurvatureEditorView();
             var c_vm = curvatureEditorView.DataContext as CurvatureEditorVM;
@@ -88,6 +74,10 @@ namespace Editor.TrackEditor
             var tp_vm = trackPreviewView.DataContext as TrackPreviewVM;
             tp_vm.Model = trackPreviewModel = new TrackPreviewModel(previewSize);
 
+            parametersEditorView = new ParametersEditorView();
+            var pe_vm = parametersEditorView.DataContext as ParametersEditorVM;
+            pe_vm.Model = new ParametersEditorModel(track);
+
             UpdatePreview();
         }
 
@@ -97,7 +87,7 @@ namespace Editor.TrackEditor
             var serialized = serializer.SerializeRmapSingleTrack(track);
             serialized.Seek(0, SeekOrigin.Begin);
             var rmap_data = serialized.ToArray();
-            trackPreviewModel.Update(rmap_data, (float)pointerPositionNormalized * (float)track.Length);
+            trackPreviewModel.Update(rmap_data, (float)pointerPositionNormalized * (float)track.Parameters.Length);
         }
 
         FileManager.File loadedFrom;

@@ -13,9 +13,9 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         {
             trackEditor = track_editor;
 
-            trackEditor.PropertyChanged += (s, e) => 
+            trackEditor.Track.PropertyChanged += (s, e) => 
             {
-                if (e.PropertyName == "Length")
+                if (e.PropertyName == "Parameters")
                     TrackLengthChanged();
             };
         }
@@ -31,7 +31,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             }
         }
 
-        public double TrackLength { get => trackEditor.Track.Length; }
+        public double TrackLength { get => trackEditor.Track.Parameters.Length; }
 
         GameObject toMove = null;
 

@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="Editor.TrackEditor.ParametersEditor.ParametersEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:common="clr-namespace:Editor.Common"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:local="clr-namespace:Editor.TrackEditor.ParametersEditor"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <local:ParametersEditorVM/>
+    </UserControl.DataContext>
+
+    <Grid>
+        <Rectangle RadiusX="10" RadiusY="10" Fill="#474747"/>
+
+        <StackPanel VerticalAlignment="Stretch" Margin="10">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel>
+                    <TextBlock Text="main color" Foreground="Orange"/>
+                    <md:ColorPicker Width="100" Height="100" Margin="10"
+                                        Color="{Binding Parameters.MainColor, Mode=TwoWay}"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="secondary color" Foreground="Orange"/>
+                    <md:ColorPicker Width="100" Height="100" Margin="10"
+                                        Color="{Binding Parameters.SecondaryColor, Mode=TwoWay}"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="length" Foreground="Orange"/>
+
+                <TextBox    VerticalAlignment="Center"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Foreground="#303030"
+                                BorderThickness="0"
+                                CaretBrush="#303030"
+                                CaretIndex="1000">
+                    <i:Interaction.Behaviors>
+                        <common:TextBoxEnterKeyUpdateBehavior/>
+                    </i:Interaction.Behaviors>
+
+                    <TextBox.ContextMenu>
+                        <ContextMenu/>
+                    </TextBox.ContextMenu>
+
+                    <TextBox.Text>
+                        <Binding Path="Parameters.Length" Mode="TwoWay" 
+                                                 ConverterCulture="en-US">
+                            <Binding.ValidationRules>
+                                <common:PositiveDoubleInputValidationRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
