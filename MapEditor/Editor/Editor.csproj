@@ -87,7 +87,6 @@
       <DependentUpon>InfiniteGridView.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameEntities\Billboard.cs" />
-    <Compile Include="GameEntities\Collider.cs" />
     <Compile Include="GameEntities\Curvature.cs" />
     <Compile Include="GameEntities\GameObject.cs" />
     <Compile Include="GameEntities\HeelKeypoint.cs" />

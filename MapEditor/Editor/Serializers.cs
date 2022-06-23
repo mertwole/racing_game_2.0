@@ -88,15 +88,15 @@ namespace Editor
             return new SHA256Managed().ComputeHash(bytes);
         }
 
-        bool CompareBillboards(Billboard x, Billboard y)
+        bool CompareBillboards(PositionedBillboard x, PositionedBillboard y)
         {
-            if (x.LODs.Count != y.LODs.Count)
+            if (x.Billboard.LODs.Count != y.Billboard.LODs.Count)
                 return false;
 
-            for (int i = 0; i < x.LODs.Count; i++)
+            for (int i = 0; i < x.Billboard.LODs.Count; i++)
             {
-                var x_hash = ShaHash(x.LODs[i].Image);
-                var y_hash = ShaHash(y.LODs[i].Image);
+                var x_hash = ShaHash(x.Billboard.LODs[i].Image);
+                var y_hash = ShaHash(y.Billboard.LODs[i].Image);
                 for (int j = 0; j < x_hash.Length; j++)
                     if (x_hash[j] != y_hash[j])
                         return false;
@@ -141,7 +141,7 @@ namespace Editor
         int getBillboardId(Billboard billboard)
         {
             for (int i = 0; i < billboards.Count; i++)
-                if (CompareBillboards(billboard, billboards[i]))
+                if (CompareBillboards(new PositionedBillboard(billboard), new PositionedBillboard(billboards[i])))
                     return i;
                     
             return -1;
@@ -219,7 +219,7 @@ namespace Editor
             {
                 var billboard = game_object.Billboards[i];
 
-                int id = getBillboardId(billboard);
+                int id = getBillboardId(billboard.Billboard);
 
                 int write_offset = 4 + colliders_data_len + 20 * i;
                 Buffer.BlockCopy(new int[] { id }, 0, data, write_offset, 4);
@@ -382,7 +382,8 @@ namespace Editor
             foreach (var go in track.GameObjects)
                 gameObjects.Add(go.GameObject);
             foreach(var go in gameObjects)
-                billboards.AddRange(go.Billboards);
+                foreach(var bb in go.Billboards)
+                    billboards.Add(bb.Billboard);
 
             return SerializeRmap();
         }
@@ -555,7 +556,7 @@ namespace Editor
                 for(int j = 0; j < num_bb; j++)
                 {
                     int bb_id = ReadInt(ms, is_little_endian);
-                    var bb = new Billboard(billboards[bb_id]);
+                    var bb = new PositionedBillboard(billboards[bb_id]);
                     bb.Position = ReadVector3(ms, is_little_endian);
                     bb.Width = ReadFloat(ms, is_little_endian);
                     go.Billboards.Add(bb);

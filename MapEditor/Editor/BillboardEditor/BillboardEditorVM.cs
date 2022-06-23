@@ -33,7 +33,7 @@ namespace Editor.BillboardEditor
     {
         BillboardEditorModel model;
         public BillboardEditorModel Model { set { model = value; OnPropertyChanged("LODs"); } }
-        public ObservableCollection<LOD> LODs { get => model == null ? new ObservableCollection<LOD>() : model.LODs; }
+        public BindingList<LOD> LODs { get => model == null ? new BindingList<LOD>() : model.LODs; }
 
         public Visibility DropRegionsVisiblity { get => draggedImage == null ? Visibility.Hidden : Visibility.Visible; }
 

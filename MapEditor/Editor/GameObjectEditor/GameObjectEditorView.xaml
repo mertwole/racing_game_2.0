@@ -177,7 +177,7 @@
                             cc:InfiniteGridView.WorldPositionY="{Binding Z}">
                 <ContentControl.Resources>
                     <Style TargetType="Image">
-                        <Setter Property="Source" Value="{Binding Preview, Converter={StaticResource AverageImageColorConverter}}"/>
+                        <Setter Property="Source" Value="{Binding Billboard.Preview, Converter={StaticResource AverageImageColorConverter}}"/>
                     </Style>
                 </ContentControl.Resources>
             </ContentControl>
@@ -205,7 +205,7 @@
                             cc:InfiniteGridView.WorldPositionY="{Binding Y}">
                 <ContentControl.Resources>
                     <Style TargetType="Image">
-                        <Setter Property="Source" Value="{Binding Preview, Converter={StaticResource AverageImageColorConverter}}"/>
+                        <Setter Property="Source" Value="{Binding Billboard.Preview, Converter={StaticResource AverageImageColorConverter}}"/>
                     </Style>
                 </ContentControl.Resources>
             </ContentControl>
@@ -233,7 +233,7 @@
                             cc:InfiniteGridView.WorldPositionY="{Binding Y}">
                 <ContentControl.Resources>
                     <Style TargetType="Image">
-                        <Setter Property="Source" Value="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"/>
+                        <Setter Property="Source" Value="{Binding Billboard.Preview, Converter={StaticResource BitmapToImageSourceConverter}}"/>
                     </Style>
                 </ContentControl.Resources>
             </ContentControl>

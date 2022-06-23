@@ -39,7 +39,7 @@ namespace Editor.GameObjectEditor
                 collider.Position = new_pos;
             else
             {
-                var billboard = toMove as Billboard;
+                var billboard = toMove as PositionedBillboard;
                 billboard.Position = new_pos;
             }
 
@@ -49,7 +49,7 @@ namespace Editor.GameObjectEditor
 
         public void DeleteObject(object obj)
         {
-            if (obj is Billboard bb && gameObject.Billboards.Contains(bb))
+            if (obj is PositionedBillboard bb && gameObject.Billboards.Contains(bb))
                 gameObject.Billboards.Remove(bb);
             else if (gameObject.Colliders.Contains(obj as Collider))
                 gameObject.Colliders.Remove(obj as Collider);
@@ -70,7 +70,7 @@ namespace Editor.GameObjectEditor
         {
             if(file.Content is Billboard billboard)
             {
-                gameObject.Billboards.Add(new Billboard(billboard));
+                gameObject.Billboards.Add(new PositionedBillboard(billboard));
 
                 dirty = true;
                 OnPropertyChanged("IsDirty");

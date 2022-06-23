@@ -8,7 +8,7 @@ namespace Editor.BillboardEditor
     public class BillboardEditorModel : INotifyPropertyChanged, IEditorTabModel
     {
         Billboard billboard;
-        public ObservableCollection<LOD> LODs { get => billboard.LODs; }
+        public BindingList<LOD> LODs { get => billboard.LODs; }
 
         FileManager.File loadedFrom = null;
         bool dirty = false;
@@ -28,7 +28,11 @@ namespace Editor.BillboardEditor
 
         public void MoveLODTo(int lod_id, int move_to)
         {
-            billboard.LODs.Move(lod_id, move_to);
+            var lod = billboard.LODs[lod_id];
+            billboard.LODs.RemoveAt(lod_id);
+            if (lod_id < move_to)
+                move_to--;
+            billboard.LODs.Insert(move_to, lod);
 
             dirty = true;
             OnPropertyChanged("IsDirty");

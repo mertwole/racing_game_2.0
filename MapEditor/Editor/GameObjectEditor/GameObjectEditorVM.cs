@@ -48,7 +48,7 @@ namespace Editor.GameObjectEditor
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is Billboard)
+            if (item is PositionedBillboard)
                 return billboardDataTemplate;
 
             if(item is Collider)
@@ -158,7 +158,7 @@ namespace Editor.GameObjectEditor
                     collider.Y - collider.SizeY * 0.5, 
                     collider.Z - collider.SizeZ * 0.5);
             }
-            else if(obj is Billboard billboard)
+            else if(obj is PositionedBillboard billboard)
             {
                 return new Vector3(
                     billboard.X - billboard.Width * 0.5,
@@ -282,7 +282,7 @@ namespace Editor.GameObjectEditor
 
                 startMoveScreenPos = args.GetPosition(movedObjectGridView);
                 if (obj is Collider collider) startMoveWorldPos = collider.Position;
-                if (obj is Billboard billboard) startMoveWorldPos = billboard.Position;
+                if (obj is PositionedBillboard billboard) startMoveWorldPos = billboard.Position;
 
                 model.StartMoveObject(obj);
                 Mouse.Capture(sender as IInputElement);
@@ -311,7 +311,7 @@ namespace Editor.GameObjectEditor
                 var delta_world = movedObjectGridView.ScreenSpaceToWorldSize(new Point(delta_move.X, delta_move.Y));
 
                 Vector3 new_pos = new Vector3();
-                if (obj is Billboard bb) new_pos = bb.Position;
+                if (obj is PositionedBillboard bb) new_pos = bb.Position;
                 if (obj is Collider collider) new_pos = collider.Position;
 
                 switch (movedObjectGridView.Name)

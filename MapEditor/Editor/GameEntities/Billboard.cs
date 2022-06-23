@@ -21,16 +21,18 @@ namespace Editor.GameEntities
         }
     }
 
-    public class Billboard : ISaveableEntity, INotifyPropertyChanged
+    public class PositionedBillboard : INotifyPropertyChanged
     {
-        public ObservableCollection<LOD> LODs { get; private set; }
+        Billboard billboard;
+        public Billboard Billboard { get => billboard; }
 
         Vector3 position = new Vector3(0, 0, 0);
-        public Vector3 Position { 
-            get => position;  
-            set 
-            { 
-                position = value; 
+        public Vector3 Position
+        {
+            get => position;
+            set
+            {
+                position = value;
                 OnPropertyChanged("Position");
                 OnPropertyChanged("X");
                 OnPropertyChanged("Y");
@@ -43,31 +45,66 @@ namespace Editor.GameEntities
         public double Y { get => position.Y; set { position.Y = value; OnPropertyChanged("Y"); OnPropertyChanged("Position"); } }
         public double Z { get => position.Z; set { position.Z = value; OnPropertyChanged("Z"); OnPropertyChanged("Position"); } }
 
-        public Bitmap Preview { get => LODs[0].Image; }
-
         double width = 1;
-        public double Width { 
+        public double Width
+        {
             get => width;
-            set 
-            { 
-                width = value; 
+            set
+            {
+                width = value;
                 OnPropertyChanged("Width");
                 OnPropertyChanged("Height");
             }
         }
 
-        public double Height { get => width / (double)Preview.Width * (double)Preview.Height; }
+        public double Height { get => width / billboard.Preview.Width * billboard.Preview.Height; }
+
+        /// Clones billboard
+        public PositionedBillboard(Billboard billboard)
+        {
+            this.billboard = new Billboard(billboard);
+            billboard.PropertyChanged += (s, e) => OnPropertyChanged("Billboard");
+        }
+
+        public PositionedBillboard(PositionedBillboard prototype)
+        {
+            billboard = new Billboard(prototype.billboard);
+            width = prototype.width;
+            position = prototype.position;
+
+            billboard.PropertyChanged += (s, e) => OnPropertyChanged("Billboard");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class Billboard : ISaveableEntity, INotifyPropertyChanged
+    {
+        public BindingList<LOD> LODs { get; private set; }
+        public Bitmap Preview { get => LODs[0].Image; }
 
         public Billboard()
         {
-            LODs = new ObservableCollection<LOD>();
+            LODs = new BindingList<LOD>();
+            LODs.ListChanged += (s, e) =>
+            {
+                OnPropertyChanged("LODs");
+                OnPropertyChanged("Preview");
+            };
         }
 
         public Billboard(Billboard prototype)
         {
-            LODs = new ObservableCollection<LOD>(prototype.LODs);
-            position = prototype.position;
-            width = prototype.width;
+            LODs = new BindingList<LOD>(prototype.LODs);
+            LODs.ListChanged += (s, e) =>
+            {
+                OnPropertyChanged("LODs");
+                OnPropertyChanged("Preview");
+            };
         }
 
         public void AddLOD(LOD lod)
