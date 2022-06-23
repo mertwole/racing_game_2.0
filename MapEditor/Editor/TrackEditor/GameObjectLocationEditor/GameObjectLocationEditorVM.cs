@@ -46,7 +46,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             } 
         }
 
-        public BindingList<GameObject> GameObjects { get => model == null ? null : model.GameObjects; }
+        public BindingList<PositionedGameObject> GameObjects { get => model == null ? null : model.GameObjects; }
 
         public double TrackWidth { get => model == null ? 1.0 : model.TrackWidth; set => model.TrackWidth = value; }
 
@@ -101,9 +101,9 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             (pixels / mainCanvasHeight - 0.5) * model.TrackWidth;
 
 
-        GameObject ClosestGameObject(double distance, double offset)
+        PositionedGameObject ClosestGameObject(double distance, double offset)
         {
-            GameObject closest = null;
+            PositionedGameObject closest = null;
             double min_dist = double.PositiveInfinity;
 
             foreach (var go in model.GameObjects)
@@ -190,7 +190,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         #region Drag&drop
 
         public bool DraggingGameObject { get => draggedGameObject == null; }
-        GameObject draggedGameObject = null;
+        PositionedGameObject draggedGameObject = null;
 
         GameObject GetGameObjectFromDragEventArgs(DragEventArgs args)
         {
@@ -223,7 +223,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
 
                 var position = args.GetPosition(args.Source as IInputElement);
                 draggedGameObject = model.AddGameObject(
-                    PixelsToDistance(position.X), PixelsToOffset(position.Y), game_object);
+                    PixelsToDistance(position.X), PixelsToOffset(position.Y), new PositionedGameObject(game_object));
 
                 model.StartMoveGameObject(draggedGameObject);
 

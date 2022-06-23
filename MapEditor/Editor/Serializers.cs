@@ -288,7 +288,7 @@ namespace Editor
             curr_offset += 4;
             for (int i = 0; i < track.GameObjects.Count; i++)
             {
-                int id = getGameObjectId(track.GameObjects[i]);
+                int id = getGameObjectId(track.GameObjects[i].GameObject);
 
                 Buffer.BlockCopy(new int[] { id }, 0, data, curr_offset, 4);
                 curr_offset += 4;
@@ -378,7 +378,9 @@ namespace Editor
             tracks.Clear();
 
             tracks.Add(track);
-            gameObjects.AddRange(track.GameObjects);
+
+            foreach (var go in track.GameObjects)
+                gameObjects.Add(go.GameObject);
             foreach(var go in gameObjects)
                 billboards.AddRange(go.Billboards);
 
@@ -603,7 +605,7 @@ namespace Editor
                     int go_id = ReadInt(ms, is_little_endian);
                     float pos_x = ReadFloat(ms, is_little_endian);
                     float pos_z = ReadFloat(ms, is_little_endian);
-                    var go = new GameObject(gameObjects[go_id]);
+                    var go = new PositionedGameObject(gameObjects[go_id]);
                     go.Offset = pos_x;
                     go.RoadDistance = pos_z;
                     track.GameObjects.Add(go);

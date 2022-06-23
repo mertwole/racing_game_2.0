@@ -11,8 +11,8 @@ namespace Editor.GameEntities
         BindingList<Curvature> curvatures = new BindingList<Curvature>();
         public BindingList<Curvature> Curvatures { get => curvatures; }
 
-        BindingList<GameObject> gameObjects = new BindingList<GameObject>();
-        public BindingList<GameObject> GameObjects { get => gameObjects; }
+        BindingList<PositionedGameObject> gameObjects = new BindingList<PositionedGameObject>();
+        public BindingList<PositionedGameObject> GameObjects { get => gameObjects; }
 
         TrackParameters parameters = new TrackParameters();
         public TrackParameters Parameters { get => parameters; }
@@ -28,10 +28,10 @@ namespace Editor.GameEntities
                 keypoints.Add(new HeelKeypoint(keypoint));
 
             foreach (var curvature in prototype.curvatures)
-                curvatures.Add(curvature);
+                curvatures.Add(new Curvature(curvature));
 
             foreach (var game_object in prototype.gameObjects)
-                gameObjects.Add(game_object);
+                gameObjects.Add(new PositionedGameObject(game_object));
 
             parameters = new TrackParameters(prototype.parameters);
             parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");

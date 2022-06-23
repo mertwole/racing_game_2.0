@@ -1,12 +1,11 @@
 ﻿using Editor.GameEntities;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Editor.TrackEditor.GameObjectLocationEditor
 {
     public class GameObjectLocationEditorModel
     {
-        public BindingList<GameObject> GameObjects { get => trackEditor.Track.GameObjects; }
+        public BindingList<PositionedGameObject> GameObjects { get => trackEditor.Track.GameObjects; }
 
         TrackEditorModel trackEditor;
         public GameObjectLocationEditorModel(TrackEditorModel track_editor)
@@ -33,9 +32,9 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
 
         public double TrackLength { get => trackEditor.Track.Parameters.Length; }
 
-        GameObject toMove = null;
+        PositionedGameObject toMove = null;
 
-        public void StartMoveGameObject(GameObject gameObject) => toMove = gameObject;
+        public void StartMoveGameObject(PositionedGameObject gameObject) => toMove = gameObject;
 
         public void MoveGameObject(double distance, double offset)
         {
@@ -45,12 +44,12 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             trackEditor.Dirtied();
         }
 
-        public GameObject AddGameObject(double distance, double offset, GameObject game_object)
+        public PositionedGameObject AddGameObject(double distance, double offset, PositionedGameObject game_object)
         {
             game_object.Offset = offset;
             game_object.RoadDistance = distance;
 
-            var new_go = new GameObject(game_object);
+            var new_go = new PositionedGameObject(game_object);
             GameObjects.Add(new_go);
 
             trackEditor.Dirtied();
@@ -58,7 +57,7 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             return new_go;
         }
 
-        public void RemoveGameObject(GameObject gameObject)
+        public void RemoveGameObject(PositionedGameObject gameObject)
         {
             GameObjects.Remove(gameObject);
 
