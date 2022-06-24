@@ -16,10 +16,10 @@ namespace Editor.GameEntities
 
         TrackParameters parameters = new TrackParameters();
         public TrackParameters Parameters { get => parameters; }
-             
+
         public Track()
         {
-            Parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");
+            UpdateOnPropertyChanged();
         }
 
         public Track(Track prototype)
@@ -34,7 +34,21 @@ namespace Editor.GameEntities
                 gameObjects.Add(new PositionedGameObject(game_object));
 
             parameters = new TrackParameters(prototype.parameters);
-            parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");
+
+            UpdateOnPropertyChanged();
+        }
+
+        void UpdateOnPropertyChanged()
+        {
+            Parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");
+            GameObjects.ListChanged += (s, e) => OnPropertyChanged("GameObjects");
+            Curvatures.ListChanged += (s, e) => OnPropertyChanged("Curvatures");
+            Keypoints.ListChanged += (s, e) => OnPropertyChanged("Keypoints");
+        }
+
+        public ISaveableEntity Clone()
+        {
+            return new Track(this);
         }
 
         public FileIcon GetIcon()

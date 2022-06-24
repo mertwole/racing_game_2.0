@@ -1,5 +1,4 @@
 ﻿using Editor.GameEntities;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Editor.TrackEditor.HeelEditor
@@ -99,7 +98,6 @@ namespace Editor.TrackEditor.HeelEditor
                 if(Keypoints[insert_id - 1].X <= x && Keypoints[insert_id].X >= x)
                 {
                     Keypoints.Insert(insert_id, new HeelKeypoint(x, y));
-                    trackEditor.Dirtied();
                     return;
                 }
         }
@@ -121,7 +119,6 @@ namespace Editor.TrackEditor.HeelEditor
                 var kp = Keypoints[Keypoints.Count - 1];
                 Keypoints.RemoveAt(Keypoints.Count - 1);
                 Keypoints.Add(kp);
-                trackEditor.Dirtied();
                 return;
             }
 
@@ -133,11 +130,8 @@ namespace Editor.TrackEditor.HeelEditor
                 {
                     Keypoints.Insert(insert_id, new HeelKeypoint(x, y));
                     editingKeypointId = insert_id;
-                    trackEditor.Dirtied();
                     return;
                 }
-
-            trackEditor.Dirtied();
         }
 
         public void EndMoveKeypoint()
@@ -151,8 +145,6 @@ namespace Editor.TrackEditor.HeelEditor
             if (remove_id == 0 || remove_id == Keypoints.Count - 1)
                 return;
             Keypoints.RemoveAt(remove_id);
-
-            trackEditor.Dirtied();
         }
 
         void EditorHeightChanged(double old_value, double new_value)
@@ -169,8 +161,6 @@ namespace Editor.TrackEditor.HeelEditor
             var kp = Keypoints[Keypoints.Count - 1];
             Keypoints.RemoveAt(Keypoints.Count - 1);
             Keypoints.Add(kp);
-
-            trackEditor.Dirtied();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

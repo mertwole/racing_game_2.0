@@ -1,5 +1,4 @@
 ﻿using Editor.FileManager;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Editor.GameEntities
@@ -113,31 +112,39 @@ namespace Editor.GameEntities
 
     public class GameObject : ISaveableEntity, INotifyPropertyChanged
     {
-        ObservableCollection<PositionedBillboard> billboards = new ObservableCollection<PositionedBillboard>();
-        public ObservableCollection<PositionedBillboard> Billboards { get => billboards; }
+        BindingList<PositionedBillboard> billboards = new BindingList<PositionedBillboard>();
+        public BindingList<PositionedBillboard> Billboards { get => billboards; }
 
-        ObservableCollection<Collider> colliders = new ObservableCollection<Collider>();
-        public ObservableCollection<Collider> Colliders { get => colliders; }
+        BindingList<Collider> colliders = new BindingList<Collider>();
+        public BindingList<Collider> Colliders { get => colliders; }
 
         public GameObject()
         {
-            billboards.CollectionChanged += (s, e) => OnPropertyChanged("Billboards");
-            colliders.CollectionChanged += (s, e) => OnPropertyChanged("Colliders");
+            UpdateOnPropertyChaned();
         }
 
         public GameObject(GameObject prototype)
         {
-            billboards = new ObservableCollection<PositionedBillboard>();
+            billboards = new BindingList<PositionedBillboard>();
             foreach (var billboard in prototype.billboards)
                 billboards.Add(new PositionedBillboard(billboard));
 
-            billboards.CollectionChanged += (s, e) => OnPropertyChanged("Billboards");
-
-            colliders = new ObservableCollection<Collider>();
+            colliders = new BindingList<Collider>();
             foreach (var collider in prototype.colliders)
                 colliders.Add(new Collider(collider));
 
-            colliders.CollectionChanged += (s, e) => OnPropertyChanged("Colliders");
+            UpdateOnPropertyChaned();
+        }
+
+        void UpdateOnPropertyChaned()
+        {
+            billboards.ListChanged += (s, e) => OnPropertyChanged("Billboards");
+            colliders.ListChanged += (s, e) => OnPropertyChanged("Colliders");
+        }
+
+        public ISaveableEntity Clone()
+        {
+            return new GameObject(this);
         }
 
         public FileIcon GetIcon()

@@ -22,8 +22,6 @@ namespace Editor.TrackEditor.CurvatureEditor
         {
             trackEditor = track_editor;
             trackEditor.Track.Curvatures.ListChanged += CurvaturesChanged;
-            foreach (Curvature curv in trackEditor.Track.Curvatures)
-                curv.PropertyChanged += (s, _) => trackEditor.Dirtied();
             trackEditor.Track.PropertyChanged += (s, e) => {
                 if (e.PropertyName == "Properties")
                     TrackLengthChanged();
@@ -42,8 +40,7 @@ namespace Editor.TrackEditor.CurvatureEditor
 
         private void CurvaturesChanged(object sender, ListChangedEventArgs e)
         {
-            if(e.ListChangedType == ListChangedType.ItemAdded)
-                Curvatures[e.NewIndex].PropertyChanged += (s, _) => trackEditor.Dirtied();
+
         }
 
         public void CreateCurvature(double position)
@@ -56,8 +53,6 @@ namespace Editor.TrackEditor.CurvatureEditor
             curvatureStart = position;
             Curvatures.Add(new Curvature(position, 0.0, 0.1));
             curvatureEditingId = Curvatures.Count - 1;
-
-            trackEditor.Dirtied();
         }
 
         public void CreatingCurvature(double position)
@@ -156,8 +151,6 @@ namespace Editor.TrackEditor.CurvatureEditor
             // Elsewhere ObservableCollection not calls CollectionChanged.
             Curvatures.RemoveAt(curvatureEditingId);
             Curvatures.Insert(curvatureEditingId, curvature_ed);
-
-            trackEditor.Dirtied();
         }
 
         const double MIN_CURVATURE_LENGTH = 0.1;
@@ -187,8 +180,6 @@ namespace Editor.TrackEditor.CurvatureEditor
                     return;
                 }  
             }
-
-            trackEditor.Dirtied();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

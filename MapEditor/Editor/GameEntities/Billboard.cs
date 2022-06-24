@@ -1,5 +1,4 @@
 ﻿using Editor.FileManager;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 
@@ -90,21 +89,13 @@ namespace Editor.GameEntities
         public Billboard()
         {
             LODs = new BindingList<LOD>();
-            LODs.ListChanged += (s, e) =>
-            {
-                OnPropertyChanged("LODs");
-                OnPropertyChanged("Preview");
-            };
+            UpdateOnPropertyChanged();
         }
 
         public Billboard(Billboard prototype)
         {
             LODs = new BindingList<LOD>(prototype.LODs);
-            LODs.ListChanged += (s, e) =>
-            {
-                OnPropertyChanged("LODs");
-                OnPropertyChanged("Preview");
-            };
+            UpdateOnPropertyChanged();
         }
 
         public void AddLOD(LOD lod)
@@ -118,15 +109,29 @@ namespace Editor.GameEntities
                 LODs.RemoveAt(id);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        void UpdateOnPropertyChanged()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            LODs.ListChanged += (s, e) =>
+            {
+                OnPropertyChanged("LODs");
+                OnPropertyChanged("Preview");
+            };
+        }
+
+        public ISaveableEntity Clone()
+        {
+            return new Billboard(this);
         }
 
         public FileIcon GetIcon()
         {
             return FileIcon.Billboard;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,10 +1,7 @@
-﻿using System.ComponentModel;
-
-namespace Editor
+﻿namespace Editor
 {
-    public interface IEditorTabModel : INotifyPropertyChanged
+    public interface IEditorTabModel
     {
-        bool IsDirty { get; }
-        void ApplyChanges();
+
     }
 }

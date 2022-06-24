@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Collections.Specialized;
 using System;
 using System.ComponentModel;
 using System.Windows.Data;
@@ -93,8 +92,8 @@ namespace Editor.GameObjectEditor
 
         void Init()
         {
-            GameObject.Billboards.CollectionChanged += UpdateBillboardsAndCollidersCollection;
-            GameObject.Colliders.CollectionChanged += UpdateBillboardsAndCollidersCollection;
+            GameObject.Billboards.ListChanged += UpdateBillboardsAndCollidersCollection;
+            GameObject.Colliders.ListChanged += UpdateBillboardsAndCollidersCollection;
 
             InitialBillboardsAndCollidersFill(GameObject);
         }
@@ -123,30 +122,36 @@ namespace Editor.GameObjectEditor
             UpdateSortedCollections();
         }
 
-        void UpdateBillboardsAndCollidersCollection(object sender, NotifyCollectionChangedEventArgs e)
+        void UpdateBillboardsAndCollidersCollection(object sender, ListChangedEventArgs e)
         {
-            if (e.NewItems != null)
-                foreach (var added in e.NewItems)
-                {
-                    billboardsAndColliders.Add(added);
+            if (e.ListChangedType == ListChangedType.ItemAdded)
+            {
+                object added;
+                if (sender is BindingList<PositionedBillboard> sender_bb)
+                    added = sender_bb[e.NewIndex];
+                else
+                    added = (sender as BindingList<Collider>)[e.NewIndex];
 
-                    xDescendingSortedCollidersAndBillboards.Add(added);
-                    yDescendingSortedCollidersAndBillboards.Add(added);
-                    zDescendingSortedCollidersAndBillboards.Add(added);
+                billboardsAndColliders.Add(added);
+                xDescendingSortedCollidersAndBillboards.Add(added);
+                yDescendingSortedCollidersAndBillboards.Add(added);
+                zDescendingSortedCollidersAndBillboards.Add(added);
 
-                    UpdateSortedCollections();
-                }
-                    
+                UpdateSortedCollections();
+            }
+            else if (e.ListChangedType == ListChangedType.ItemDeleted) 
+            {
+                object removed;
+                if (sender is BindingList<PositionedBillboard> sender_bb)
+                    removed = sender_bb[e.OldIndex];
+                else
+                    removed = (sender as BindingList<Collider>)[e.OldIndex];
 
-            if (e.OldItems != null)
-                foreach (var removed in e.OldItems)
-                {
-                    billboardsAndColliders.Remove(removed);
-
-                    xDescendingSortedCollidersAndBillboards.Remove(removed);
-                    yDescendingSortedCollidersAndBillboards.Remove(removed);
-                    zDescendingSortedCollidersAndBillboards.Remove(removed);
-                }
+                billboardsAndColliders.Remove(removed);
+                xDescendingSortedCollidersAndBillboards.Remove(removed);
+                yDescendingSortedCollidersAndBillboards.Remove(removed);
+                zDescendingSortedCollidersAndBillboards.Remove(removed);
+            }
         }
 
         Vector3 GetClosestToViewerPoint(object obj)
@@ -219,10 +224,10 @@ namespace Editor.GameObjectEditor
         object selectedEntity = null;
 
         public Collider SelectedCollider { get => selectedEntity as Collider; }
-        public Billboard SelectedBillboard { get => selectedEntity as Billboard; }
+        public PositionedBillboard SelectedBillboard { get => selectedEntity as PositionedBillboard; }
 
         public bool ColliderSelected { get => selectedEntity is Collider; }
-        public bool BillboardSelected { get => selectedEntity is Billboard; }
+        public bool BillboardSelected { get => selectedEntity is PositionedBillboard; }
 
         // OnPropertyChanged("UpdateSelectedObject") called every time when Collider/Billboard selected/deselected.
         public bool UpdateSelectedObject { get => true; }

@@ -384,7 +384,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Image  Margin="10" 
-                        Source="{Binding SelectedBillboard.Preview, 
+                        Source="{Binding SelectedBillboard.Billboard.Preview, 
                         Converter={StaticResource BitmapToImageSourceConverter}}"/>
 
                 <Grid Grid.Column="1" Margin="10">

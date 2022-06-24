@@ -13,34 +13,60 @@ namespace Editor.TabbedEditors
         UserControl view;
         public UserControl View { get => view; }
 
+        FileManager.File loadedFrom;
+        ISaveableEntity editedEntity;
         IEditorTabModel model;
 
-        bool canBeClosed;
+        bool canBeClosed = true;
         public bool CanBeClosed { get => canBeClosed; }
 
         string shownName;
         public string ShownName { get => shownName; }
 
-        public EditorTab(UserControl view, IEditorTabModel model, string shown_name, bool can_be_closed)
-        {
-            canBeClosed = can_be_closed;
-            this.view = view;
-            shownName = shown_name;
-            this.model = model;
+        bool isDirty = false;
+        public bool IsDirty { get => isDirty; }
 
-            model.PropertyChanged += (s, e) => 
-            { 
-                if (e.PropertyName == "IsDirty") 
-                    OnPropertyChanged("IsDirty"); 
-            };
+        public EditorTab(FileManager.File file)
+        {
+            loadedFrom = file;
+            editedEntity = file.Content.Clone();
+            editedEntity.PropertyChanged += (s, e) => Dirtied();
+
+            switch (editedEntity)
+            {
+                case GameObject go:
+                    view = new GameObjectEditorView();
+                    model = new GameObjectEditorModel(go);
+                    (view.DataContext as GameObjectEditorVM).Model = model as GameObjectEditorModel;
+                    shownName = "game object [" + "NAME TODO" + "]";
+                    break;
+                case Billboard bb:
+                    view = new BillboardEditorView();
+                    model = new BillboardEditorModel(bb);
+                    (view.DataContext as BillboardEditorVM).Model = model as BillboardEditorModel;
+                    shownName = "billboard [" + "NAME TODO" + "]";
+                    break;
+                case Track track:
+                    view = new TrackEditorView();
+                    model = new TrackEditorModel(track);
+                    (view.DataContext as TrackEditorVM).Model = model as TrackEditorModel;
+                    shownName = "track [" + "NAME TODO" + "]";
+                    break;
+            }
+        }
+
+        void Dirtied()
+        {
+            isDirty = true;
+            OnPropertyChanged("IsDirty");
         }
 
         public void Save()
         {
-            model.ApplyChanges();
+            loadedFrom.Content = editedEntity.Clone();
+            isDirty = false;
+            OnPropertyChanged("IsDirty");
         }
-
-        public bool IsDirty => model.IsDirty;
 
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string property)
@@ -104,27 +130,7 @@ namespace Editor.TabbedEditors
 
         public void OpenFileEditor(FileManager.File file)
         {
-            switch(file.Content)
-            {
-                case GameObject _:
-                    var go_eitor_view = new GameObjectEditorView();
-                    var go_eitor_model = new GameObjectEditorModel(file);
-                    (go_eitor_view.DataContext as GameObjectEditorVM).Model = go_eitor_model;
-                    tabs.Add(new EditorTab(go_eitor_view, go_eitor_model, "game object [" + file.Name + "]", true));
-                    break;
-                case Billboard _:
-                    var bb_editor_view = new BillboardEditorView();
-                    var bb_editor_model = new BillboardEditorModel(file);
-                    (bb_editor_view.DataContext as BillboardEditorVM).Model = bb_editor_model;
-                    tabs.Add(new EditorTab(bb_editor_view, bb_editor_model, "billboard [" + file.Name + "]", true));
-                    break;
-                case Track _:
-                    var track_editor_view = new TrackEditorView();
-                    var track_editor_model = new TrackEditorModel(file);
-                    (track_editor_view.DataContext as TrackEditorVM).Model = track_editor_model;
-                    tabs.Add(new EditorTab(track_editor_view, track_editor_model, "track [" + file.Name + "]", true));
-                    break;
-            }
+            tabs.Add(new EditorTab(file));
         }
     }
 }

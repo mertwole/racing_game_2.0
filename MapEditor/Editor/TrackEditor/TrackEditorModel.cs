@@ -4,11 +4,8 @@ using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.HeelEditor;
 using Editor.TrackEditor.ParametersEditor;
 using Editor.TrackEditor.TrackPreview;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Windows.Media;
-using Color = System.Windows.Media.Color;
 
 namespace Editor.TrackEditor
 {
@@ -44,18 +41,13 @@ namespace Editor.TrackEditor
         Size previewSize = new Size(192, 108);
         public Size PreviewSize { get => previewSize; }
 
-        public TrackEditorModel(FileManager.File file)
+        public TrackEditorModel(Track track)
         {
-            if (!(file.Content is Track))
-                throw new System.Exception("Unexpected file type. Expected file containing Track.");
-
-            loadedFrom = file;
-            track = new Track(file.Content as Track);
+            this.track = track;
 
             track.PropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == "Parameters")
-                    Dirtied();
+                UpdatePreview();
             };
 
             curvatureEditorView = new CurvatureEditorView();
@@ -88,35 +80,6 @@ namespace Editor.TrackEditor
             serialized.Seek(0, SeekOrigin.Begin);
             var rmap_data = serialized.ToArray();
             trackPreviewModel.Update(rmap_data, (float)pointerPositionNormalized * (float)track.Parameters.Length);
-        }
-
-        FileManager.File loadedFrom;
-
-        bool isDirty = false;
-        public bool IsDirty => isDirty;
-
-        public void Dirtied()
-        {
-            isDirty = true;
-            OnPropertyChanged("IsDirty");
-
-            UpdatePreview();
-        }
-
-        public void ApplyChanges()
-        {
-            if (loadedFrom == null) return;
-
-            loadedFrom.Content = new Track(track);
-
-            isDirty = false;
-            OnPropertyChanged("IsDirty");
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        void OnPropertyChanged(string property)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 }

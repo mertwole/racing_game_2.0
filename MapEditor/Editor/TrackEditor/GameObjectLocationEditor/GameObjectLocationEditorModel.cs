@@ -40,8 +40,6 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
         {
             toMove.RoadDistance = distance;
             toMove.Offset = offset;
-
-            trackEditor.Dirtied();
         }
 
         public PositionedGameObject AddGameObject(double distance, double offset, PositionedGameObject game_object)
@@ -52,16 +50,12 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             var new_go = new PositionedGameObject(game_object);
             GameObjects.Add(new_go);
 
-            trackEditor.Dirtied();
-
             return new_go;
         }
 
         public void RemoveGameObject(PositionedGameObject gameObject)
         {
             GameObjects.Remove(gameObject);
-
-            trackEditor.Dirtied();
         }
 
         void TrackWidthChanged()
@@ -76,8 +70,6 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
                 else if (GameObjects[i].Offset < -trackWidth * 0.5)
                     GameObjects[i].Offset = -trackWidth * 0.5;
             }
-
-            trackEditor.Dirtied();
         }
 
         public void TrackLengthChanged()
@@ -91,8 +83,6 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
                     GameObjects[i].RoadDistance += double.Epsilon;
                 }
             }
-
-            trackEditor.Dirtied();
         }
     }
 }
