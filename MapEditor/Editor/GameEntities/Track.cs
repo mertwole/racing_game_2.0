@@ -3,6 +3,56 @@ using System.ComponentModel;
 
 namespace Editor.GameEntities
 {
+    public class PositionedGameObject : INotifyPropertyChanged
+    {
+        GameObject gameObject;
+        public GameObject GameObject { get => gameObject; }
+
+        double roadDistance;
+        public double RoadDistance
+        {
+            get => roadDistance;
+            set
+            {
+                roadDistance = value;
+                OnPropertyChanged("RoadDistance");
+            }
+        }
+
+        double offset;
+        public double Offset
+        {
+            get => offset;
+            set
+            {
+                offset = value;
+                OnPropertyChanged("Offset");
+            }
+        }
+
+        /// Cloning game_object
+        public PositionedGameObject(GameObject game_object)
+        {
+            gameObject = new GameObject(game_object);
+            gameObject.PropertyChanged += (s, e) => OnPropertyChanged("GameObject");
+        }
+
+        public PositionedGameObject(PositionedGameObject prototype)
+        {
+            gameObject = new GameObject(prototype.gameObject);
+            gameObject.PropertyChanged += (s, e) => OnPropertyChanged("GameObject");
+
+            roadDistance = prototype.roadDistance;
+            offset = prototype.offset;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     public class Track : ISaveableEntity, INotifyPropertyChanged
     {
         BindingList<HeelKeypoint> keypoints = new BindingList<HeelKeypoint>();

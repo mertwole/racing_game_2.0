@@ -1,26 +1,20 @@
 ﻿using Editor.GameEntities;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Editor.TrackEditor.ParametersEditor
 {
-    class ParametersEditorVM : INotifyPropertyChanged
+    class ParametersEditorVM : IViewModel, INotifyPropertyChanged
     {
         ParametersEditorModel model = null;
-        public ParametersEditorModel Model 
-        { 
-            get => model; 
-            set
-            {
-                model = value;
-                OnPropertyChanged("Parameters");
-                model.Parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");
-            }
+
+        public void SetModel(object model)
+        {
+            this.model = model as ParametersEditorModel;
+            OnPropertyChanged("Parameters");
+            this.model.Parameters.PropertyChanged += (s, e) => OnPropertyChanged("Parameters");
         }
+
+        public void ProvideModelToRequester(RequestModelEventArgs args) { }
 
         public TrackParameters Parameters { get => model?.Parameters; }
 

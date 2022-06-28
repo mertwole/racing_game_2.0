@@ -2,7 +2,6 @@
 using Editor.TrackEditor.CurvatureEditor;
 using Editor.TrackEditor.GameObjectLocationEditor;
 using Editor.TrackEditor.HeelEditor;
-using Editor.TrackEditor.ParametersEditor;
 using Editor.TrackEditor.TrackPreview;
 using System.Drawing;
 using System.IO;
@@ -18,7 +17,6 @@ namespace Editor.TrackEditor
         GameObjectLocationEditorView gameObjectLocationEditorView;
         HeelEditorView heelEditorView;
         TrackPreviewView trackPreviewView;
-        ParametersEditorView parametersEditorView;
 
         TrackPreviewModel trackPreviewModel;
 
@@ -26,7 +24,6 @@ namespace Editor.TrackEditor
         public GameObjectLocationEditorView GameObjectLocationEditorView { get => gameObjectLocationEditorView; }
         public HeelEditorView HeelEditorView { get => heelEditorView; }
         public TrackPreviewView TrackPreviewView { get => trackPreviewView; }
-        public ParametersEditorView ParametersEditorView { get => parametersEditorView; }
 
         double pointerPositionNormalized = 0.0;
         public double PointerPositionNormalized {
@@ -65,10 +62,6 @@ namespace Editor.TrackEditor
             trackPreviewView = new TrackPreviewView();
             var tp_vm = trackPreviewView.DataContext as TrackPreviewVM;
             tp_vm.Model = trackPreviewModel = new TrackPreviewModel(previewSize);
-
-            parametersEditorView = new ParametersEditorView();
-            var pe_vm = parametersEditorView.DataContext as ParametersEditorVM;
-            pe_vm.Model = new ParametersEditorModel(track);
 
             UpdatePreview();
         }

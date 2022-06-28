@@ -38,19 +38,19 @@ namespace Editor.TabbedEditors
                     view = new GameObjectEditorView();
                     model = new GameObjectEditorModel(go);
                     (view.DataContext as GameObjectEditorVM).Model = model as GameObjectEditorModel;
-                    shownName = "game object [" + "NAME TODO" + "]";
+                    shownName = "game object [" + file.Name + "]";
                     break;
                 case Billboard bb:
                     view = new BillboardEditorView();
                     model = new BillboardEditorModel(bb);
                     (view.DataContext as BillboardEditorVM).Model = model as BillboardEditorModel;
-                    shownName = "billboard [" + "NAME TODO" + "]";
+                    shownName = "billboard [" + file.Name + "]";
                     break;
                 case Track track:
                     view = new TrackEditorView();
                     model = new TrackEditorModel(track);
                     (view.DataContext as TrackEditorVM).Model = model as TrackEditorModel;
-                    shownName = "track [" + "NAME TODO" + "]";
+                    shownName = "track [" + file.Name + "]";
                     break;
             }
         }

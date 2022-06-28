@@ -83,6 +83,7 @@
     <Compile Include="Common\ChildFinder.cs" />
     <Compile Include="Common\PositiveDoubleInputValidationRule.cs" />
     <Compile Include="Common\TextBoxEnterKeyUpdateBehaviour.cs" />
+    <Compile Include="Common\ViewBehaviour.cs" />
     <Compile Include="CustomControls\InfiniteGridView.xaml.cs">
       <DependentUpon>InfiniteGridView.xaml</DependentUpon>
     </Compile>
@@ -101,6 +102,7 @@
     <Compile Include="GameObjectEditor\GameObjectEditorVM.cs" />
     <Compile Include="IEditorTabModel.cs" />
     <Compile Include="MainModel.cs" />
+    <Compile Include="RequestModel.cs" />
     <Compile Include="Serializers.cs" />
     <Compile Include="TabbedEditors\ApplyChangesDialog.xaml.cs">
       <DependentUpon>ApplyChangesDialog.xaml</DependentUpon>
@@ -154,6 +156,7 @@
       <DependentUpon>TrackPreviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrackEditor\TrackPreview\TrackPreviewVM.cs" />
+    <Compile Include="IViewModel.cs" />
     <Page Include="BillboardEditor\BillboardEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

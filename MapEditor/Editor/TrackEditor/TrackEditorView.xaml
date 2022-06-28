@@ -10,7 +10,6 @@
              xmlns:params_editor="clr-namespace:Editor.TrackEditor.ParametersEditor"
              xmlns:cc="clr-namespace:Editor.CustomControls"
              xmlns:local="clr-namespace:Editor.TrackEditor"
-             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:common="clr-namespace:Editor.Common"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              mc:Ignorable="d" 
@@ -19,6 +18,10 @@
         <local:TrackEditorVM/>
     </UserControl.DataContext>
 
+    <i:Interaction.Behaviors>
+        <common:ViewBehaviour/>
+    </i:Interaction.Behaviors>
+    
     <Grid>
         <cc:TimelineView PointerPositionNormalized="{Binding PointerPositionNormalized, Mode=OneWayToSource}"
                          TimelineLength="{Binding Length}">
@@ -54,16 +57,8 @@
             </ContentControl>
         </cc:TimelineView>
 
-        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left"
-              Margin="10">
-            <ContentControl Content="{Binding ParametersEditorView}">
-                <ContentControl.Resources>
-                    <Style TargetType="params_editor:ParametersEditorView">
-                        <Setter Property="HorizontalAlignment" Value="Left"/>
-                        <Setter Property="VerticalAlignment" Value="Bottom"/>
-                    </Style>
-                </ContentControl.Resources>
-            </ContentControl>
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
+            <params_editor:ParametersEditorView/>
         </Grid>
         
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">

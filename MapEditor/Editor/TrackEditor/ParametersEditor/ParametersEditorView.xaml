@@ -13,6 +13,10 @@
         <local:ParametersEditorVM/>
     </UserControl.DataContext>
 
+    <i:Interaction.Behaviors>
+        <common:ViewBehaviour/>
+    </i:Interaction.Behaviors>
+    
     <Grid>
         <Rectangle RadiusX="10" RadiusY="10" Fill="#474747"/>
 

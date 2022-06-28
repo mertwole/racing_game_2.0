@@ -60,47 +60,58 @@ namespace Editor.GameEntities
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public class PositionedGameObject : INotifyPropertyChanged
+    public class PositionedBillboard : INotifyPropertyChanged
     {
-        GameObject gameObject;
-        public GameObject GameObject { get => gameObject; }
+        Billboard billboard;
+        public Billboard Billboard { get => billboard; }
 
-        double roadDistance;
-        public double RoadDistance
+        Vector3 position = new Vector3(0, 0, 0);
+        public Vector3 Position
         {
-            get => roadDistance;
+            get => position;
             set
             {
-                roadDistance = value;
-                OnPropertyChanged("RoadDistance");
+                position = value;
+                OnPropertyChanged("Position");
+                OnPropertyChanged("X");
+                OnPropertyChanged("Y");
+                OnPropertyChanged("Z");
             }
         }
 
-        double offset;
-        public double Offset
+        // Bacause Two-way binding not works for structs.
+        public double X { get => position.X; set { position.X = value; OnPropertyChanged("X"); OnPropertyChanged("Position"); } }
+        public double Y { get => position.Y; set { position.Y = value; OnPropertyChanged("Y"); OnPropertyChanged("Position"); } }
+        public double Z { get => position.Z; set { position.Z = value; OnPropertyChanged("Z"); OnPropertyChanged("Position"); } }
+
+        double width = 1;
+        public double Width
         {
-            get => offset;
+            get => width;
             set
             {
-                offset = value;
-                OnPropertyChanged("Offset");
+                width = value;
+                OnPropertyChanged("Width");
+                OnPropertyChanged("Height");
             }
         }
 
-        /// Cloning game_object
-        public PositionedGameObject(GameObject game_object)
+        public double Height { get => width / billboard.Preview.Width * billboard.Preview.Height; }
+
+        /// Clones billboard
+        public PositionedBillboard(Billboard billboard)
         {
-            gameObject = new GameObject(game_object);
-            gameObject.PropertyChanged += (s, e) => OnPropertyChanged("GameObject");
+            this.billboard = new Billboard(billboard);
+            billboard.PropertyChanged += (s, e) => OnPropertyChanged("Billboard");
         }
 
-        public PositionedGameObject(PositionedGameObject prototype)
+        public PositionedBillboard(PositionedBillboard prototype)
         {
-            gameObject = new GameObject(prototype.gameObject);
-            gameObject.PropertyChanged += (s, e) => OnPropertyChanged("GameObject");
+            billboard = new Billboard(prototype.billboard);
+            width = prototype.width;
+            position = prototype.position;
 
-            roadDistance = prototype.roadDistance;
-            offset = prototype.offset;
+            billboard.PropertyChanged += (s, e) => OnPropertyChanged("Billboard");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
