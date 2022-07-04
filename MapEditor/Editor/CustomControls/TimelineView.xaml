@@ -21,7 +21,7 @@
                 <StackPanel x:Name="ChildrenContainer" Margin="0, 50, 0, 50"/>
 
                 <Canvas x:Name="TimelineCanvas" Margin="20, 10, 20, 0">
-                    <Grid Height="2000" Width="10" Canvas.Top="0" Name="Pointer" Panel.ZIndex="10">
+                    <Grid Height="2000" Width="10" Canvas.Top="0" Name="Pointer" Panel.ZIndex="100">
                         <Grid Width="2" Background="Orange" HorizontalAlignment="Center"
                               IsHitTestVisible="False"
                         />

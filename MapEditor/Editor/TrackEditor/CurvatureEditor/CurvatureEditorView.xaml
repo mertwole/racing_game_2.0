@@ -17,6 +17,10 @@
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
 
+    <i:Interaction.Behaviors>
+        <common:ViewBehaviour/>
+    </i:Interaction.Behaviors>
+    
     <Grid Background="#474747" Name="Root">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="MouseLeftButtonDown">

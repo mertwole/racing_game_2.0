@@ -22,18 +22,19 @@ namespace Editor.TrackEditor.CurvatureEditor
             => null;
     }
 
-    public class CurvatureEditorVM : INotifyPropertyChanged
+    public class CurvatureEditorVM : IViewModel, INotifyPropertyChanged
     {
         CurvatureEditorModel model;
-        public CurvatureEditorModel Model { 
-            set 
-            { 
-                model = value;
-                Init();
-                OnPropertyChanged("Curvatures");
-                OnPropertyChanged("TrackLength");
-            } 
+
+        public void SetModel(object model)
+        {
+            this.model = model as CurvatureEditorModel;
+            Init();
+            OnPropertyChanged("Curvatures");
+            OnPropertyChanged("TrackLength");
         }
+
+        public void ProvideModelToRequester(RequestModelEventArgs args) { }
 
         public bool IsCurvatureNotEditing { get => !model.IsCurvatureEditing; }
         public BindingList<Curvature> Curvatures { get => model?.Curvatures; }

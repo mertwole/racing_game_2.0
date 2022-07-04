@@ -5,7 +5,7 @@ namespace Editor.TrackEditor.ParametersEditor
 {
     class ParametersEditorVM : IViewModel, INotifyPropertyChanged
     {
-        ParametersEditorModel model = null;
+        ParametersEditorModel model;
 
         public void SetModel(object model)
         {

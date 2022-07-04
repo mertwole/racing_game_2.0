@@ -50,18 +50,19 @@ namespace Editor.TrackEditor.HeelEditor
             => null;
     }
 
-    class HeelEditorVM : INotifyPropertyChanged
+    class HeelEditorVM : IViewModel, INotifyPropertyChanged
     {
         HeelEditorModel model;
-        public HeelEditorModel Model { 
-            set 
-            { 
-                model = value;
-                Init();
-                OnPropertyChanged("Keypoints");
-                OnPropertyChanged("EditorScale");
-            } 
+
+        public void SetModel(object model)
+        {
+            this.model = model as HeelEditorModel;
+            Init();
+            OnPropertyChanged("Keypoints");
+            OnPropertyChanged("EditorScale");
         }
+
+        public void ProvideModelToRequester(RequestModelEventArgs args) { }
 
         public BindingList<HeelKeypoint> Keypoints { 
             get => model == null ? null : model.Keypoints; }
@@ -108,6 +109,7 @@ namespace Editor.TrackEditor.HeelEditor
                 graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
 
             graphPoints[0].IsStroked = false;
+            graphPoints[1].IsStroked = false;
 
             graphPoints.Add(new LineSegment(new Point(mainCanvasWidth, mainCanvasHeight), false));
             graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
@@ -164,16 +166,7 @@ namespace Editor.TrackEditor.HeelEditor
 
                 graphPoints.Clear();
 
-                for (int i = 0; i < mainCanvasWidth; i++)
-                    graphPoints.Add(new LineSegment(new Point(i, 0.0), true));
-
-                graphPoints[0].IsStroked = false;
-
-                graphPoints.Add(new LineSegment(new Point(mainCanvasWidth, mainCanvasHeight), false));
-                graphPoints.Add(new LineSegment(new Point(0, mainCanvasHeight), false));
-
-                UpdateGraph();
-                UpdateKeypoints();
+                InitGraph();
             });
         }
 

@@ -34,17 +34,18 @@ namespace Editor.TrackEditor.GameObjectLocationEditor
             => null;
     }
 
-    public class GameObjectLocationEditorVM : INotifyPropertyChanged
+    public class GameObjectLocationEditorVM : IViewModel, INotifyPropertyChanged
     {
         GameObjectLocationEditorModel model;
-        public GameObjectLocationEditorModel Model { 
-            set 
-            { 
-                model = value; 
-                OnPropertyChanged("GameObjects");
-                OnPropertyChanged("TrackWidth");
-            } 
+
+        public void SetModel(object model)
+        {
+            this.model = model as GameObjectLocationEditorModel;
+            OnPropertyChanged("GameObjects");
+            OnPropertyChanged("TrackWidth");
         }
+
+        public void ProvideModelToRequester(RequestModelEventArgs args) { }
 
         public BindingList<PositionedGameObject> GameObjects { get => model == null ? null : model.GameObjects; }
 

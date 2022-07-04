@@ -25,36 +25,15 @@
     <Grid>
         <cc:TimelineView PointerPositionNormalized="{Binding PointerPositionNormalized, Mode=OneWayToSource}"
                          TimelineLength="{Binding Length}">
-            <ContentControl Content="{Binding CurvatureEditorView}">
-                <ContentControl.Resources>
-                    <Style TargetType="curv_editor:CurvatureEditorView">
-                        <Setter Property="Height" Value="20"/>
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    </Style>
-                </ContentControl.Resources>
-            </ContentControl>
+            <curv_editor:CurvatureEditorView Height="20" HorizontalAlignment="Stretch"/>
 
             <Grid Height="35" HorizontalAlignment="Stretch"/>
 
-            <ContentControl Content="{Binding HeelEditorView}">
-                <ContentControl.Resources>
-                    <Style TargetType="heel_editor:HeelEditorView">
-                        <Setter Property="Height" Value="60"/>
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    </Style>
-                </ContentControl.Resources>
-            </ContentControl>
-            
+            <heel_editor:HeelEditorView Height="60" HorizontalAlignment="Stretch"/>
+
             <Grid Height="35" HorizontalAlignment="Stretch"/>
 
-            <ContentControl Content="{Binding GameObjectLocationEditorView}">
-                <ContentControl.Resources>
-                    <Style TargetType="go_location_editor:GameObjectLocationEditorView">
-                        <Setter Property="Height" Value="200"/>
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    </Style>
-                </ContentControl.Resources>
-            </ContentControl>
+            <go_location_editor:GameObjectLocationEditorView Height="200" HorizontalAlignment="Stretch"/>
         </cc:TimelineView>
 
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
@@ -62,14 +41,7 @@
         </Grid>
         
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
-            <ContentControl Content="{Binding TrackPreviewView}">
-                <ContentControl.Resources>
-                    <Style TargetType="track_preview:TrackPreviewView">
-                        <Setter Property="HorizontalAlignment" Value="Right"/>
-                        <Setter Property="VerticalAlignment" Value="Bottom"/>
-                    </Style>
-                </ContentControl.Resources>
-            </ContentControl>
+            <track_preview:TrackPreviewView/>
         </Grid>
     </Grid>
 </UserControl>

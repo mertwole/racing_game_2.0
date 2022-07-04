@@ -11,12 +11,6 @@ namespace Editor.CustomControls
     [ContentProperty("Children")]
     public partial class TimelineView : UserControl
     {
-        //double timelineLength = 50.0;
-        //public double TimelineLength { get => timelineLength; set => timelineLength = value; }
-
-        //double editFieldHeight = 500.0;
-        //public double EditFieldHeight { get => editFieldHeight; set => editFieldHeight = value; }
-
         double scaleX = 40.0;
         double scaleY = 2.0;
 
@@ -48,8 +42,8 @@ namespace Editor.CustomControls
         }
 
         public static readonly DependencyProperty PointerPositionNormalizedProperty = DependencyProperty.Register(
-        "PointerPositionNormalized", typeof(double),
-        typeof(TimelineView), new FrameworkPropertyMetadata());
+            "PointerPositionNormalized", typeof(double),
+            typeof(TimelineView), new FrameworkPropertyMetadata(0.0));
         public double PointerPositionNormalized
         {
             get { return (double)GetValue(PointerPositionNormalizedProperty); }
@@ -67,7 +61,9 @@ namespace Editor.CustomControls
 
         void UpdateTimelineLength()
         {
+            var pointer = Pointer;
             TimelineCanvas.Children.Clear();
+            TimelineCanvas.Children.Add(pointer);
 
             TimelineCanvas.Width = TimelineLength * scaleX;
             ChildrenContainer.Width = TimelineLength * scaleX;        
@@ -78,7 +74,7 @@ namespace Editor.CustomControls
                 line.X1 = i * scaleX;
                 line.X2 = i * scaleX;
                 line.Y1 = 0;
-                line.Y2 = ScrollRegion.ActualHeight;// editFieldHeight * scaleY;
+                line.Y2 = ScrollRegion.ActualHeight;
                 line.Stroke = new SolidColorBrush(Color.FromArgb(45, 0x7B, 0x7B, 0x7B));
                 line.StrokeThickness = 1.0;
                 line.IsHitTestVisible = false;
@@ -101,8 +97,6 @@ namespace Editor.CustomControls
         {
             InitializeComponent();
             Children = ChildrenContainer.Children;
-            //TimelineCanvas.Height = editFieldHeight * scaleY;
-            //editFieldHeight = TimelineCanvas.ActualHeight;
 
             UpdateTimelineLength();
         }

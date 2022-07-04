@@ -3,23 +3,14 @@ using System.Drawing;
 
 namespace Editor.TrackEditor.TrackPreview
 {
-    public class TrackPreviewVM : INotifyPropertyChanged
+    public class TrackPreviewVM : IViewModel, INotifyPropertyChanged
     {
         TrackPreviewModel model;
-        public TrackPreviewModel Model
-        {
-            set
-            {
-                model = value;
-                Init();
-            }
-        }
 
-        public Bitmap Preview => model == null ? null : model.Preview;
-
-        void Init()
+        public void SetModel(object model)
         {
-            model.PropertyChanged += (s, e) =>
+            this.model = model as TrackPreviewModel;
+            this.model.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == "Preview")
                     OnPropertyChanged("Preview");
@@ -28,10 +19,9 @@ namespace Editor.TrackEditor.TrackPreview
             OnPropertyChanged("Preview");
         }
 
-        public TrackPreviewVM()
-        {
-            
-        }
+        public void ProvideModelToRequester(RequestModelEventArgs args) { }
+
+        public Bitmap Preview => model?.Preview;
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

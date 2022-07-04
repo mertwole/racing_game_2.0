@@ -16,6 +16,10 @@
         <common:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter"/>
     </UserControl.Resources>
 
+    <i:Interaction.Behaviors>
+        <common:ViewBehaviour/>
+    </i:Interaction.Behaviors>
+
     <Grid Background="Red">
         <Image Source="{Binding Preview, Converter={StaticResource BitmapToImageSourceConverter}}"
                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Stretch="None"/>

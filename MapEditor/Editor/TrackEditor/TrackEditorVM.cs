@@ -14,11 +14,6 @@ namespace Editor.TrackEditor
             set
             {
                 model = value;
-                OnPropertyChanged("CurvatureEditorView");
-                OnPropertyChanged("GameObjectLocationEditorView");
-                OnPropertyChanged("HeelEditorView");
-                OnPropertyChanged("TrackPreviewView");
-                OnPropertyChanged("ParametersEditorView");
 
                 OnPropertyChanged("Length");
                 model.Track.Parameters.PropertyChanged += (s, e) => OnPropertyChanged("Length");
@@ -28,11 +23,6 @@ namespace Editor.TrackEditor
         public void SetModel(object model)
         {
             this.model = model as TrackEditorModel;
-            OnPropertyChanged("CurvatureEditorView");
-            OnPropertyChanged("GameObjectLocationEditorView");
-            OnPropertyChanged("HeelEditorView");
-            OnPropertyChanged("TrackPreviewView");
-            OnPropertyChanged("ParametersEditorView");
 
             OnPropertyChanged("Length");
             this.model.Track.Parameters.PropertyChanged += (s, e) => OnPropertyChanged("Length");
@@ -42,19 +32,21 @@ namespace Editor.TrackEditor
         {
             if (args.Requester is ParametersEditorVM)
                 args.Requester.SetModel(new ParametersEditorModel(model.Track));
+            else if (args.Requester is CurvatureEditorVM)
+                args.Requester.SetModel(new CurvatureEditorModel(model));
+            else if (args.Requester is GameObjectLocationEditorVM)
+                args.Requester.SetModel(new GameObjectLocationEditorModel(model));
+            else if (args.Requester is HeelEditorVM)
+                args.Requester.SetModel(new HeelEditorModel(model));
+            else if (args.Requester is TrackPreviewVM)
+                args.Requester.SetModel(new TrackPreviewModel(model));
         }
 
         public double Length { get => model == null ? 0.0 : model.Track.Parameters.Length; }
 
-        public CurvatureEditorView CurvatureEditorView { get => model?.CurvatureEditorView; }
-        public GameObjectLocationEditorView GameObjectLocationEditorView { get => model?.GameObjectLocationEditorView; }
-        public HeelEditorView HeelEditorView { get => model?.HeelEditorView; }
-        public TrackPreviewView TrackPreviewView { get => model?.TrackPreviewView; }
-
         public double PointerPositionNormalized { set { if(model != null) model.PointerPositionNormalized = value; } }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

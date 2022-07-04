@@ -1,15 +1,21 @@
-﻿using System;
+﻿using Editor.GameEntities;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Editor.TrackEditor.TrackPreview
 {
     public class TrackPreviewModel : INotifyPropertyChanged
     {
+        Track track;
+
         Bitmap preview;
         public Bitmap Preview { get => preview; }
+
+        double latestPointerPosition = 0;
 
         [DllImport("preview_renderer.dll")]
         static unsafe extern void render_preview(
@@ -18,12 +24,33 @@ namespace Editor.TrackEditor.TrackPreview
             Int32 out_width, Int32 out_height, UInt32* out_pixels
         );
 
-        public TrackPreviewModel(Size preview_size)
+        public TrackPreviewModel(TrackEditorModel model)
         {
-            preview = new Bitmap(preview_size.Width, preview_size.Height);
+            preview = new Bitmap(192, 108);
+            track = model.Track;
+
+            model.PropertyChanged += (s, e) => { 
+                if (e.PropertyName == "PointerPositionNormalized") 
+                { 
+                    latestPointerPosition = model.PointerPositionNormalized; 
+                    UpdatePreview(); 
+                } 
+            };
+            track.PropertyChanged += (s, e) => UpdatePreview();
+
+            UpdatePreview();
         }
 
-        public void Update(byte[] rmap_data, float camera_distance)
+        static Serializers serializer = new Serializers();
+        void UpdatePreview()
+        {
+            var serialized = serializer.SerializeRmapSingleTrack(track);
+            serialized.Seek(0, SeekOrigin.Begin);
+            var rmap_data = serialized.ToArray();
+            Update(rmap_data, (float)latestPointerPosition * (float)track.Parameters.Length);
+        }
+
+        void Update(byte[] rmap_data, float camera_distance)
         {
             if (preview == null)
                 return;
