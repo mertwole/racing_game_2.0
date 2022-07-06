@@ -1,9 +1,10 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interactivity;
 
 namespace Editor.Common
 {
-    public class ViewBehaviour : Behavior<UserControl>
+    public class ViewBehaviour : Behavior<FrameworkElement>
     {
         protected override void OnAttached()
         {

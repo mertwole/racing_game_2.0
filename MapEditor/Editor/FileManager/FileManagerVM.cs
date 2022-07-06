@@ -75,11 +75,19 @@ namespace Editor.FileManager
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
     }
 
-    public class FileManagerVM : INotifyPropertyChanged
+    public class FileManagerVM : IViewModel, INotifyPropertyChanged
     {
-        FileManagerModel model = MainModel.FileManagerModel;
+        FileManagerModel model;
 
-        public BindingList<IContent> Hierarchy { get => model.Hierarchy; }
+        public void SetModel(object model)
+        {
+            this.model = model as FileManagerModel;
+            OnPropertyChanged("Hierarchy");
+        }
+
+        public void ProvideModelToRequester(RequestModelEventArgs args) { }
+
+        public BindingList<IContent> Hierarchy { get => model?.Hierarchy; }
 
         // MainTreeView
         public static readonly DependencyProperty MainTreeViewProperty =

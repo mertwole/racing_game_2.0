@@ -1,6 +1,5 @@
 ﻿using Editor.GameEntities;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace Editor.FileManager
@@ -11,9 +10,10 @@ namespace Editor.FileManager
 
         Folder root = new Folder("root", null);
 
-        public FileManagerModel()
+        MainModel mainModel;
+        public FileManagerModel(MainModel main_model)
         {
-            
+            mainModel = main_model;
         }
 
         public void ReplaceHierarchy(List<IContent> hierarchy)
@@ -106,8 +106,7 @@ namespace Editor.FileManager
 
         public void OpenFileEditor(File file)
         {
-            var tabbed_editors_model = MainModel.TabbedEditorsModel;
-            tabbed_editors_model.OpenFileEditor(file);
+            mainModel.OpenFileEditor(file);
         }
     }
 

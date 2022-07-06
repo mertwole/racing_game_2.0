@@ -13,6 +13,10 @@
         <local:FileManagerVM/>
     </UserControl.DataContext>
 
+    <i:Interaction.Behaviors>
+        <common:ViewBehaviour/>
+    </i:Interaction.Behaviors>
+
     <UserControl.Resources>
         <common:BindingProxy x:Key="Proxy" Data="{Binding}"/>
         <local:CallCheckSelected x:Key="CallCheckSelected"/>

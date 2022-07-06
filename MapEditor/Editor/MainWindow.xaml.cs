@@ -8,10 +8,5 @@ namespace Editor
         {
             InitializeComponent();
         }
-
-        private void LoadProject(object sender, RoutedEventArgs e)
-        {
-            MainModel.LoadProject();
-        }
     }
 }

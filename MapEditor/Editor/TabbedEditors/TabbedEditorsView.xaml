@@ -12,6 +12,10 @@
         <local:TabbedEditorsVM/>
     </UserControl.DataContext>
 
+    <i:Interaction.Behaviors>
+        <common:ViewBehaviour/>
+    </i:Interaction.Behaviors>
+    
     <Grid Name="MainGrid" Background="Transparent">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="KeyDown">

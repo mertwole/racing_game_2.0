@@ -102,12 +102,13 @@
     <Compile Include="GameObjectEditor\GameObjectEditorVM.cs" />
     <Compile Include="IEditorTabModel.cs" />
     <Compile Include="MainModel.cs" />
+    <Compile Include="MainVM.cs" />
     <Compile Include="RequestModel.cs" />
     <Compile Include="Serializers.cs" />
     <Compile Include="TabbedEditors\ApplyChangesDialog.xaml.cs">
       <DependentUpon>ApplyChangesDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TabbedEditors\ProjectSaveFailed.xaml.cs">
+    <Compile Include="ProjectSaveFailed.xaml.cs">
       <DependentUpon>ProjectSaveFailed.xaml</DependentUpon>
     </Compile>
     <Compile Include="TabbedEditors\TabbedEditorsModel.cs" />
@@ -173,7 +174,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TabbedEditors\ProjectSaveFailed.xaml">
+    <Page Include="ProjectSaveFailed.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

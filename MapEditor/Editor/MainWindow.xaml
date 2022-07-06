@@ -4,7 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:fm="clr-namespace:Editor.FileManager"
-
+        xmlns:common="clr-namespace:Editor.Common"
+        xmlns:local="clr-namespace:Editor"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        
         xmlns:tabbed_editors="clr-namespace:Editor.TabbedEditors"
         
         mc:Ignorable="d"
@@ -18,6 +21,14 @@
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}">
+    <Window.DataContext>
+        <local:MainVM/>
+    </Window.DataContext>
+
+    <i:Interaction.Behaviors>
+        <common:ViewBehaviour/>
+    </i:Interaction.Behaviors>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
@@ -30,10 +41,23 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="KeyDown">
+                <common:EventToCommand  Command="{Binding ApplyChanges}"
+                                        PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        
         <ToolBar Grid.ColumnSpan="3" VerticalAlignment="Top">
             <Button Content="load project" 
                     Style="{StaticResource MaterialDesignFlatAccentBgButton}"
-                    Padding="8, 0" Click="LoadProject"/>
+                    Padding="8, 0">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <common:EventToCommand  Command="{Binding LoadProject}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
         </ToolBar>
 
         <tabbed_editors:TabbedEditorView Grid.Column="0" Grid.Row="1"/>

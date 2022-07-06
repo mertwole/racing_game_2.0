@@ -1,5 +1,4 @@
 ﻿using Editor.FileManager;
-using Editor.GameEntities;
 using Editor.TabbedEditors;
 using Microsoft.Win32;
 using System.IO;
@@ -8,20 +7,21 @@ using File = System.IO.File;
 
 namespace Editor
 {
-    public static class MainModel
+    public class MainModel
     {
-        static FileManagerModel fileManagerModel = new FileManagerModel();
-        public static FileManagerModel FileManagerModel { get => fileManagerModel; }
+        public TabbedEditorsModel tabbedEditorsModel = null;
+        public FileManagerModel fileManagerModel = null;
 
-        static TabbedEditorsModel tabbedEditorsModel = new TabbedEditorsModel();
-        public static TabbedEditorsModel TabbedEditorsModel { get => tabbedEditorsModel; }
-
-        public static bool CanSaveProject { get => projFilePath != null; }
-        static string projFilePath = null;
+        string projFilePath = null;
 
         static Serializers serializer = new Serializers();
 
-        public static void TryEnableSaveProject()
+        public void OpenFileEditor(FileManager.File file)
+        {
+            tabbedEditorsModel.OpenFileEditor(file);
+        }
+
+        public void TryEnableSaveProject()
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.DefaultExt = ".rproj";
@@ -29,9 +29,19 @@ namespace Editor
                 projFilePath = sfd.FileName;
         }
 
-        public static void SaveProject()
+        public void SaveProject()
         {
-            if (!CanSaveProject) return;
+            if (projFilePath == null)
+            {
+                TryEnableSaveProject();
+                if (projFilePath == null)
+                {
+                    var modal = new ProjectSaveFailed();
+                    modal.ShowDialog();
+                    return;
+                }
+            }
+
             var serialized = serializer.SerializeRproj(fileManagerModel.Hierarchy.ToList());
             serialized.Seek(0, SeekOrigin.Begin);
 
@@ -40,7 +50,7 @@ namespace Editor
             fs.Close();
         }
 
-        public static void LoadProject()
+        public void LoadProject()
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.DefaultExt = ".rproj";
@@ -62,7 +72,7 @@ namespace Editor
             if (!all_tabs_closed)
                 return;
 
-            FileManagerModel.ReplaceHierarchy(hierarchy);
+            fileManagerModel.ReplaceHierarchy(hierarchy);
         }
     }
 }

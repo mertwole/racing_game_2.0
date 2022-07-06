@@ -10,31 +10,40 @@ using System.Windows.Threading;
 
 namespace Editor.TabbedEditors
 {
-    class TabbedEditorsVM : INotifyPropertyChanged
+    class TabbedEditorsVM : IViewModel, INotifyPropertyChanged
     {
-        TabbedEditorsModel model = MainModel.TabbedEditorsModel;
+        TabbedEditorsModel model;
 
-        public ObservableCollection<EditorTab> Tabs { get => model.Tabs; }
-
-        EditorTab activeTab;
-        public EditorTab ActiveTab { get => activeTab; set => activeTab = value; }
-
-        public TabbedEditorsVM()
+        public void SetModel(object model)
         {
-            Tabs.CollectionChanged += (s, e) => 
-            { 
-                if (e.NewItems != null)
+            this.model = model as TabbedEditorsModel;
+            this.model.Tabs.ListChanged += (s, e) =>
+            {
+                if(e.ListChangedType == ListChangedType.ItemAdded)
                 {
                     // Doesn't work if called from current thread.
                     Dispatcher.CurrentDispatcher.BeginInvoke((Action)(
-                        () => {
-                            activeTab = (EditorTab)e.NewItems[0];
+                        () =>
+                        {
+                            activeTab = this.model.Tabs[e.NewIndex];
                             OnPropertyChanged("ActiveTab");
                         }
                     ));
                 }
             };
+
+            OnPropertyChanged("Tabs");
         }
+
+        public void ProvideModelToRequester(RequestModelEventArgs args)
+        {
+            
+        }
+
+        public BindingList<EditorTab> Tabs { get => model?.Tabs; }
+
+        EditorTab activeTab;
+        public EditorTab ActiveTab { get => activeTab; set => activeTab = value; }
 
         T FindParentOfType<T>(DependencyObject element) where T : class
         {
@@ -72,5 +81,7 @@ namespace Editor.TabbedEditors
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
+
+        
     }
 }

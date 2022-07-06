@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Editor.TabbedEditors
+namespace Editor
 {
     public partial class ProjectSaveFailed : Window
     {

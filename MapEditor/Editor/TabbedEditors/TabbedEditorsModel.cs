@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using Editor.TrackEditor;
 using Editor.GameObjectEditor;
 using Editor.BillboardEditor;
@@ -77,8 +76,13 @@ namespace Editor.TabbedEditors
 
     public class TabbedEditorsModel
     {
-        ObservableCollection<EditorTab> tabs = new ObservableCollection<EditorTab>();
-        public ObservableCollection<EditorTab> Tabs { get => tabs; }
+        BindingList<EditorTab> tabs = new BindingList<EditorTab>();
+        public BindingList<EditorTab> Tabs { get => tabs; }
+
+        public TabbedEditorsModel(MainModel main_model)
+        {
+            main_model.tabbedEditorsModel = this;
+        }
 
         public bool CloseAllTabs()
         {
@@ -113,19 +117,7 @@ namespace Editor.TabbedEditors
 
         public void SaveTab(EditorTab tab)
         {
-            if(!MainModel.CanSaveProject)
-            {
-                MainModel.TryEnableSaveProject();
-                if(!MainModel.CanSaveProject)
-                {
-                    var modal = new ProjectSaveFailed();
-                    modal.ShowDialog();
-                    return;
-                }
-            }
-
             tab.Save();
-            MainModel.SaveProject();
         }
 
         public void OpenFileEditor(FileManager.File file)
